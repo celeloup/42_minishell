@@ -103,7 +103,7 @@ all: $(OBJ_PATH) $(NAME)
 
 $(OBJ_PATH):
 	mkdir $@
-	mkdir $@ft_printf
+	mkdir $@/ft_printf
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	printf "\33[2K\r$(_CYAN)compiling: $<$(_END)"
