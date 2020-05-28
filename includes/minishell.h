@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/05/28 11:34:35 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/05/28 14:53:48 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,7 @@
 # define YELLOW "\033[0;33m"
 # define RED "\033[1;31m"
 # define END "\033[0m"
+
+void	fonction_test_celia();
 
 #endif
