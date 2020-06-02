@@ -12,7 +12,7 @@
 
 NAME			= minishell
 
-SRCS_FILE		= minishell.c
+SRCS_FILE		= minishell.c parsing.c check.c init.c free.c
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS			= $(addprefix $(OBJS_DIR), $(SRCS_FILE:.c=.o))

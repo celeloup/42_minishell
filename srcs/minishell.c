@@ -60,29 +60,37 @@ void	control_c(int num)
 int		main(int argc, char *argv[], char *env[])
 {
 	char	*input;
+	t_arg	arg;
 
 	// Pour l'instant je m'en sers pas donc je les ai mute pour les flags
 	(void)env;
-	(void)argv;
-	(void)argc;
 
+	//Pour comparaison (marche si args minishell idem args lancement programme)
+	print_args(argc, argv, "Real ");
+	
 	//INTERCEPTION DES SIGNAUX
 	signal(SIGINT, control_c);
 	signal(SIGQUIT, control_slash);
 
-
+	//Pour le moment parse en dehors de boucle et GNL
+	//=> permet de vérifier que argc de notre minishell = argc du vrai minishell
+	init_arg(&arg);
 	while (42)
 	{
 		prompt(0);
 		get_next_line(0, &input);
 		if (!input) // SI ON RECOIT LE EOF = CTRL-D
 			control_d();
-		
-		//ici mettre fonction parsing
-
 		else if (ft_strcmp("exit", input) == 0) //CHECK SI COMMANDE = "exit"
 			exit(EXIT_SUCCESS);
-		ft_printf("%s\n", input);
+		else //parsing
+		{
+			ft_printf("input is : >%s<\n", input);
+			parse(input, &arg);
+			print_args(arg.c, arg.v, "(Our) mini");
+		}
 	}
+	ft_printf("\nMAIN9");
+	free_arg(&arg);
 	return (0);
 }

@@ -22,6 +22,28 @@
 # define RED "\033[1;31m"
 # define END "\033[0m"
 
+# define SPACE      32
+# define TAB        9
+# define NEWLINE    10
+
+typedef struct	s_arg{
+	int			count;
+	char		**value;
+    int         max_arg_size;
+}				t_arg;
+
 void	fonction_test_celia();
+
+/* parsing.c */
+void    parse(char *input, t_arg *arg);
+
+/* check.c */
+void    print_args(int argc, char **argv, char *str);
+
+/* free.c */
+void    free_arg(t_arg *arg);
+
+/* init.c */
+void    init_arg(t_arg *arg);
 
 #endif
