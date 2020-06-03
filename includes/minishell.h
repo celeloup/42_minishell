@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/05/28 14:53:48 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/03 18:28:28 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "../libft/src/libft.h"
 # include <signal.h>
+# include <wait.h>
+# include <errno.h>
 
 # define GREEN "\033[1;32m"
 # define BLUE "\033[1;36m"
@@ -32,7 +34,8 @@ typedef struct	s_arg{
     int         max_arg_size;
 }				t_arg;
 
-void	fonction_test_celia();
+/* minishell.c */
+void	prompt(int error);
 
 /* parsing.c */
 void    parse(char *input, t_arg *arg);
@@ -45,5 +48,10 @@ void    free_arg(t_arg *arg);
 
 /* init.c */
 void    init_arg(t_arg *arg);
+
+/* signal_handling.c */
+void	control_slash(int num);
+void	control_d();
+void	control_c(int num);
 
 #endif

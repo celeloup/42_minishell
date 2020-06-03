@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/05/28 12:22:22 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/03 16:54:07 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,16 @@ free_arg(t_arg *arg)
     int i;
 
     i = 0;
-    while (arg->c && i < arg->c)
+    while (arg->count && i < arg->count)
     {
-        if (arg->v[i] != NULL)
-            free(arg->v[i]);
-        arg->v[i] = NULL;
+        if (arg->value[i] != NULL)
+            free(arg->value[i]);
+        arg->value[i] = NULL;
         i++;
     }
-    if (arg->v != NULL)
-        free(arg->v);
-    arg->v = NULL;
-    arg->c = 0; //Pas sûr que ce soit nécessaire.
+    if (arg->value != NULL)
+        free(arg->value);
+    arg->value = NULL;
+    arg->count = 0; //Pas sûr que ce soit nécessaire.
     arg->max_arg_size = 0; //idem
 }

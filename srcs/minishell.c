@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/03 16:15:14 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/03 18:46:11 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,49 +24,16 @@ void	prompt(int error)
 		ft_printf("%s➜  %sminishell %s> %s", GREEN, BLUE, YELLOW, END);
 }
 
-/*
-** Signal interruption forte
-** Pour l'instant fait rien
-*/
-void	control_slash(int num)
-{
-	ft_printf("ctrl-/\n");
-	(void)num;
-}
-
-/*
-** Signal arrêt
-** Pour l'instant, quitte le terminal
-** faut rajouter le check de si process en cours et les arrêter
-*/
-void	control_d()
-{
-	exit(EXIT_SUCCESS);
-}
-
-
-/*
-** Signal interruption
-** Pour l'instant, fait rien
-** faut rajouter le check de si y'a des process en cours et les interrompre
-*/
-void	control_c(int num)
-{
-	(void)num;
-	write(1, "\n", 1);
-	prompt(1);
-}
-
 int		main(int argc, char *argv[], char *env[])
 {
 	char	*input;
 	t_arg	arg;
-
-	// Pour l'instant je m'en sers pas donc je les ai mute pour les flags
-	(void)env;
+	
+	(void)argc;
+	(void)argv;
 
 	//Pour comparaison (marche si args minishell idem args lancement programme)
-	print_args(argc, argv, "Real ");
+	//print_args(argc, argv, "Real ");
 	
 	//INTERCEPTION DES SIGNAUX
 	signal(SIGINT, control_c);
@@ -85,12 +52,24 @@ int		main(int argc, char *argv[], char *env[])
 			exit(EXIT_SUCCESS);
 		else //parsing
 		{
-			ft_printf("input is : >%s<\n", input);
+			//ft_printf("input is : >%s<\n", input);
 			parse(input, &arg);
-			print_args(arg.count, arg.value, "(Our) mini");
+			//print_args(arg.count, arg.value, "(Our) mini");
+		}
+		if (fork() == 0)
+		{
+			if (execve(arg.value[0], arg.value, env) == -1)
+			{
+				char *test = strerror(errno);
+				ft_printf("error : %s\n", test);
+			}
+			return (0);
+		}
+		else
+		{
+			wait(NULL);
 		}
 	}
-	ft_printf("\nMAIN9");
 	free_arg(&arg);
 	return (0);
 }

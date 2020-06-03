@@ -22,13 +22,13 @@ arg_count(char *input, t_arg *arg)
 	int		size;
 
 	i = 0;
-	arg->c = 0;//normalement pas besoin car déjà dans free_arg
+	arg->count = 0;//normalement pas besoin car déjà dans free_arg
 	arg->max_arg_size = 0;//idem
 	while (input[i] && i < ft_strlen(input))
 	{
 		if (is_IFS(input[i]) == 0)
 		{
-			arg->c++;
+			arg->count++;
 			size = 0;
 			while (input[i + size] && is_IFS(input[i + size]) == 0)
 				size++;
@@ -40,13 +40,14 @@ arg_count(char *input, t_arg *arg)
 			i++;
 	}
 }
-	
-	char *
+
+/*	
+1	char *
 get_arg()
 {
 	
 }
-	
+	*/
 	void
 arg_values(char *input, t_arg *arg)
 {
@@ -54,7 +55,7 @@ arg_values(char *input, t_arg *arg)
 	int	j;
 	int	count;
 
-	if (!(arg->v = malloc(sizeof(char**) * arg->c)))
+	if (!(arg->value = malloc(sizeof(char**) * arg->count)))
 		ft_printf("\nFailed allocating memory for arg_v");// sans doute a changer par une fonction globale de sortie propre
 	count = 0;
 	i = 0;
@@ -65,17 +66,17 @@ arg_values(char *input, t_arg *arg)
 			i++;
 		if (input[i] && is_IFS(input[i]) == 0)
 		{
-			if (!(arg->v[count] = malloc(sizeof(char*) * arg->max_arg_size)))
+			if (!(arg->value[count] = malloc(sizeof(char*) * arg->max_arg_size)))
 				ft_printf("\nFailed allocating memory for arg_v[%d]", count);//idem : changer
 			while (input[i] && is_IFS(input[i]) == 0)
 			{
-				arg->v[count][j] = input[i];
+				arg->value[count][j] = input[i];
 				i++;
 				j++;
 			}
 			while (j < arg->max_arg_size)
 			{
-				arg->v[count][j] = '\0';
+				arg->value[count][j] = '\0';
 				j++;
 			}
 			count++;

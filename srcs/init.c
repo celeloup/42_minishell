@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/05/28 12:22:22 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/03 16:54:09 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
     void
 init_arg(t_arg *arg)
 {
-    arg->c = 0;
-    arg->v = NULL;
+    arg->count = 0;
+    arg->value = NULL;
     arg->max_arg_size = 0;
 }
