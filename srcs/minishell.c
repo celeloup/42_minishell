@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/05/28 12:22:22 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/03 16:15:14 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int		main(int argc, char *argv[], char *env[])
 		{
 			ft_printf("input is : >%s<\n", input);
 			parse(input, &arg);
-			print_args(arg.c, arg.v, "(Our) mini");
+			print_args(arg.count, arg.value, "(Our) mini");
 		}
 	}
 	ft_printf("\nMAIN9");
