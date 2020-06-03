@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/05/28 14:53:48 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/03 18:28:28 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "../libft/src/libft.h"
 # include <signal.h>
+# include <wait.h>
+# include <errno.h>
 
 # define GREEN "\033[1;32m"
 # define BLUE "\033[1;36m"
@@ -57,7 +59,8 @@ typedef	struct		s_cmd{
 	struct s_cmd	*next;
 }					t_cmd;
 
-void	fonction_test_celia();
+/* minishell.c */
+void	prompt(int error);
 
 /* parsing.c */
 t_cmd			*parse_input(char *input, char *env[]);
@@ -80,5 +83,10 @@ void			free_rdir(t_rdir *rdir);
 /* init.c */
 t_cmd			*init_cmd(char *input);
 t_rdir			*init_rdir();
+
+/* signal_handling.c */
+void	control_slash(int num);
+void	control_d();
+void	control_c(int num);
 
 #endif

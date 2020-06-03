@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/03 16:15:14 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/09 19:56:09 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,39 +22,6 @@ void	prompt(int error)
 		ft_printf("%s➜  %sminishell %s> %s", RED, BLUE, YELLOW, END);
 	else
 		ft_printf("%s➜  %sminishell %s> %s", GREEN, BLUE, YELLOW, END);
-}
-
-/*
-** Signal interruption forte
-** Pour l'instant fait rien
-*/
-void	control_slash(int num)
-{
-	ft_printf("ctrl-/\n");
-	(void)num;
-}
-
-/*
-** Signal arrêt
-** Pour l'instant, quitte le terminal
-** faut rajouter le check de si process en cours et les arrêter
-*/
-void	control_d()
-{
-	exit(EXIT_SUCCESS);
-}
-
-
-/*
-** Signal interruption
-** Pour l'instant, fait rien
-** faut rajouter le check de si y'a des process en cours et les interrompre
-*/
-void	control_c(int num)
-{
-	(void)num;
-	write(1, "\n", 1);
-	prompt(1);
 }
 
 int		main(int argc, char *argv[], char *env[])
