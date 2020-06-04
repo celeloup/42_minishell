@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/03 18:28:28 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/04 12:00:05 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 # include <signal.h>
 # include <wait.h>
 # include <errno.h>
+# include <fcntl.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 
 # define GREEN "\033[1;32m"
 # define BLUE "\033[1;36m"

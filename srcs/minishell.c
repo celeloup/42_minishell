@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 19:56:09 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/09 19:58:31 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,13 @@ int		main(int argc, char *argv[], char *env[])
 	{
 		prompt(0);
 		get_next_line(0, &input);
-		if (!input) // SI ON RECOIT LE EOF = CTRL-D
+		if (!input)
 			control_d();
-		else if (ft_strcmp("exit", input) == 0) //CHECK SI COMMANDE = "exit"
+		else if (ft_strcmp("exit", input) == 0)
 			exit(EXIT_SUCCESS);
-		else //parsing
+		
+		// PARSING OF INPUT
+		else 
 		{
 			ft_printf("input is : >%s<\n", input);
 			cmd_list = parse_input(input, env);
