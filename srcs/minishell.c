@@ -60,7 +60,7 @@ void	control_c(int num)
 int		main(int argc, char *argv[], char *env[])
 {
 	char	*input;
-	t_arg	arg;
+	t_cmd	*cmd_list;
 
 	// Pour l'instant je m'en sers pas donc je les ai mute pour les flags
 	(void)env;
@@ -72,9 +72,7 @@ int		main(int argc, char *argv[], char *env[])
 	signal(SIGINT, control_c);
 	signal(SIGQUIT, control_slash);
 
-	//Pour le moment parse en dehors de boucle et GNL
-	//=> permet de vérifier que argc de notre minishell = argc du vrai minishell
-	init_arg(&arg);
+	cmd_list = NULL;
 	while (42)
 	{
 		prompt(0);
@@ -86,11 +84,13 @@ int		main(int argc, char *argv[], char *env[])
 		else //parsing
 		{
 			ft_printf("input is : >%s<\n", input);
-			parse(input, &arg);
-			print_args(arg.count, arg.value, "(Our) mini");
+			ft_printf("\nMAIN51");
+			cmd_list = parse_input(input);
+			ft_printf("\nMAIN52");
+			print_cmd(cmd_list);
+			ft_printf("\nMAIN53");
 		}
 	}
 	ft_printf("\nMAIN9");
-	free_arg(&arg);
 	return (0);
 }

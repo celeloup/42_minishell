@@ -12,10 +12,3 @@
 
 #include "../includes/minishell.h"
 
-    void
-init_arg(t_arg *arg)
-{
-    arg->c = 0;
-    arg->v = NULL;
-    arg->max_arg_size = 0;
-}

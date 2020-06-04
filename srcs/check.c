@@ -25,3 +25,11 @@ print_args(int argc, char **argv, char *str)
         i++;
     }
 }
+
+    void
+print_cmd(t_cmd *list)
+{
+    print_args(list->argc, list->argv, "Mini");
+    if (list->next)
+        print_cmd(list->next);
+}

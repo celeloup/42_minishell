@@ -26,24 +26,27 @@
 # define TAB        9
 # define NEWLINE    10
 
-typedef struct	s_arg{
-	int			count;
-	char		**value;
-    int         max_arg_size;
-}				t_arg;
+typedef struct s_cmd t_cmd;
+
+typedef	struct		s_cmd{
+	char			**argv;
+	int				argc;
+	t_cmd			*next;
+}					t_cmd;
 
 void	fonction_test_celia();
 
 /* parsing.c */
-void    parse(char *input, t_arg *arg);
+t_cmd			*parse_input(char *input);
 
 /* check.c */
-void    print_args(int argc, char **argv, char *str);
+void			print_args(int argc, char **argv, char *str);
+void			print_cmd(t_cmd *list);
 
 /* free.c */
-void    free_arg(t_arg *arg);
+void			free_cmd_list(t_cmd *cmd_list);
 
 /* init.c */
-void    init_arg(t_arg *arg);
+t_cmd			*init_cmd_list(int count);
 
 #endif
