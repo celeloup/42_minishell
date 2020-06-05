@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 19:59:22 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/09 20:01:32 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,67 @@
 ** Affiche le prompt en couleurs
 ** Si y'a eu erreur avant, affiche flèche en rouge, sinon vert
 */
+
 void	prompt(int error)
 {
 	if (error == 1)
 		ft_printf("%s➜  %sminishell %s> %s", RED, BLUE, YELLOW, END);
 	else
 		ft_printf("%s➜  %sminishell %s> %s", GREEN, BLUE, YELLOW, END);
+}
+
+int		is_builtins(t_cmd *cmd, char *env[])
+{
+	if (ft_strcmp("exit", cmd->argv[0]) == 0)
+		ft_exit(cmd, env);
+	else if (ft_strcmp("echo", cmd->argv[0]) == 0)
+		ft_echo(cmd, env);
+	else if (ft_strcmp("cd", cmd->argv[0]) == 0)
+		ft_cd(cmd, env);
+	else if (ft_strcmp("pwd", cmd->argv[0]) == 0)
+		ft_pwd(cmd, env);
+	else if (ft_strcmp("export", cmd->argv[0]) == 0)
+		ft_export(cmd, env);
+	else if (ft_strcmp("unset", cmd->argv[0]) == 0)
+		ft_unset(cmd, env);
+	else if (ft_strcmp("env", cmd->argv[0]) == 0)
+		ft_env(cmd, env);
+	else
+		return (-1);
+	return (0);
+}
+
+char	*get_env_var(char *var, char *env[])
+{
+	size_t	i;
+
+	i = 0;
+	while (env[i])
+	{
+		if (!strncmp(env[i], var + 1, ft_strlen(var + 1)))
+			return (ft_strdup(ft_strrchr(env[i], '=') + 1));
+		i++;
+	}
+	return (NULL);
+}
+
+void	exec_cmds(t_cmd *cmd, char *env[])
+{
+	while (cmd)
+	{
+		if (is_builtins(cmd, env) == 0)
+		{
+			cmd = cmd->next;
+			continue;
+		}
+		else
+		{
+			free(cmd->argv[0]);
+			cmd->argv[0] = ft_strjoin("test", "hehe");
+			ft_printf("%s not a builtins\n", cmd->argv[0]);
+		}
+		cmd = cmd->next;
+	}
 }
 
 int		main(int argc, char *argv[], char *env[])
