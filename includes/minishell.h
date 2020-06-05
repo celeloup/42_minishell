@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/04 12:00:05 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/05 17:48:19 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,17 @@ typedef struct	s_arg{
     int         max_arg_size;
 }				t_arg;
 
+typedef struct		s_cmd
+{
+	char			**argv;
+	char			**output_redirect; // >
+	char			**output_append; // >>
+	char			**input_redirect; // <
+	int				pipe;
+	int				argc;
+	struct s_cmd	*next;
+}					t_cmd;
+
 /* minishell.c */
 void	prompt(int error);
 
@@ -56,5 +67,14 @@ void    init_arg(t_arg *arg);
 void	control_slash(int num);
 void	control_d();
 void	control_c(int num);
+
+/* builtins.c */
+void	ft_exit(t_cmd *cmd, char *env[]);
+void	ft_echo(t_cmd *cmd, char *env[]);
+void	ft_cd(t_cmd *cmd, char *env[]);
+void	ft_pwd(t_cmd *cmd, char *env[]);
+void	ft_export(t_cmd *cmd, char *env[]);
+void	ft_unset(t_cmd *cmd, char *env[]);
+void	ft_env(t_cmd *cmd, char *env[]);
 
 #endif
