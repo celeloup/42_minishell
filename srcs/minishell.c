@@ -66,7 +66,7 @@ int		main(int argc, char *argv[], char *env[])
 	(void)env;
 
 	//Pour comparaison (marche si args minishell idem args lancement programme)
-	print_args(argc, argv, "Real ");
+	print_args(argc, argv);
 	
 	//INTERCEPTION DES SIGNAUX
 	signal(SIGINT, control_c);
@@ -84,13 +84,9 @@ int		main(int argc, char *argv[], char *env[])
 		else //parsing
 		{
 			ft_printf("input is : >%s<\n", input);
-			ft_printf("\nMAIN51");
 			cmd_list = parse_input(input);
-			ft_printf("\nMAIN52");
-			print_cmd(cmd_list);
-			ft_printf("\nMAIN53");
+			print_cmd(cmd_list, 0);
 		}
 	}
-	ft_printf("\nMAIN9");
 	return (0);
 }

@@ -6,112 +6,7 @@
 
 //IFS = Internal Field Separator
 
-	int
-is_IFS(char c)
-{
-	if (c == SPACE || c == TAB || c == NEWLINE)
-		return (1);
-	else
-		return (0);
-}
-
 /*
-	void
-arg_count(char *input, t_arg *arg)
-{
-	size_t	i;
-	int		size;
-
-	i = 0;
-	arg->c = 0;//normalement pas besoin car déjà dans free_arg
-	arg->max_arg_size = 0;//idem
-	while (input[i] && i < ft_strlen(input))
-	{
-		if (is_IFS(input[i]) == 0)
-		{
-			arg->c++;
-			size = 0;
-			while (input[i + size] && is_IFS(input[i + size]) == 0)
-				size++;
-			i = i + size;
-			if (size > arg->max_arg_size)
-				arg->max_arg_size = size;
-		}
-		while (input[i] && is_IFS(input[i]))
-			i++;
-	}
-}
-	
-	char *
-get_arg()
-{
-	
-}
-	
-	void
-arg_values(char *input, t_arg *arg)
-{
-	int	i;
-	int	j;
-	int	count;
-
-	if (!(arg->v = malloc(sizeof(char**) * arg->c)))
-		ft_printf("\nFailed allocating memory for arg_v");// sans doute a changer par une fonction globale de sortie propre
-	count = 0;
-	i = 0;
-	while (input[i])
-	{
-		j = 0;
-		while (input[i] && is_IFS(input[i]))
-			i++;
-		if (input[i] && is_IFS(input[i]) == 0)
-		{
-			if (!(arg->v[count] = malloc(sizeof(char*) * arg->max_arg_size)))
-				ft_printf("\nFailed allocating memory for arg_v[%d]", count);//idem : changer
-			while (input[i] && is_IFS(input[i]) == 0)
-			{
-				arg->v[count][j] = input[i];
-				i++;
-				j++;
-			}
-			while (j < arg->max_arg_size)
-			{
-				arg->v[count][j] = '\0';
-				j++;
-			}
-			count++;
-		}
-		i++;
-	}
-}
-*/
-/*
-// si bug : codes ASCII ' = 39. Code ASCII " = 34
-	int
-count_cmd(char *input)
-{
-	int	i;
-	int	single_quote;
-	int	double_quote;
-	int	count;
-
-	i = 0;
-	single_quote = 0;
-	double_quote = 0;
-	while (i < ft_strlen(input))
-	{
-		if (!(double_quote % 2) && input[i] == '\'')
-			single_quote++;
-		if (!(single_quote % 2) && input[i] == '"')
-			double_quote++;
-		if (!(single_quote % 2) && !(double_quote % 2) && input[i] == ';')
-			count++;
-		i++;
-	}
-	return (count);
-}
-*/
-
 	static int
 tokens_count(char *input)
 {
@@ -128,13 +23,12 @@ tokens_count(char *input)
 		count++;
 	while (input[i])
 	{
-		if (!(double_quote % 2) && input[i] == 39)
+		if (!(double_quote % 2) && input[i] == SINGLE_QUOTE)
 			single_quote++;
-		if (!(single_quote % 2) && input[i] == 34)
+		if (!(single_quote % 2) && input[i] == DOUBLE_QUOTE)
 			double_quote++;
-		if ((!(single_quote % 2) && !(double_quote % 2))
-			&& ((is_IFS(input[i]) && input[i + 1] && !is_IFS(input[i + 1]))
-			|| (input[i] != ';' && input[i - 1] && input[i - 1] == ';')))
+		if ((!(single_quote % 2) && !(double_quote % 2))// a changer
+			&& (is_IFS(input[i]) && input[i + 1] && !is_IFS(input[i + 1])))
 			count++;
 		i++;
 	}
@@ -156,9 +50,9 @@ token_len(char *input)
 	while (input[len] && input[0] != ';'
 		&& (!is_IFS(input[len]) || (single_quote % 2) || (double_quote % 2)))
 	{
-		if (!(double_quote % 2) && input[len] == 39)
+		if (!(double_quote % 2) && input[len] == SINGLE_QUOTE)
 			single_quote++;
-		if (!(single_quote % 2) && input[len] == 34)
+		if (!(single_quote % 2) && input[len] == DOUBLE_QUOTE)
 			double_quote++;
 		if ((!(single_quote % 2) || !(double_quote % 2)) && input[len] == ';')
 			break;
@@ -264,15 +158,229 @@ check_tokens(char **tokens)
 {
 	(void)tokens;// A COMPLETER AVEC LES CAS D'ERREUR
 }
-	
+
+	char**
+deal_quotes(char **tokens)
+{
+	int	i;
+
+	i = 0;
+	while (tokens[i])
+	{
+
+		i++;
+	}
+	return (tokens);
+}
+*/
+
+
+	int
+quote_len(char *input)
+{
+	int len;
+
+	len = 0;
+	while (input[0] == SINGLE_QUOTE && input[len] && input[len] != SINGLE_QUOTE)
+		len++;
+	while (input[0] == DOUBLE_QUOTE && input[len] && input[len] != DOUBLE_QUOTE)
+	{
+		if (input[len] == BKSLASH && input[len + 1] 
+			&& (input[len + 1] == DOUBLE_QUOTE || input[len + 1] == BKSLASH))
+			len += 2;
+		else
+			len++;
+	}
+	if (input[len] && input[len] == input[0])
+		len++;
+	return (len);
+}
+
+	int
+token_len(char *input)
+{
+	int i;
+
+	i = 0;
+	while (input[i] && !(IFS(input[i]) || RD(input[i]) || SEPARATOR(input[i])))
+	{
+		if (QUOTE(input[i]) && !(input[i - 1] && input[i - 1] == BKSLASH))
+			i += quote_len(&input[i]);
+		else if (input[i] == BKSLASH && input[i + 1])
+			i += 2;
+		else
+			i++;
+	}
+	return (i);
+}
+
+	int
+get_rd_type(t_rd *rd, char *input)
+{
+	int	i;
+	int rd_type;
+
+	i = 0;
+	if (input[0] == '<')
+		rd_type = RD_IN;
+	else if (input[1] && input[0] == input[1])
+		rd_type = APP_RD_OUT;
+	else
+		rd_type = RD_OUT;
+	if (rd_type == RD_IN || rd_type == RD_OUT)
+		i++;
+	else
+		i += 2;
+	while (input[i] && IFS(input[i]))
+		i++;
+	if (rd)
+		rd->type = rd_type;
+	return (i);
+}
+
+	int
+get_rd_value(t_rd *rd, char *input)
+{
+	int	len;
+	int	i;
+
+	i = 0;
+	len = token_len(input);
+	if (!(rd->value = malloc(sizeof(char *) * (len + 1))))
+			return (0);
+	while (i < len)
+	{
+		rd->value[i] = input[i];
+		i++;
+	}
+	rd->value[len] = '\0';
+	return (len);
+}
+
+	int
+get_cmd_rd(t_cmd *cmd, t_rd *rd, char *input)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	if (rd)
+		get_cmd_rd(cmd, rd->next, input);
+	else
+	{
+		if (!input || (input && !(rd = malloc(sizeof(t_rd*)))))
+        	return (0);
+		i += get_rd_type(rd, input);
+		i += get_rd_value(rd, &input[i]);
+	}
+	rd->next = NULL;
+	return (i);
+}
+
+	int
+cmd_len(t_cmd *cmd, char *input)
+{
+	int	i;
+
+	i = 0;
+	ft_printf("\nPARSE10");
+		
+	while (input[i] && !(input[i] == ';' || input[i] == '|'))
+	{
+		ft_printf("\nPARSE14");
+			
+		if (token_len(&input[i]))
+		{
+			cmd->argc++;
+			ft_printf("\nPARSE15");
+			i += token_len(&input[i]);
+		}
+		else if (RD(input[i]))
+			i += get_cmd_rd(cmd, cmd->rd, &input[i]);
+		else
+			i++;
+	}
+	if (input[i] && (input[i] == ';' || input[i] == '|'))
+		i++;
+	return (i);
+}
+
+	void
+get_cmd_argv(t_cmd *cmd, char *input, int cmd_len)
+{
+	int	i;
+	int	j;
+	int	len;
+
+	i = 0;
+	j = 0;
+	len = 0;
+	while (input[i] && i < cmd_len)
+	{
+		if ((len = token_len(&input[i])))
+		{
+			cmd->argv[j] = malloc(sizeof(char *) * (len + 1));
+			cmd->argv[j] = ft_strncpy(cmd->argv[j], &input[i], len);
+			cmd->argv[j][len] = '\0';
+			i += len;
+			j++;
+		}
+		else if (RD(input[i]))
+		{
+			i += get_rd_type(NULL, &input[i]);
+			i += token_len(&input[i]);
+		}
+		else
+			i++;
+	}
+}
+
 	t_cmd*
 parse_input(char *input)
 {
-	t_cmd		*list;
-	char		**tokens;
+	t_cmd	*cmd = NULL;
+	int		len;
+	
+	ft_printf("\nPARSE01");
+	cmd = init_cmd(input);
+	if (!cmd)
+		return (NULL);//remplacer par un cas d'erreur ? 
+	ft_printf("\nPARSE03");
+	ft_printf("\nARGC_PARSE = %d", cmd->argc);
+    
+	len = cmd_len(cmd, input);
+	ft_printf("\nARGC = %d", cmd->argc);
+	ft_printf("\nPARSE05");
+	if (input[len - 1] == '|')
+		cmd->pipe++;
+	ft_printf("\nPARSE06");
+	if (!input || (input && !(cmd->argv = malloc(sizeof(char **) * cmd->argc))))
+        return (NULL);//idem 
+	ft_printf("\nPARSE07");
+	get_cmd_argv(cmd, input, len);
+	ft_printf("\nPARSE08");
+	if (input[len])//gérer l'erreur 2 ';' a suivre
+		cmd->next = parse_input(&input[len]);
+	ft_printf("\nPARSE09");
+	return (cmd);
+}
+	/*
+	while(input[i])
+	{
+		i += get_cmd(cmd->next, &input[i]); 
+		i++;
+	}
+	cmd_count = ft_cmd_count(input);
 	int			i;
 
+	i = 0;
+	while(input[i])
+	{
+		i++;
+	}
 	tokens = split_input(input);
+	tokens = deal_quotes(tokens);
 	check_tokens(tokens);
 	i = 0;
 	while (tokens[i] && !ft_strcmp(tokens[i], ";"))
@@ -281,3 +389,4 @@ parse_input(char *input)
 	list = cmd_list(&tokens[i]);
 	return (list);
 }
+*/
