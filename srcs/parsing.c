@@ -143,7 +143,7 @@ cmd_list(char **tokens)
 	i = 0;
 	while (i < list->argc)
 	{
-		list->argv[i] = ft_strdup(tokens[i]);
+		list->argv[i] = ft_strdirup(tokens[i]);
 		i++;
 	}
 	while (tokens[i] && !ft_strcmp(tokens[i], ";"))
@@ -174,40 +174,147 @@ deal_quotes(char **tokens)
 }
 */
 
+	char*
+get_env_var(char *var, char *env[])
+{
+	size_t	i;
+	i = 0;
+	while (env[i])
+	{
+		if (!strncmp(env[i], var + 1, ft_strlen(var + 1)))
+			return (ft_strdup(ft_strrchr(env[i], '=') + 1));
+		i++;
+	}
+	return (NULL);//vérifier s'il ne renvoie pas plutôt une chaine vide
+}
 
 	int
-quote_len(char *input)
+var_len(char *input, char *env[], int name)
 {
-	int len;
+	int		len;
+	char	*var_name = NULL;
+	char	*var = NULL;
 
-	len = 0;
-	while (input[0] == SINGLE_QUOTE && input[len] && input[len] != SINGLE_QUOTE)
+	len = 1;
+	if (input[len] && input[len] == '?')
 		len++;
-	while (input[0] == DOUBLE_QUOTE && input[len] && input[len] != DOUBLE_QUOTE)
-	{
-		if (input[len] == BKSLASH && input[len + 1] 
-			&& (input[len + 1] == DOUBLE_QUOTE || input[len + 1] == BKSLASH))
-			len += 2;
-		else
+	else if (input[len])
+		while (input[len] && ft_isalnum(input[len]))// a confirmer
 			len++;
-	}
-	if (input[len] && input[len] == input[0])
-		len++;
+	if (name)
+		return (len);
+	var_name = (char *)malloc(sizeof(char) * (len + 1));
+	var_name[len] = '\0';
+	var = get_env_var(var, env);
+	len = ft_strlen(var);
+	if (len == -1)
+		len = 1;
+	free(var_name);
+	if (var)
+		free(var);
+	var_name = NULL;
+	var = NULL;
 	return (len);
 }
 
 	int
-token_len(char *input)
+single_quote_len(char *input, int clean)
+{
+	int len;
+	int	clean_len;
+
+	clean_len = 0;
+	len = 1;
+	while (input[len] && input[len] != SINGLE_QUOTE)
+		len++;
+	if (input[len] && input[len] == SINGLE_QUOTE)
+	{
+		clean_len -= 2;
+		len++;
+	}
+	if (clean)
+		return (clean_len + len);
+	return (len);
+}
+
+	int
+double_quote_len(char *input, char *env[], int clean)
+{
+	int len;
+	int	clean_len;
+
+	clean_len = 0;
+	len = 1;
+	while (input[len] && input[len] != DOUBLE_QUOTE)
+	{
+		if (input[len] == BKSLASH && input[len + 1] 
+			&& (input[len + 1] == DOLLAR || input[len + 1] == DOUBLE_QUOTE 
+			|| input[len + 1] == BKSLASH))
+			{
+				len += 2;
+				clean_len--;
+			}
+		else if (input[len] == DOLLAR)
+		{
+			len += var_len(&input[len], env, 1);
+			clean_len -= var_len(&input[len], env, 1);
+			clean_len += var_len(&input[len], env, 0);
+		}
+		else
+			len++;
+	}
+	if (input[len] && input[len] == DOUBLE_QUOTE)
+	{
+		clean_len -= 2;
+		len++;
+	}
+	if (clean)
+		return (clean_len + len);
+	return (len);
+}
+
+	int
+quote_len(char *input, char *env[], int clean)
+{
+	int	len;
+
+	len = 0;
+	if (input[0] == DOUBLE_QUOTE)
+		len = double_quote_len(input, env, clean);
+	if (input[0] == SINGLE_QUOTE)
+		len = single_quote_len(input, clean);
+	return(len);
+}
+
+	int
+token_len(char *input, char *env[], int clean)
 {
 	int i;
+	int clean_len;
 
 	i = 0;
-	while (input[i] && !(IFS(input[i]) || RD(input[i]) || SEPARATOR(input[i])))
+	clean_len = 0;
+	while (input[i] && !(IFS(input[i]) || RDIR(input[i]) || CMD_SEP(input[i])))
 	{
-		if (QUOTE(input[i]) && !(input[i - 1] && input[i - 1] == BKSLASH))
-			i += quote_len(&input[i]);
-		else if (input[i] == BKSLASH && input[i + 1])
+		if (input[i] == BKSLASH && input[i + 1])
+		{
+			clean_len--;
+			if (input[i + 1] == NEWLINE)//multiligne hors sujet ?
+				clean_len--;
 			i += 2;
+		}
+		else if (QUOTE(input[i]))
+		{
+			clean_len -= (quote_len(&input[i], env, 0));
+			clean_len += (quote_len(&input[i], env, 1));
+			i += quote_len(&input[i], env, 0);
+		}
+		else if (input[i] == DOLLAR)
+		{
+			clean_len -= var_len(&input[i], env, 1);
+			clean_len += var_len(&input[i], env, 0);
+			i += var_len(&input[i], env, 1);
+		}
 		else
 			i++;
 	}
@@ -215,99 +322,129 @@ token_len(char *input)
 }
 
 	int
-get_rd_type(t_rd *rd, char *input)
+get_rdir_type(t_rdir *rdir, char *input)
 {
 	int	i;
-	int rd_type;
+	int rdir_type;
 
 	i = 0;
 	if (input[0] == '<')
-		rd_type = RD_IN;
-	else if (input[1] && input[0] == input[1])
-		rd_type = APP_RD_OUT;
+		rdir_type = RDIR_IN;
+	else if (input[0] == '>' && input[1] && input[1] == '>')
+		rdir_type = APP_RDIR_OUT;
 	else
-		rd_type = RD_OUT;
-	if (rd_type == RD_IN || rd_type == RD_OUT)
+		rdir_type = RDIR_OUT;
+	if (rdir_type == RDIR_IN || rdir_type == RDIR_OUT)
 		i++;
 	else
 		i += 2;
 	while (input[i] && IFS(input[i]))
 		i++;
-	if (rd)
-		rd->type = rd_type;
+	if (rdir)
+		rdir->type = rdir_type;
 	return (i);
 }
 
 	int
-get_rd_value(t_rd *rd, char *input)
+get_rdir_value(t_rdir *rdir, char *input, char *env[])
 {
 	int	len;
 	int	i;
-
-	i = 0;
-	len = token_len(input);
-	if (!(rd->value = malloc(sizeof(char *) * (len + 1))))
-			return (0);
-	while (i < len)
-	{
-		rd->value[i] = input[i];
-		i++;
-	}
-	rd->value[len] = '\0';
-	return (len);
-}
-
-	int
-get_cmd_rd(t_cmd *cmd, t_rd *rd, char *input)
-{
-	int	i;
 	int	j;
 
-	i = 0;
-	j = 0;
-	if (rd)
-		get_cmd_rd(cmd, rd->next, input);
-	else
+	i = token_len(input, env, 0);
+	len = token_len(input, env, 1);
+	// cas d'erreur si len = 0 ?
+	if (rdir)
 	{
-		if (!input || (input && !(rd = malloc(sizeof(t_rd*)))))
-        	return (0);
-		i += get_rd_type(rd, input);
-		i += get_rd_value(rd, &input[i]);
+		if (!(rdir->value = (char *)malloc(sizeof(char) * (len + 1))))
+				return (0);
+		while (i < len)
+		{
+			rdir->value[i] = input[i];
+			i++;
+		}
+		rdir->value[len] = '\0';
 	}
-	rd->next = NULL;
+	return (i);
+}
+
+	t_rdir*
+copy_rdir(t_rdir *src)
+{
+	t_rdir	*dest;
+
+	dest = NULL;
+	if (!src)
+		return (NULL);
+	dest = init_rdir();
+	dest->type = src->type;
+	dest->value = ft_strdup(src->value);
+	if (src->next)
+		dest->next = copy_rdir(src->next);
+	return (dest);
+}
+	
+	int
+get_cmd_rdir(t_rdir **rdir, char *input, char *env[])
+{
+	int		i;
+	
+	if (*rdir)
+	{
+		while (*rdir)
+			rdir = &(*rdir)->next;
+	}
+	i = 0;
+	*rdir = init_rdir();
+	i += get_rdir_type(*rdir, input);
+	i += get_rdir_value(*rdir, &input[i], env);
 	return (i);
 }
 
 	int
-cmd_len(t_cmd *cmd, char *input)
+cmd_len(t_cmd *cmd, char *input, char *env[])
 {
 	int	i;
 
 	i = 0;
-	ft_printf("\nPARSE10");
-		
 	while (input[i] && !(input[i] == ';' || input[i] == '|'))
-	{
-		ft_printf("\nPARSE14");
-			
-		if (token_len(&input[i]))
+	{	
+		//ft_printf("\n%d", (int)input[i]);
+		if (token_len(&input[i], 0))
 		{
 			cmd->argc++;
-			ft_printf("\nPARSE15");
-			i += token_len(&input[i]);
+			i += token_len(&input[i], 0);
 		}
-		else if (RD(input[i]))
-			i += get_cmd_rd(cmd, cmd->rd, &input[i]);
+		else if (RDIR(input[i]))
+			i += get_cmd_rdir(&cmd->rdir, &input[i], env);
 		else
 			i++;
 	}
-	if (input[i] && (input[i] == ';' || input[i] == '|'))
-		i++;
 	return (i);
 }
 
+	char*
+clean_token(char *input, int len, char *env[])
+{
+	char	*token;
+	int		i;
+
+	i = 0;
+	token = (char *)malloc(sizeof(char) * (token_len(input, 1) + 1));//secu
+	token[token_len(input, 1)] = '\0';
+	while(i < len)
+	{
+		i++;
+	}
+	/*token = malloc(sizeof(char *) * (len + 1));
+	token = ft_strncpy(token, &input[i], len);
+	token[len] = '\0';	*/
+	return (token);
+}
+
 	void
-get_cmd_argv(t_cmd *cmd, char *input, int cmd_len)
+get_cmd_argv(t_cmd *cmd, char *input, int cmd_len, char *env[])
 {
 	int	i;
 	int	j;
@@ -318,18 +455,16 @@ get_cmd_argv(t_cmd *cmd, char *input, int cmd_len)
 	len = 0;
 	while (input[i] && i < cmd_len)
 	{
-		if ((len = token_len(&input[i])))
+		if ((len = token_len(&input[i], env, 0)))
 		{
-			cmd->argv[j] = malloc(sizeof(char *) * (len + 1));
-			cmd->argv[j] = ft_strncpy(cmd->argv[j], &input[i], len);
-			cmd->argv[j][len] = '\0';
+			cmd->argv[j] = clean_token(&input[i], len, env);
 			i += len;
 			j++;
 		}
-		else if (RD(input[i]))
+		else if (RDIR(input[i]))
 		{
-			i += get_rd_type(NULL, &input[i]);
-			i += token_len(&input[i]);
+			i += get_rdir_type(NULL, &input[i]);
+			i += token_len(&input[i], env, 0);
 		}
 		else
 			i++;
@@ -337,56 +472,23 @@ get_cmd_argv(t_cmd *cmd, char *input, int cmd_len)
 }
 
 	t_cmd*
-parse_input(char *input)
+parse_input(char *input, char *env[])
 {
 	t_cmd	*cmd = NULL;
 	int		len;
 	
-	ft_printf("\nPARSE01");
 	cmd = init_cmd(input);
 	if (!cmd)
 		return (NULL);//remplacer par un cas d'erreur ? 
-	ft_printf("\nPARSE03");
-	ft_printf("\nARGC_PARSE = %d", cmd->argc);
-    
 	len = cmd_len(cmd, input);
-	ft_printf("\nARGC = %d", cmd->argc);
-	ft_printf("\nPARSE05");
-	if (input[len - 1] == '|')
-		cmd->pipe++;
-	ft_printf("\nPARSE06");
 	if (!input || (input && !(cmd->argv = malloc(sizeof(char **) * cmd->argc))))
-        return (NULL);//idem 
-	ft_printf("\nPARSE07");
-	get_cmd_argv(cmd, input, len);
-	ft_printf("\nPARSE08");
+        return (NULL);//idem //pourquoi size of char ** et pas char * ?
+	get_cmd_argv(cmd, input, len, env);
+	if (input[len] && input[len] == '|')
+		cmd->pipe++;
+	if (input[len] && (input[len] == ';' || input[len] == '|'))
+		len++;
 	if (input[len])//gérer l'erreur 2 ';' a suivre
-		cmd->next = parse_input(&input[len]);
-	ft_printf("\nPARSE09");
+		cmd->next = parse_input(&input[len], env);
 	return (cmd);
 }
-	/*
-	while(input[i])
-	{
-		i += get_cmd(cmd->next, &input[i]); 
-		i++;
-	}
-	cmd_count = ft_cmd_count(input);
-	int			i;
-
-	i = 0;
-	while(input[i])
-	{
-		i++;
-	}
-	tokens = split_input(input);
-	tokens = deal_quotes(tokens);
-	check_tokens(tokens);
-	i = 0;
-	while (tokens[i] && !ft_strcmp(tokens[i], ";"))
-		i++;
-	list = NULL; 
-	list = cmd_list(&tokens[i]);
-	return (list);
-}
-*/

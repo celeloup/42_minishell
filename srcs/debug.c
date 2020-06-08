@@ -26,22 +26,27 @@ print_args(int argc, char **argv)
     }
 }
     void
-print_cmd_rd(t_rd *rd)
+print_cmd_rdir(t_rdir *rdir)
 {
     char *type;
 
+    if (!rdir)
+    {
+        ft_printf("\ntrying to print a null rdir vector");
+        return;
+    }
     type = NULL;
-    if (rd->type == RD_IN)
+    if (rdir->type == RDIR_IN)
         type = ft_strdup("<");
-    if (rd->type == RD_OUT)
+    else if (rdir->type == RDIR_OUT)
         type = ft_strdup(">");
     else
         type = ft_strdup(">>");
-    ft_printf("%s %s ", type, rd->value);
+    ft_printf("%s %s ", type, rdir->value);
     free(type);
     type = NULL;
-    if (rd->next)
-        print_cmd_rd(rd->next);
+    if (rdir->next)
+        print_cmd_rdir(rdir->next);
 }
     
     void
@@ -54,14 +59,17 @@ print_cmd(t_cmd *cmd, int i)
     }
     ft_printf("\n----CMD%d----", i);
     ft_printf("\nARGC = %d", cmd->argc);
-    
     if (cmd->argv && cmd->argc)
         print_args(cmd->argc, cmd->argv);
-    if (cmd->rd)
+    else
+        ft_printf("\nARGV = no arg found");
+    if (cmd->rdir)
     {
         ft_printf("\nRDIR = ");
-        print_cmd_rd(cmd->rd);
+        print_cmd_rdir(cmd->rdir);
     }
+    else
+        ft_printf("\nRDIR = no rdir found");
     ft_printf("\nPIPE = %d", cmd->pipe);
     if (cmd->next)
         print_cmd(cmd->next, i + 1);

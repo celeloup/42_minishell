@@ -12,6 +12,21 @@
 
 #include "../includes/minishell.h"
 
+    t_rdir*
+init_rdir(void)
+{
+    t_rdir  *rdir;
+
+    rdir = NULL;
+    rdir = (t_rdir *)malloc(sizeof(t_rdir));
+    if (!rdir)
+        return (NULL);
+    rdir->type = 0;
+    rdir->value = NULL;
+    rdir->next = NULL;
+    return (rdir);
+}
+
     t_cmd*
 init_cmd(char *input)
 {
@@ -20,12 +35,12 @@ init_cmd(char *input)
     cmd = NULL;
     if (!input)
         return (NULL);
-    cmd = (t_cmd *)malloc(sizeof(t_cmd *));
+    cmd = (t_cmd *)malloc(sizeof(t_cmd));
     if (!cmd)
         return(NULL);
     cmd->argv = NULL;
     cmd->argc = 0;
-    cmd->rd = NULL;
+    cmd->rdir = NULL;
     cmd->pipe = 0;
     cmd->next = NULL;
     return (cmd);

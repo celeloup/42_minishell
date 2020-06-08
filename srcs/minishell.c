@@ -63,7 +63,7 @@ int		main(int argc, char *argv[], char *env[])
 	t_cmd	*cmd_list;
 
 	// Pour l'instant je m'en sers pas donc je les ai mute pour les flags
-	(void)env;
+	//(void)env;
 
 	//Pour comparaison (marche si args minishell idem args lancement programme)
 	print_args(argc, argv);
@@ -84,7 +84,7 @@ int		main(int argc, char *argv[], char *env[])
 		else //parsing
 		{
 			ft_printf("input is : >%s<\n", input);
-			cmd_list = parse_input(input);
+			cmd_list = parse_input(input, env);
 			print_cmd(cmd_list, 0);
 		}
 	}

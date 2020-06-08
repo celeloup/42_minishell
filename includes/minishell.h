@@ -29,25 +29,26 @@
 # define BKSLASH		92
 # define SINGLE_QUOTE	39
 # define DOUBLE_QUOTE	34
+# define DOLLAR			36
 # define QUOTE(x)		(x == SINGLE_QUOTE || x == DOUBLE_QUOTE)
 # define ESCAPE_CHAR(x)	(x == 'a' || x == 'b' || x == 'e' || x == 'f' || x == 'n' || x == 'r' || x == 't' || x == 'v' || x == BACKSLASH || x == 'x' || x == 'c')
-# define RD(x)			(x == '>' || x == '<')
-# define SEPARATOR(x)	(x == '|' || x == ';')
+# define RDIR(x)		(x == '>' || x == '<')
+# define CMD_SEP(x)		(x == '|' || x == ';')
 
-# define RD_IN			1
-# define RD_OUT			2
-# define APP_RD_OUT		3
+# define RDIR_IN		1
+# define RDIR_OUT		2
+# define APP_RDIR_OUT	3
 
-typedef	struct		s_rd{
+typedef	struct		s_rdir{
 	int				type;
 	char			*value;
-	struct s_rd		*next;
-}					t_rd;
+	struct s_rdir	*next;
+}					t_rdir;
 
 typedef	struct		s_cmd{
 	char			**argv;
 	int				argc;
-	t_rd			*rd;
+	t_rdir			*rdir;
 	int				pipe;
 	struct s_cmd	*next;
 }					t_cmd;
@@ -55,16 +56,19 @@ typedef	struct		s_cmd{
 void	fonction_test_celia();
 
 /* parsing.c */
-t_cmd			*parse_input(char *input);
+t_cmd			*parse_input(char *input, char *env[]);
 
 /* debug.c */
 void			print_args(int argc, char **argv);
+void			print_cmd_rdir(t_rdir *rdir);
 void			print_cmd(t_cmd *cmd, int i);
 
 /* free.c */
-void			free_cmd_list(t_cmd *cmd_list);
+void			free_cmd(t_cmd *cmd_list);
+void			free_rdir(t_rdir *rdir);
 
 /* init.c */
 t_cmd			*init_cmd(char *input);
+t_rdir			*init_rdir();
 
 #endif

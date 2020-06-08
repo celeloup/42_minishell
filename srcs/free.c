@@ -13,7 +13,20 @@
 #include "../includes/minishell.h"
 
     void
-free_cmd_list(t_cmd *cmd)
+free_rdir(t_rdir *rdir)
+{
+    if (rdir->next)
+        free_rdir(rdir->next);
+    if (rdir->value)
+        free(rdir->value);
+    rdir->value = NULL;
+    rdir->type = 0;
+    free(rdir);
+    rdir = NULL;
+}
+
+    void
+free_cmd(t_cmd *cmd)
 {
     int i;
 
@@ -26,7 +39,6 @@ free_cmd_list(t_cmd *cmd)
             cmd->argv[i] = NULL;
             i++;
         }
-        
         free(cmd);
         cmd = NULL;
     }
