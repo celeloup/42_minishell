@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 21:10:38 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/09 21:22:06 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,7 @@ int		exec_cmd(t_cmd *cmd, char*env[])
 	{
 		if (execve(cmd->argv[0], cmd->argv, env) == -1)
 		{
-			//char *test = strerror(errno);
-			char *test = ft_strjoin(cmd->argv[0], ": command not found");
+			char *test = strerror(errno);
 			write(2, test, ft_strlen(test));
 			write(2, "\n", 1);
 			exit(0);
