@@ -6,21 +6,13 @@
 #    By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-<<<<<<< HEAD
-#    Updated: 2020/06/09 19:56:35 by celeloup         ###   ########.fr        #
-=======
-#    Updated: 2020/06/05 17:43:14 by celeloup         ###   ########.fr        #
->>>>>>> début boucle execution, envoie vers fonction buildins
+#    Updated: 2020/06/09 20:08:44 by celeloup         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			= minishell
 
-<<<<<<< HEAD
-SRCS_FILE		= minishell.c parsing.c debug.c init.c free.c 
-=======
-SRCS_FILE		= minishell.c parsing.c check.c init.c free.c signal_handling.c builtins.c
->>>>>>> début boucle execution, envoie vers fonction buildins
+SRCS_FILE		= minishell.c parsing.c debug.c init.c free.c signal_handling.c builtins.c
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS			= $(addprefix $(OBJS_DIR), $(SRCS_FILE:.c=.o))

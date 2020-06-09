@@ -6,11 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2020/06/09 20:04:32 by celeloup         ###   ########.fr       */
-=======
-/*   Updated: 2020/06/09 19:30:34 by celeloup         ###   ########.fr       */
->>>>>>> pipes work in progress
+/*   Updated: 2020/06/09 20:23:41 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,26 +46,12 @@ int		is_builtins(t_cmd *cmd, char *env[])
 	return (0);
 }
 
-char	*get_env_var(char *var, char *env[])
-{
-	size_t	i;
-
-	i = 0;
-	while (env[i])
-	{
-		if (!strncmp(env[i], var + 1, ft_strlen(var + 1)))
-			return (ft_strdup(ft_strrchr(env[i], '=') + 1));
-		i++;
-	}
-	return (NULL);
-}
-
-int		redirections(t_rd	*rd)
+int		redirections(t_rdir	*rd)
 {
 	int fd;
 	while (rd)
 	{
-		if (rd->type == RD_IN)
+		if (rd->type == RDIR_IN)
 		{
 			fd = open(rd->value, O_RDONLY);
 			if (fd == -1)
@@ -79,7 +61,7 @@ int		redirections(t_rd	*rd)
 			if (close(fd) == -1)
 				return (-1);
 		}
-		else if (rd->type == RD_OUT)
+		else if (rd->type == RDIR_OUT)
 		{
 			fd = open(rd->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
@@ -106,7 +88,7 @@ int		redirections(t_rd	*rd)
 
 int		exec_cmd(t_cmd *cmd, char*env[])
 {
-	if (redirections(cmd->rd) == -1)
+	if (redirections(cmd->rdir) == -1)
 		ft_printf("error redirection");
 	if (is_builtins(cmd, env) == -1)
 	{
@@ -186,16 +168,16 @@ t_cmd	*construct_list(char *input)
 {
 	t_cmd	*cmd;
 	t_cmd	*cmd2;
-	t_rd	*rd1;
-	t_rd	*rd2;
+	t_rdir	*rd1;
+	t_rdir	*rd2;
 
 	rd1 = malloc(sizeof(t_cmd));
-	rd1->type = RD_OUT;
+	rd1->type = RDIR_OUT;
 	rd1->value = "test";
 	rd2 = malloc(sizeof(t_cmd));
 	rd1->next = NULL;
 	
-	rd2->type = RD_OUT;
+	rd2->type = RDIR_OUT;
 	rd2->value = "second_test";
 	rd2->next = NULL;
 
@@ -205,7 +187,7 @@ t_cmd	*construct_list(char *input)
 	//cmd->argv = ft_split(input, ' ');
 	(void)input;
 	cmd->pipe = 0;
-	cmd->rd = rd1;
+	cmd->rdir = rd1;
 	cmd->next = NULL;
 	cmd2->argv = ft_split("/usr/bin/wc Makefile", ' ');
 	cmd2->pipe = 0;
@@ -226,29 +208,27 @@ int		main(int argc, char *argv[], char *env[])
 	//(void)env;
 
 	//Pour comparaison (marche si args minishell idem args lancement programme)
-	print_args(argc, argv);
+	//print_args(argc, argv);
+	(void)argv;
+	(void)argc;
 	
 	//INTERCEPTION DES SIGNAUX
 	signal(SIGINT, control_c);
 	signal(SIGQUIT, control_slash);
-
-	cmd_list = NULL;
 	signal(SIGTERM, signal_handler);
+	cmd_list = NULL;
 	while (42)
 	{
 		prompt(0);
 		get_next_line(0, &input);
 		if (!input)
 			control_d();
-		else if (ft_strcmp("exit", input) == 0)
-			exit(EXIT_SUCCESS);
-		
-		// PARSING OF INPUT
 		else 
 		{
-			ft_printf("input is : >%s<\n", input);
+			//ft_printf("input is : >%s<\n", input);
 			cmd_list = parse_input(input, env);
-			print_cmd(cmd_list, 0);
+			exec_cmds(cmd_list, env);
+			//print_cmd(cmd_list, 0);
 		}
 		//free cmd ici ? (ft free_cmd existe dejà)
 	}
