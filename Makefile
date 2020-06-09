@@ -6,21 +6,13 @@
 #    By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-<<<<<<< HEAD
-#    Updated: 2020/06/09 20:08:44 by celeloup         ###   ########.fr        #
-=======
-#    Updated: 2020/06/05 17:43:14 by celeloup         ###   ########.fr        #
->>>>>>> 5002e55e300da9ed5c6ad7b963055de1e234a925
+#    Updated: 2020/06/09 20:58:52 by celeloup         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			= minishell
 
-<<<<<<< HEAD
 SRCS_FILE		= minishell.c parsing.c debug.c init.c free.c signal_handling.c builtins.c
-=======
-SRCS_FILE		= minishell.c parsing.c check.c init.c free.c signal_handling.c builtins.c
->>>>>>> 5002e55e300da9ed5c6ad7b963055de1e234a925
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS			= $(addprefix $(OBJS_DIR), $(SRCS_FILE:.c=.o))
