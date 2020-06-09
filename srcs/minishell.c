@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 16:06:01 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/09 19:30:34 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ int		exec_cmd(t_cmd *cmd, char*env[])
 {
 	if (redirections(cmd->rd) == -1)
 		ft_printf("error redirection");
-	if (is_builtins(cmd, env) == -1 && cmd->pipe == 0)
+	if (is_builtins(cmd, env) == -1)
 	{
 		if (execve(cmd->argv[0], cmd->argv, env) == -1)
 		{
@@ -117,10 +117,49 @@ int		exec_cmd(t_cmd *cmd, char*env[])
 	return (0);
 }
 
+int		pipe_count(t_cmd *cmd)
+{
+	int		nb_pipe;
+
+	nb_pipe = 0;
+	while (cmd && cmd->pipe)
+	{
+		nb_pipe++;
+		cmd = cmd->next;
+	}
+	return (nb_pipe);
+}
+
+int		exec_pipes(t_cmd *cmd, char *env[])
+{
+	int pipefds[2];
+	if (pipe(pipefds) == -1)
+		ft_printf("pipe failed"); // + exit
+		int pid;
+	if ((pid = fork()) == -1) 
+		ft_printf("fork failed"); // + exit
+	else if (pid == 0) //child
+	{
+		close(pipefds[0]);
+		dup2(pipefds[1], 1);
+		close(pipefds[1]);
+		exec_cmd(cmd, env);
+	}
+	else //parent
+	{
+		close(pipefds[1]);
+		dup2(pipefds[0], 0);
+		close(pipefds[0]);
+		exec_cmd(cmd->next, env);
+	}
+	return (0);
+}
+
 int		exec_cmds(t_cmd *cmd, char *env[])
 {
 	pid_t	pid;
 	int		status;
+	//int		*pipes_tab;
 
 	while (cmd)
 	{	
@@ -133,7 +172,6 @@ int		exec_cmds(t_cmd *cmd, char *env[])
 		{
 			exec_cmd(cmd, env);
 		}
-		
 		wait(&status);
 		cmd = cmd->next;
 	}
@@ -151,7 +189,7 @@ t_cmd	*construct_list(char *input)
 	rd1->type = RD_OUT;
 	rd1->value = "test";
 	rd2 = malloc(sizeof(t_cmd));
-	rd1->next = rd2;
+	rd1->next = NULL;
 	
 	rd2->type = RD_OUT;
 	rd2->value = "second_test";
@@ -159,13 +197,19 @@ t_cmd	*construct_list(char *input)
 
 	cmd = malloc(sizeof(t_cmd));
 	cmd2 = malloc(sizeof(t_cmd));
-	cmd->argv = ft_split(input, ' ');
+	cmd->argv = NULL;
+	//cmd->argv = ft_split(input, ' ');
+	(void)input;
 	cmd->pipe = 0;
 	cmd->rd = rd1;
 	cmd->next = NULL;
-	cmd2->argv = ft_split("/usr/bin/wc test", ' ');
+	cmd2->argv = ft_split("/usr/bin/wc Makefile", ' ');
 	cmd2->pipe = 0;
-	cmd2->next = NULL;
+	t_cmd *cmd3 = malloc(sizeof(t_cmd));
+	cmd3->argv = ft_split("/bin/echo cmd3", ' ');
+	cmd3->next = NULL;
+	cmd->pipe = 0;
+	cmd2->next = cmd3;
 	return (cmd);
 }
 
