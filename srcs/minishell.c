@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 20:23:41 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/09 20:47:32 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ t_cmd	*construct_list(char *input)
 	return (cmd);
 }
 
-int		main(int argc, char *argv[], char *env[])
+int		pipe_count(t_cmd *cmd)
 {
 	char	*input;
 	t_cmd	*cmd_list;
@@ -212,7 +212,36 @@ int		main(int argc, char *argv[], char *env[])
 	(void)argv;
 	(void)argc;
 	
-	//INTERCEPTION DES SIGNAUX
+	rd2->type = RD_OUT;
+	rd2->value = "second_test";
+	rd2->next = NULL;
+
+	cmd = malloc(sizeof(t_cmd));
+	cmd2 = malloc(sizeof(t_cmd));
+	cmd->argv = NULL;
+	//cmd->argv = ft_split(input, ' ');
+	(void)input;
+	cmd->pipe = 0;
+	cmd->rd = rd1;
+	cmd->next = NULL;
+	cmd2->argv = ft_split("/usr/bin/wc Makefile", ' ');
+	cmd2->pipe = 0;
+	t_cmd *cmd3 = malloc(sizeof(t_cmd));
+	cmd3->argv = ft_split("/bin/echo cmd3", ' ');
+	cmd3->next = NULL;
+	cmd->pipe = 0;
+	cmd2->next = cmd3;
+	return (cmd);
+}
+
+int		main(int argc, char *argv[], char *env[])
+{
+	char	*input;
+	t_cmd	*cmd;
+	
+
+	(void)argc;
+	(void)argv;
 	signal(SIGINT, control_c);
 	signal(SIGQUIT, control_slash);
 	signal(SIGTERM, signal_handler);
