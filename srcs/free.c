@@ -15,6 +15,8 @@
     void
 free_rdir(t_rdir *rdir)
 {
+    if (!rdir)
+        return ;
     if (rdir->next)
         free_rdir(rdir->next);
     if (rdir->value)
@@ -30,16 +32,22 @@ free_cmd(t_cmd *cmd)
 {
     int i;
 
+    if (!cmd)
+        return ;
+    if (cmd->next)
+        free_cmd(cmd->next);
     i = 0;
-    if (cmd)
+    while (i < cmd->argc)
     {
-        while (cmd->argv[i])
-        {
-            free(cmd->argv[i]);
-            cmd->argv[i] = NULL;
-            i++;
-        }
-        free(cmd);
-        cmd = NULL;
+        free(cmd->argv[i]);
+        cmd->argv[i] = NULL;
+        i++;
     }
+    if (cmd->rdir)
+        free_rdir(cmd->rdir);
+    cmd->rdir = NULL;
+    cmd->argc = 0;
+    cmd->pipe = 0;
+    free(cmd);
+    cmd = NULL;
 }

@@ -27,6 +27,7 @@
 # define NEWLINE    	10
 # define IFS(x)			(x == SPACE || x == TAB || x == NEWLINE)
 # define BKSLASH		92
+# define NO_QUOTE		0
 # define SINGLE_QUOTE	39
 # define DOUBLE_QUOTE	34
 # define DOLLAR			36
@@ -34,10 +35,13 @@
 # define ESCAPE_CHAR(x)	(x == 'a' || x == 'b' || x == 'e' || x == 'f' || x == 'n' || x == 'r' || x == 't' || x == 'v' || x == BACKSLASH || x == 'x' || x == 'c')
 # define RDIR(x)		(x == '>' || x == '<')
 # define CMD_SEP(x)		(x == '|' || x == ';')
+# define ARG_SEP(x)		(IFS(x) || RDIR(x) || CMD_SEP(x))
 
 # define RDIR_IN		1
 # define RDIR_OUT		2
 # define APP_RDIR_OUT	3
+# define EXP			1
+# define NOT_EXP		0
 
 typedef	struct		s_rdir{
 	int				type;
@@ -57,6 +61,12 @@ void	fonction_test_celia();
 
 /* parsing.c */
 t_cmd			*parse_input(char *input, char *env[]);
+	int
+len_after_char(char *input, char *env[], int double_quote, int expanded);
+	char*
+expanded_str(char *input, char *env[], int double_quote);
+
+
 
 /* debug.c */
 void			print_args(int argc, char **argv);

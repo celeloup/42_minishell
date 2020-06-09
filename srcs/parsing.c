@@ -189,11 +189,80 @@ get_env_var(char *var, char *env[])
 }
 
 	int
-var_len(char *input, char *env[], int name)
+backslash_len(char *input, int quote, int expanded)
+{
+	if (input[0] != BKSLASH)
+		return (0);
+	if (!input[1])
+		return (1);
+	else if (input[1] == NEWLINE && expanded)
+		return (0);
+	else if (!expanded || (quote == DOUBLE_QUOTE && !(input[1] == DOLLAR 
+		|| input[1] == DOUBLE_QUOTE || input[1] == BKSLASH)))
+		return (2);
+	else
+		return (1);
+}
+	
+	int
+single_quote_len(char *input, int expanded)
+{
+	int len;
+	int	exp_len;
+
+	exp_len = 0;
+	len = 1;
+	while (input[len] && input[len] != SINGLE_QUOTE)
+		len++;
+	if (input[len] && input[len] == SINGLE_QUOTE)
+	{
+		exp_len -= 2;
+		len++;
+	}
+	if (expanded)
+		return (exp_len + len);
+	return (len);
+}
+	
+	int
+double_quote_len(char *input, char *env[], int expanded)
+{
+	int len;
+	int	exp_len;
+
+	exp_len = 0;
+	len = 1;
+	while (input[len] && input[len] != DOUBLE_QUOTE)
+	{
+		exp_len -= len_after_char(&input[len], env, DOUBLE_QUOTE, NOT_EXP);
+		exp_len += len_after_char(&input[len], env, DOUBLE_QUOTE, EXP);
+		len += len_after_char(&input[len], env, DOUBLE_QUOTE, NOT_EXP);
+	}
+	if (input[len] && input[len] == DOUBLE_QUOTE)
+	{
+		exp_len -= 2;
+		len++;
+	}
+	if (expanded)
+		return (exp_len + len);
+	return (len);
+}
+
+	int
+quote_len(char *input, char *env[], int expanded)
+{
+	if (input[0] == DOUBLE_QUOTE)
+		return (double_quote_len(input, env, expanded));
+	else
+		return (single_quote_len(input, expanded));
+}
+	
+	int
+var_len(char *input, char *env[], int expanded)//dollar inclus
 {
 	int		len;
 	char	*var_name = NULL;
-	char	*var = NULL;
+	char	*var_value = NULL;
 
 	len = 1;
 	if (input[len] && input[len] == '?')
@@ -201,124 +270,191 @@ var_len(char *input, char *env[], int name)
 	else if (input[len])
 		while (input[len] && ft_isalnum(input[len]))// a confirmer
 			len++;
-	if (name)
+	if (!expanded)
 		return (len);
 	var_name = (char *)malloc(sizeof(char) * (len + 1));
 	var_name[len] = '\0';
-	var = get_env_var(var, env);
-	len = ft_strlen(var);
+	var_value = get_env_var(var_name, env);
+	len = ft_strlen(var_value);
 	if (len == -1)
 		len = 1;
 	free(var_name);
-	if (var)
-		free(var);
+	if (var_value)
+		free(var_value);
 	var_name = NULL;
-	var = NULL;
+	var_value = NULL;
 	return (len);
 }
-
+	
 	int
-single_quote_len(char *input, int clean)
+len_after_char(char *input, char *env[], int quote, int expanded)
+{
+	if (!input)
+		return(0);
+	else if (QUOTE(input[0]) && !quote)
+		return (quote_len(input, env, expanded));
+	else if (input[0] == BKSLASH)
+		return (backslash_len(input, quote, expanded));
+	else if (input[0] == DOLLAR)
+		return (var_len(input, env, expanded));
+	else 
+		return (1);
+}
+		
+	int
+token_len(char *input, char *env[], int expanded)
 {
 	int len;
-	int	clean_len;
-
-	clean_len = 0;
-	len = 1;
-	while (input[len] && input[len] != SINGLE_QUOTE)
-		len++;
-	if (input[len] && input[len] == SINGLE_QUOTE)
-	{
-		clean_len -= 2;
-		len++;
-	}
-	if (clean)
-		return (clean_len + len);
-	return (len);
-}
-
-	int
-double_quote_len(char *input, char *env[], int clean)
-{
-	int len;
-	int	clean_len;
-
-	clean_len = 0;
-	len = 1;
-	while (input[len] && input[len] != DOUBLE_QUOTE)
-	{
-		if (input[len] == BKSLASH && input[len + 1] 
-			&& (input[len + 1] == DOLLAR || input[len + 1] == DOUBLE_QUOTE 
-			|| input[len + 1] == BKSLASH))
-			{
-				len += 2;
-				clean_len--;
-			}
-		else if (input[len] == DOLLAR)
-		{
-			len += var_len(&input[len], env, 1);
-			clean_len -= var_len(&input[len], env, 1);
-			clean_len += var_len(&input[len], env, 0);
-		}
-		else
-			len++;
-	}
-	if (input[len] && input[len] == DOUBLE_QUOTE)
-	{
-		clean_len -= 2;
-		len++;
-	}
-	if (clean)
-		return (clean_len + len);
-	return (len);
-}
-
-	int
-quote_len(char *input, char *env[], int clean)
-{
-	int	len;
+	int exp_len;
 
 	len = 0;
-	if (input[0] == DOUBLE_QUOTE)
-		len = double_quote_len(input, env, clean);
-	if (input[0] == SINGLE_QUOTE)
-		len = single_quote_len(input, clean);
-	return(len);
+	exp_len = 0;
+	while (input[len] && !(ARG_SEP(input[len])))
+	{
+		exp_len -= len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
+		exp_len += len_after_char(&input[len], env, NO_QUOTE, EXP);
+		len += len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
+	}
+	if (expanded)
+		return (len + exp_len);
+	return (len);
 }
 
-	int
-token_len(char *input, char *env[], int clean)
+	char*
+get_var_name(char *input)
 {
-	int i;
-	int clean_len;
+	int		i;
+	int		len;
+	char	*name;
+
+	len = var_len(input, NULL, NOT_EXP);//gérer le cas rien apres dollar ? 
+	name = NULL;
+	name = (char *)malloc(sizeof(char) * (len + 1));
+	name[0] = DOLLAR;
+	name[len] = '\0';
+	i = 1;
+	while (input[i] && ft_isalnum(input[i]))
+	{
+		name[i] = input[i];
+		i++;
+	}
+	return (name);
+}
+
+	char*
+get_escaped_char(char *input, int quote)
+{
+	char	*ret = NULL;
+	int		len;
+	
+	if (!(len = backslash_len(input, quote, EXP)))
+		return (NULL);
+	if (input[1] && input[1] == NEWLINE)
+		return (NULL);
+	ret = (char*)malloc(sizeof(char) * (len + 1));
+	ret[len] = '\0';
+	if (!input[1])
+		ret[0] = BKSLASH;
+	else if (quote == DOUBLE_QUOTE && !(input[1] == DOLLAR
+		|| input[1] == DOUBLE_QUOTE || input[1] == BKSLASH))
+	{
+		ret[0] = BKSLASH;
+		ret[1] = input[1];
+	}
+	else
+		ret[0] = input[1];
+	return (ret);
+}
+
+	char*
+get_single_quote(char *input)
+{
+	char	*ret;
+	int		len;
+
+	len = single_quote_len(input, EXP);
+	ret = ft_substr(input, 1, len);
+	return (ret);
+}
+
+	char*
+get_double_quote(char *input, char *env[])
+{
+	char	*ret;
+	char	*str;
+	int		len;
+	int		i;
+	int		j;
+
+	len = double_quote_len(input, env, EXP);
+	ret = (char *)malloc(sizeof(char) * (len + 1));
+	ret[len] = '\0';
+	i = 1;
+	j = 0;
+	while(input[i] && i < double_quote_len(input, env, NOT_EXP) && j < len)
+	{
+		if ((str = expanded_str(&input[i], env, DOUBLE_QUOTE)))
+		{
+			ft_strcpy(&ret[j], str);
+			free(str);
+		}
+		str = NULL;
+		j += len_after_char(&input[i], env, DOUBLE_QUOTE, EXP);
+		i += len_after_char(&input[i], env, DOUBLE_QUOTE, NOT_EXP);
+	}
+	return (ret);
+}
+
+	char*
+get_quote(char *input, char *env[])
+{
+	if (input[0] == SINGLE_QUOTE)
+		return (get_single_quote(input));
+	else
+		return (get_double_quote(input, env));
+}
+	
+	char*
+expanded_str(char *input, char *env[], int quote)
+{
+	if (!input)
+		return (NULL);//vérfier ?
+	else if (input[0] == BKSLASH)
+		return (get_escaped_char(input, quote));
+	else if (QUOTE(input[0]) && !quote)
+		return (get_quote(input, env));
+	else if (input[0] == DOLLAR)
+		return (get_env_var(get_var_name(input), env));
+	else
+		return (ft_substr(input, 0, 1));
+}
+		
+	char*
+get_token(char *input, char *env[])
+{
+	char	*token = NULL;
+	char	*str = NULL;
+	int		i;
+	int		j;
 
 	i = 0;
-	clean_len = 0;
-	while (input[i] && !(IFS(input[i]) || RDIR(input[i]) || CMD_SEP(input[i])))
+	j = 0;
+	token = (char *)malloc(sizeof(char) * (token_len(input, env, EXP) + 1));
+	//secu ?
+	token[token_len(input, env, EXP)] = '\0';
+	while(i < token_len(input, env, NOT_EXP) && j < token_len(input, env, EXP))
 	{
-		if (input[i] == BKSLASH && input[i + 1])
+		str = expanded_str(&input[i], env, NO_QUOTE);
+		if (str)
 		{
-			clean_len--;
-			if (input[i + 1] == NEWLINE)//multiligne hors sujet ?
-				clean_len--;
-			i += 2;
+			ft_strcpy(&token[j], str);
+			free(str);
 		}
-		else if (QUOTE(input[i]))
-		{
-			clean_len -= (quote_len(&input[i], env, 0));
-			clean_len += (quote_len(&input[i], env, 1));
-			i += quote_len(&input[i], env, 0);
-		}
-		else if (input[i] == DOLLAR)
-		{
-			clean_len -= var_len(&input[i], env, 1);
-			clean_len += var_len(&input[i], env, 0);
-			i += var_len(&input[i], env, 1);
-		}
-		else
-			i++;
+		str = NULL;
+		j += len_after_char(&input[i], env, NO_QUOTE, EXP);
+		i += len_after_char(&input[i], env, NO_QUOTE, NOT_EXP);
 	}
-	return (i);
+	return (token);
 }
 
 	int
@@ -348,28 +484,13 @@ get_rdir_type(t_rdir *rdir, char *input)
 	int
 get_rdir_value(t_rdir *rdir, char *input, char *env[])
 {
-	int	len;
-	int	i;
-	int	j;
-
-	i = token_len(input, env, 0);
-	len = token_len(input, env, 1);
-	// cas d'erreur si len = 0 ?
+	// cas d'erreur si token_len = 0 ?
 	if (rdir)
-	{
-		if (!(rdir->value = (char *)malloc(sizeof(char) * (len + 1))))
-				return (0);
-		while (i < len)
-		{
-			rdir->value[i] = input[i];
-			i++;
-		}
-		rdir->value[len] = '\0';
-	}
-	return (i);
+		rdir->value = get_token(input, env);
+	return (token_len(input, env, NOT_EXP));
 }
 
-	t_rdir*
+/*	t_rdir*
 copy_rdir(t_rdir *src)
 {
 	t_rdir	*dest;
@@ -383,7 +504,7 @@ copy_rdir(t_rdir *src)
 	if (src->next)
 		dest->next = copy_rdir(src->next);
 	return (dest);
-}
+}*/
 	
 	int
 get_cmd_rdir(t_rdir **rdir, char *input, char *env[])
@@ -402,6 +523,34 @@ get_cmd_rdir(t_rdir **rdir, char *input, char *env[])
 	return (i);
 }
 
+	void
+get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (input[i] && i < cmd_len)
+	{
+		if (token_len(&input[i], env, NOT_EXP))
+		{
+			if (j == cmd->argc)
+				ft_printf("\nWRONG ARGC OR PARSING ERROR");
+			cmd->argv[j] = get_token(&input[i], env);
+			i += token_len(&input[i], env, NOT_EXP);
+			j++;
+		}
+		else if (RDIR(input[i]))
+		{
+			i += get_rdir_type(NULL, &input[i]);
+			i += token_len(&input[i], env, NOT_EXP);
+		}
+		else
+			i++;
+	}
+}
+
 	int
 cmd_len(t_cmd *cmd, char *input, char *env[])
 {
@@ -411,10 +560,10 @@ cmd_len(t_cmd *cmd, char *input, char *env[])
 	while (input[i] && !(input[i] == ';' || input[i] == '|'))
 	{	
 		//ft_printf("\n%d", (int)input[i]);
-		if (token_len(&input[i], 0))
+		if (token_len(&input[i], env, NOT_EXP))
 		{
 			cmd->argc++;
-			i += token_len(&input[i], 0);
+			i += token_len(&input[i], env, NOT_EXP);
 		}
 		else if (RDIR(input[i]))
 			i += get_cmd_rdir(&cmd->rdir, &input[i], env);
@@ -424,66 +573,20 @@ cmd_len(t_cmd *cmd, char *input, char *env[])
 	return (i);
 }
 
-	char*
-clean_token(char *input, int len, char *env[])
-{
-	char	*token;
-	int		i;
-
-	i = 0;
-	token = (char *)malloc(sizeof(char) * (token_len(input, 1) + 1));//secu
-	token[token_len(input, 1)] = '\0';
-	while(i < len)
-	{
-		i++;
-	}
-	/*token = malloc(sizeof(char *) * (len + 1));
-	token = ft_strncpy(token, &input[i], len);
-	token[len] = '\0';	*/
-	return (token);
-}
-
-	void
-get_cmd_argv(t_cmd *cmd, char *input, int cmd_len, char *env[])
-{
-	int	i;
-	int	j;
-	int	len;
-
-	i = 0;
-	j = 0;
-	len = 0;
-	while (input[i] && i < cmd_len)
-	{
-		if ((len = token_len(&input[i], env, 0)))
-		{
-			cmd->argv[j] = clean_token(&input[i], len, env);
-			i += len;
-			j++;
-		}
-		else if (RDIR(input[i]))
-		{
-			i += get_rdir_type(NULL, &input[i]);
-			i += token_len(&input[i], env, 0);
-		}
-		else
-			i++;
-	}
-}
-
 	t_cmd*
 parse_input(char *input, char *env[])
 {
 	t_cmd	*cmd = NULL;
 	int		len;
 	
+	if (!input)
+		return (NULL);
 	cmd = init_cmd(input);
 	if (!cmd)
 		return (NULL);//remplacer par un cas d'erreur ? 
-	len = cmd_len(cmd, input);
-	if (!input || (input && !(cmd->argv = malloc(sizeof(char **) * cmd->argc))))
-        return (NULL);//idem //pourquoi size of char ** et pas char * ?
-	get_cmd_argv(cmd, input, len, env);
+	len = cmd_len(cmd, input, env);
+	cmd->argv = (char**)malloc(sizeof(char *) * cmd->argc);
+	get_cmd_argv(cmd, input, env, len);
 	if (input[len] && input[len] == '|')
 		cmd->pipe++;
 	if (input[len] && (input[len] == ';' || input[len] == '|'))

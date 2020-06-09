@@ -87,6 +87,7 @@ int		main(int argc, char *argv[], char *env[])
 			cmd_list = parse_input(input, env);
 			print_cmd(cmd_list, 0);
 		}
+		//free cmd ici ? (ft free_cmd existe dejà)
 	}
 	return (0);
 }

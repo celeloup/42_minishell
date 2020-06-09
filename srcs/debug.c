@@ -33,7 +33,7 @@ print_cmd_rdir(t_rdir *rdir)
     if (!rdir)
     {
         ft_printf("\ntrying to print a null rdir vector");
-        return;
+        return ;
     }
     type = NULL;
     if (rdir->type == RDIR_IN)
@@ -42,7 +42,7 @@ print_cmd_rdir(t_rdir *rdir)
         type = ft_strdup(">");
     else
         type = ft_strdup(">>");
-    ft_printf("%s %s ", type, rdir->value);
+    ft_printf("%s : *%s*", type, rdir->value);
     free(type);
     type = NULL;
     if (rdir->next)
