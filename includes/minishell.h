@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 20:11:32 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/09 20:54:20 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,21 @@ void			free_rdir(t_rdir *rdir);
 /* init.c */
 t_cmd			*init_cmd(char *input);
 t_rdir			*init_rdir();
+
+/* signal_handling.c */
+void	control_slash(int num);
+void	control_d();
+void	control_c(int num);
+void	signal_handler(int num);
+
+/* builtins.c */
+void	ft_exit(t_cmd *cmd, char *env[]);
+void	ft_echo(t_cmd *cmd, char *env[]);
+void	ft_cd(t_cmd *cmd, char *env[]);
+void	ft_pwd(t_cmd *cmd, char *env[]);
+void	ft_export(t_cmd *cmd, char *env[]);
+void	ft_unset(t_cmd *cmd, char *env[]);
+void	ft_env(t_cmd *cmd, char *env[]);
 
 /* signal_handling.c */
 void	control_slash(int num);
