@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/05 17:48:19 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/08 15:14:14 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,23 @@ typedef struct	s_arg{
     int         max_arg_size;
 }				t_arg;
 
+# define RD_IN 1
+# define RD_OUT 2
+# define APP_RD_OUT 3
+
+typedef struct	s_rd
+{
+	int			type;
+	char		*value;
+	struct s_rd	*next;
+}				t_rd;
+
 typedef struct		s_cmd
 {
 	char			**argv;
-	char			**output_redirect; // >
-	char			**output_append; // >>
-	char			**input_redirect; // <
-	int				pipe;
 	int				argc;
+	t_rd			*rd;
+	int				pipe;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -67,6 +76,7 @@ void    init_arg(t_arg *arg);
 void	control_slash(int num);
 void	control_d();
 void	control_c(int num);
+void	signal_handler(int num);
 
 /* builtins.c */
 void	ft_exit(t_cmd *cmd, char *env[]);

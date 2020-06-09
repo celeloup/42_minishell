@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/03 17:32:21 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/04 12:09:25 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/08 11:14:47 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,14 @@ void	control_c(int num)
 {
 	(void)num;
 	write(1, "\n", 1);
-	prompt(1);
+}
+
+void	signal_handler(int num)
+{
+	if (num == SIGTERM)
+	{
+		//free here
+		exit(EXIT_SUCCESS);
+	}
+		
 }
