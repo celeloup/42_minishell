@@ -25,9 +25,11 @@ void	prompt(int error)
 		ft_printf("%s➜  %sminishell %s> %s", GREEN, BLUE, YELLOW, END);
 }
 
-int		is_builtins(t_cmd *cmd, char *env[])
+int		is_builtin(t_cmd *cmd, char *env[])
 {
-	if (ft_strcmp("exit", cmd->argv[0]) == 0)
+	if (!cmd->argv || (cmd->argv && !cmd->argv[0]))
+		return (-1);// msg d'erreur ? 
+	else if (ft_strcmp("exit", cmd->argv[0]) == 0)
 		ft_exit(cmd, env);
 	else if (ft_strcmp("echo", cmd->argv[0]) == 0)
 		ft_echo(cmd, env);
@@ -90,7 +92,7 @@ int		exec_cmd(t_cmd *cmd, char*env[])
 {
 	if (redirections(cmd->rdir) == -1)
 		ft_printf("error redirection");
-	if (is_builtins(cmd, env) == -1)
+	if (is_builtin(cmd, env) == -1)
 	{
 		if (execve(cmd->argv[0], cmd->argv, env) == -1)
 		{
@@ -204,7 +206,6 @@ int		main(int argc, char *argv[], char *env[])
 	char	*input;
 	t_cmd	*cmd_list;
 	
-
 	(void)argc;
 	(void)argv;
 	signal(SIGINT, control_c);
@@ -221,8 +222,14 @@ int		main(int argc, char *argv[], char *env[])
 		{
 			//ft_printf("input is : >%s<\n", input);
 			cmd_list = parse_input(input, env);
-			exec_cmds(cmd_list, env);
 			//print_cmd(cmd_list, 0);
+			if (cmd_list)
+			{
+				exec_cmds(cmd_list, env);
+				cmd_list = free_cmd(cmd_list);
+			}
+			free(input);
+			input = NULL;
 		}
 		//free cmd ici ? (ft free_cmd existe dejà)
 	}

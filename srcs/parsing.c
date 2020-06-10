@@ -11,13 +11,16 @@ get_env_var(char *var, char *env[])
 {
 	size_t	i;
 	i = 0;
+	if (!var[1])
+		return (ft_strdup("$"));
 	while (env[i])
 	{
-		if (!strncmp(env[i], var + 1, ft_strlen(var + 1)))
+		if (!strncmp(env[i], var + 1, ft_strlen(var + 1))
+			&& env[i][ft_strlen(var + 1)] && env[i][ft_strlen(var + 1)] == '=')
 			return (ft_strdup(ft_strrchr(env[i], '=') + 1));
 		i++;
 	}
-	return (NULL);//vérifier s'il ne renvoie pas plutôt une chaine vide
+	return (ft_strdup(""));//vérifier s'il ne renvoie pas plutôt une chaine vide
 }
 
 	int
@@ -98,21 +101,23 @@ var_len(char *input, char *env[], int expanded)//dollar inclus
 
 	len = 1;
 	if (input[len] && input[len] == '?')
-		len++;
+		len = 2;
 	else if (input[len])
 		while (input[len] && ft_isalnum(input[len]))// a confirmer
 			len++;
 	if (!expanded)
 		return (len);
+	if (expanded && len == 1)
+		return (1);//juste le dollar sans caractere alphanu derriere
 	var_name = (char *)malloc(sizeof(char) * (len + 1));
+	ft_strncpy(var_name, input, len);
 	var_name[len] = '\0';
 	var_value = get_env_var(var_name, env);
+	if (!var_value)
+		return (0);//variable n'existe pas donc chaine vide
 	len = ft_strlen(var_value);
-	if (len == -1)
-		len = 1;
 	free(var_name);
-	if (var_value)
-		free(var_value);
+	free(var_value);
 	var_name = NULL;
 	var_value = NULL;
 	return (len);
@@ -160,6 +165,8 @@ get_var_name(char *input)
 	char	*name;
 
 	len = var_len(input, NULL, NOT_EXP);//gérer le cas rien apres dollar ? 
+	if (len == 2 && input[1] == '?')
+		return (ft_strdup("$?"));
 	name = NULL;
 	name = (char *)malloc(sizeof(char) * (len + 1));
 	name[0] = DOLLAR;
@@ -272,7 +279,6 @@ get_token(char *input, char *env[])
 	i = 0;
 	j = 0;
 	token = (char *)malloc(sizeof(char) * (token_len(input, env, EXP) + 1));
-	//secu ?
 	token[token_len(input, env, EXP)] = '\0';
 	while(i < token_len(input, env, NOT_EXP) && j < token_len(input, env, EXP))
 	{
@@ -308,6 +314,10 @@ get_rdir_type(t_rdir *rdir, char *input)
 		i += 2;
 	while (input[i] && IFS(input[i]))
 		i++;
+	if (!input[i])
+		return (parsing_error(NULL, UNEXPECTED_TOKEN));
+	else if (input[i] && (RDIR(input[i]) || CMD_SEP(input[i])))
+		return (parsing_error(&input[i], UNEXPECTED_TOKEN));
 	if (rdir)
 		rdir->type = rdir_type;
 	return (i);
@@ -317,32 +327,20 @@ get_rdir_type(t_rdir *rdir, char *input)
 get_rdir_value(t_rdir *rdir, char *input, char *env[])
 {
 	// cas d'erreur si token_len = 0 ?
+	if (!rdir)// a confirmer
+		return (0);// a confirmer
 	if (rdir)
+	{
 		rdir->value = get_token(input, env);
+	}
 	return (token_len(input, env, NOT_EXP));
 }
-
-/*	t_rdir*
-copy_rdir(t_rdir *src)
-{
-	t_rdir	*dest;
-
-	dest = NULL;
-	if (!src)
-		return (NULL);
-	dest = init_rdir();
-	dest->type = src->type;
-	dest->value = ft_strdup(src->value);
-	if (src->next)
-		dest->next = copy_rdir(src->next);
-	return (dest);
-}*/
 	
 	int
 get_cmd_rdir(t_rdir **rdir, char *input, char *env[])
 {
 	int		i;
-	
+
 	if (*rdir)
 	{
 		while (*rdir)
@@ -350,7 +348,10 @@ get_cmd_rdir(t_rdir **rdir, char *input, char *env[])
 	}
 	i = 0;
 	*rdir = init_rdir();
-	i += get_rdir_type(*rdir, input);
+	if (get_rdir_type(NULL, input) > 0)
+		i += get_rdir_type(*rdir, input);
+	else
+		return (-1);
 	i += get_rdir_value(*rdir, &input[i], env);
 	return (i);
 }
@@ -367,8 +368,6 @@ get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 	{
 		if (token_len(&input[i], env, NOT_EXP))
 		{
-			if (j == cmd->argc)
-				ft_printf("\nWRONG ARGC OR PARSING ERROR");
 			cmd->argv[j] = get_token(&input[i], env);
 			i += token_len(&input[i], env, NOT_EXP);
 			j++;
@@ -386,23 +385,31 @@ get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 	int
 cmd_len(t_cmd *cmd, char *input, char *env[])
 {
-	int	i;
+	int	len;
 
-	i = 0;
-	while (input[i] && !(input[i] == ';' || input[i] == '|'))
+	len = 0;
+	if (RDIR(input[0]) || CMD_SEP(input[0]))
+		return (parsing_error(input, UNEXPECTED_TOKEN));
+	while (input[len] && !(CMD_SEP(input[len])))
 	{	
-		//ft_printf("\n%d", (int)input[i]);
-		if (token_len(&input[i], env, NOT_EXP))
+		if (token_len(&input[len], env, NOT_EXP))
 		{
 			cmd->argc++;
-			i += token_len(&input[i], env, NOT_EXP);
+			len += token_len(&input[len], env, NOT_EXP);
 		}
-		else if (RDIR(input[i]))
-			i += get_cmd_rdir(&cmd->rdir, &input[i], env);
+		else if (RDIR(input[len]))
+		{
+			if (get_rdir_type(NULL, &input[len]) > 0)
+				len += get_cmd_rdir(&cmd->rdir, &input[len], env);
+			else
+				return (-1);
+		}
 		else
-			i++;
+			len++;
 	}
-	return (i);
+	if (input[len] && input[len + 1] && CMD_SEP(input[len + 1]))
+		return (parsing_error(&input[len], UNEXPECTED_TOKEN));
+	return (len);
 }
 
 	t_cmd*
@@ -411,19 +418,22 @@ parse_input(char *input, char *env[])
 	t_cmd	*cmd = NULL;
 	int		len;
 	
-	if (!input)
-		return (NULL);
-	cmd = init_cmd(input);
-	if (!cmd)
-		return (NULL);//remplacer par un cas d'erreur ? 
-	len = cmd_len(cmd, input, env);
-	cmd->argv = (char**)malloc(sizeof(char *) * cmd->argc);
+	if (!input || (!(cmd = init_cmd(input))))
+		return (NULL);// a vérifier dans les cas d'erreur
+	if ((len = cmd_len(cmd, input, env)) == -1)
+		return (free_cmd(cmd));
+	cmd->argv = (char**)malloc(sizeof(char *) * (cmd->argc + 1));
+	cmd->argv[cmd->argc] = NULL;
 	get_cmd_argv(cmd, input, env, len);
 	if (input[len] && input[len] == '|')
 		cmd->pipe++;
 	if (input[len] && (input[len] == ';' || input[len] == '|'))
 		len++;
 	if (input[len])//gérer l'erreur 2 ';' a suivre
+	{
 		cmd->next = parse_input(&input[len], env);
+		if (!cmd->next)
+			return(free_cmd(cmd));
+	}
 	return (cmd);
 }

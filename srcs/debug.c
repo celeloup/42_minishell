@@ -42,7 +42,7 @@ print_cmd_rdir(t_rdir *rdir)
         type = ft_strdup(">");
     else
         type = ft_strdup(">>");
-    ft_printf("%s : *%s*", type, rdir->value);
+    ft_printf("%s '%s' ", type, rdir->value);
     free(type);
     type = NULL;
     if (rdir->next)
@@ -58,7 +58,8 @@ print_cmd(t_cmd *cmd, int i)
         return ;
     }
     ft_printf("\n----CMD%d----", i);
-    ft_printf("\nARGC = %d", cmd->argc);
+    if (cmd->argv && cmd->argc)
+        ft_printf("\nARGC = %d", cmd->argc);
     if (cmd->argv && cmd->argc)
         print_args(cmd->argc, cmd->argv);
     else

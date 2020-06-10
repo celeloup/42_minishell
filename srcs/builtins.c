@@ -23,9 +23,23 @@ void	ft_exit(t_cmd *cmd, char *env[])
 
 void	ft_echo(t_cmd *cmd, char *env[])
 {
-	(void)cmd;
+	int		i;
+	int		n_option;
+
+	i = 1;
+	n_option = 0;
+	if (cmd->argv[1] && !(ft_strcmp("-n", cmd->argv[1])))
+		n_option = i++;
+	while (cmd->argv[i])
+	{
+		ft_putstr_fd(cmd->argv[i], 1);
+		if (cmd->argv[i + 1])
+			ft_putchar_fd(SPACE, 1);
+		i++;
+	}
+	if (!n_option)
+			ft_putchar_fd('\n', 1);
 	(void)env;
-	ft_putstr_fd("Echo fonction\n", 2);
 	exit(EXIT_SUCCESS);
 }
 
