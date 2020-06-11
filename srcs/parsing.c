@@ -429,7 +429,7 @@ parse_input(char *input, char *env[])
 		cmd->pipe++;
 	if (input[len] && (input[len] == ';' || input[len] == '|'))
 		len++;
-	if (input[len])//gérer l'erreur 2 ';' a suivre
+	if (input[len])
 	{
 		cmd->next = parse_input(&input[len], env);
 		if (!cmd->next)
