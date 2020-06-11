@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 15:26:24 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/10 18:34:12 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	ft_cd(t_cmd *cmd, char *env[])
 {
 	(void)cmd;
 	(void)env;
-	ft_putstr_fd("cd fonction\n", 2);
+	//ft_putstr_fd("cd fonction\n", 2);
 	exit(EXIT_SUCCESS);
 }
 
