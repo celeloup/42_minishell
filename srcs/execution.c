@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/11 09:41:17 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/11 10:26:24 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/11 10:41:38 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,17 @@ void	error_exit(char *actor, char *msg)
 	write(2, "\n", 1);
 	exit(EXIT_FAILURE);
 }
+/*
+char	**get_bin(char *path)
+{
+	
+}
 
+char	*path_join(char *bin, char *path)
+{
+	
+}
+*/
 /*
 ** exec_cmd -> execute a single command
 ** Apply redirection

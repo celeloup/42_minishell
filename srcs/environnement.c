@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/10 21:28:53 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/11 09:40:00 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/11 10:41:14 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,17 +83,8 @@ int		remove_env(char **env[], char *var)
 {
 	
 }
-
-char	**get_bin(char *path)
-{
-	
-}
-
-char	*path_join(char *bin, char *path)
-{
-	
-}
 */
+
 void	print_env(char *env[])
 {
 	int i;
