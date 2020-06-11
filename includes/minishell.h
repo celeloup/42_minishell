@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 20:54:20 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/11 10:22:32 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "../libft/src/libft.h"
 # include <signal.h>
-# include <wait.h>
+# include <sys/wait.h>
 # include <errno.h>
 # include <fcntl.h>
 # include <sys/types.h>
@@ -116,5 +116,22 @@ void	ft_pwd(t_cmd *cmd, char *env[]);
 void	ft_export(t_cmd *cmd, char *env[]);
 void	ft_unset(t_cmd *cmd, char *env[]);
 void	ft_env(t_cmd *cmd, char *env[]);
+
+/* environnement.c */
+char	**init_env(char *env[]);
+void	free_env(char *env[]);
+int		add_env(char **env[], char *var);
+void	print_env(char *env[]);
+
+/* execution.c */
+int		is_builtins(t_cmd *cmd, char *env[]);
+int		redirections(t_rdir *rd);
+void	error_exit(char *actor, char *msg);
+int		exec_cmd(t_cmd *cmd, char *env[]);
+void	close_fd(int fd);
+void	redirect_pipe(int old_fd, int new_fd);
+void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd);
+int		exec_cmds(t_cmd *cmd, char *env[]);
+
 
 #endif
