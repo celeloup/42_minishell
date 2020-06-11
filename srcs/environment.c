@@ -164,7 +164,7 @@ edit_var(char **env[], char *var)
 }
 
 	int
-add_var(char **env[], char *var) //ajouter check si variable existe avant ajout (et si oui, juste modifier) et check variable bon format ?
+add_var(char **env[], char *var)
 {
 	int		i;
 	char	**new_env;
