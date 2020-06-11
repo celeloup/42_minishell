@@ -7,17 +7,19 @@
 //IFS = Internal Field Separator
 
 	char*
-get_env_var(char *var, char *env[])
+get_var_value(char *input, char *env[])//input démarre avec $
 {
 	size_t	i;
+	
 	i = 0;
-	if (!var[1])
+	if (!input[1])
 		return (ft_strdup("$"));
 	while (env[i])
 	{
-		if (!strncmp(env[i], var + 1, ft_strlen(var + 1))
-			&& env[i][ft_strlen(var + 1)] && env[i][ft_strlen(var + 1)] == '=')
-			return (ft_strdup(ft_strrchr(env[i], '=') + 1));
+		if (!strncmp(env[i], input + 1, ft_strlen(input + 1))
+			&& env[i][ft_strlen(input + 1)] 
+			&& env[i][ft_strlen(input + 1)] == '=')
+			return (ft_strdup(ft_strrchr(env[i], '=') + 1));//strrchr ne crée pas un leak ? pas de malloc + => la fonction retourne NULL si rien apres le = 
 		i++;
 	}
 	return (ft_strdup(""));//vérifier s'il ne renvoie pas plutôt une chaine vide
@@ -112,7 +114,7 @@ var_len(char *input, char *env[], int expanded)//dollar inclus
 	var_name = (char *)malloc(sizeof(char) * (len + 1));
 	ft_strncpy(var_name, input, len);
 	var_name[len] = '\0';
-	var_value = get_env_var(var_name, env);
+	var_value = get_var_value(var_name, env);
 	if (!var_value)
 		return (0);//variable n'existe pas donc chaine vide
 	len = ft_strlen(var_value);
@@ -263,7 +265,7 @@ expanded_str(char *input, char *env[], int quote)
 	else if (QUOTE(input[0]) && !quote)
 		return (get_quote(input, env));
 	else if (input[0] == DOLLAR)
-		return (get_env_var(get_var_name(input), env));
+		return (get_var_value(get_var_name(input), env));
 	else
 		return (ft_substr(input, 0, 1));
 }

@@ -83,6 +83,8 @@ void	prompt(int error);
 t_cmd	*parse_input(char *input, char *env[]);
 int		len_after_char(char *input, char *env[], int quote, int expanded);
 char	*expanded_str(char *input, char *env[], int quote);
+char	*get_var_value(char *input, char *env[]);
+char	*get_var_name(char *input);
 
 /* error.c */
 int		parsing_error(char *input, int error_type);
@@ -115,14 +117,14 @@ void	ft_export(t_cmd *cmd, char *env[]);
 void	ft_unset(t_cmd *cmd, char *env[]);
 void	ft_env(t_cmd *cmd, char *env[]);
 
-/* environnement.c */
-char	**init_env(char *env[]);
-void	free_env(char *env[]);
-int		add_env(char **env[], char *var);
+/* environment.c */
+char	**env_dup(char *env[]);
+char	**free_env(char **env[]);
+int		add_var(char **env[], char *var);
 void	print_env(char *env[]);
 
 /* execution.c */
-int		is_builtins(t_cmd *cmd, char *env[]);
+int		is_builtin(t_cmd *cmd, char *env[]);
 int		redirections(t_rdir *rd);
 void	error_exit(char *actor, char *msg);
 int		exec_cmd(t_cmd *cmd, char *env[]);

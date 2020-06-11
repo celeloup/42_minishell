@@ -30,7 +30,7 @@ int		main(int argc, char *argv[], char *env[])
 {
 	char	*input;
 	t_cmd	*cmd_list;
-	char	**environnement;
+	char	**environment;
 	
 	(void)argc;
 	(void)argv;
@@ -42,7 +42,7 @@ int		main(int argc, char *argv[], char *env[])
 		ft_putstr_fd("SIGCHLD\n", 2);
 		error_exit("signal", "failed.");
 	}
-	environnement = init_env(env);
+	environment = env_dup(env);
 	cmd_list = NULL;
 	while (42)
 	{
@@ -53,11 +53,11 @@ int		main(int argc, char *argv[], char *env[])
 		else
 		{
 			//ft_printf("input is : >%s<\n", input);
-			cmd_list = parse_input(input, environnement);
+			cmd_list = parse_input(input, environment);
 			//print_cmd(cmd_list, 0);
 			if (cmd_list)
 			{
-				exec_cmds(cmd_list, environnement);
+				exec_cmds(cmd_list, environment);
 				cmd_list = free_cmd(cmd_list);
 			}
 			free(input);
