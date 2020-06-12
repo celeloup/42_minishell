@@ -6,7 +6,7 @@
 #    By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-#    Updated: 2020/06/11 10:36:06 by celeloup         ###   ########.fr        #
+#    Updated: 2020/06/11 11:55:39 by celeloup         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ LIBFT_DIR		= ./libft/
 LIBFT			= $(LIBFT_DIR)libft.a
 HEADER			= $(INCLUDES_DIR)minishell.h
 
-CFLAGS			= -Wall -Wextra -Werror
+CFLAGS			= -Wall -Wextra -Werror# -fsanitize=address,undefined -Wpadded
 CC				= clang
 
 INCLUDES	= $(addprefix -I, $(INCLUDES_DIR) $(LIBFT_DIR))

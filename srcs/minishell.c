@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/11 10:39:25 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/22 15:58:43 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int		main(int argc, char *argv[], char *env[])
 	signal(SIGINT, control_c);
 	signal(SIGQUIT, control_slash);
 	signal(SIGTERM, signal_handler);
-	if (signal(SIGCHLD, SIG_IGN) == SIG_ERR)
+	/*if (signal(SIGCHLD, SIG_IGN) == SIG_ERR)
 	{
 		ft_putstr_fd("SIGCHLD\n", 2);
 		error_exit("signal", "failed.");
@@ -55,11 +55,15 @@ int		main(int argc, char *argv[], char *env[])
 			//ft_printf("input is : >%s<\n", input);
 			cmd_list = parse_input(input, environment);
 			//print_cmd(cmd_list, 0);
+			int test = 0;
+			int	child = 0;
 			if (cmd_list)
 			{
 				exec_cmds(cmd_list, &environment);
 				cmd_list = free_cmd(cmd_list);
 			}
+			ft_printf("ret child = %d\n", child);
+			ft_printf("ret test = %d\n", test);
 			free(input);
 			input = NULL;
 		}

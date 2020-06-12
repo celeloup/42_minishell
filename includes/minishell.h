@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/11 10:37:28 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/22 15:58:45 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,8 @@ typedef	struct		s_cmd{
 void	prompt(int error);
 
 /* parsing.c */
+char*
+get_env_var(char *var, char *env[]);
 t_cmd	*parse_input(char *input, char *env[]);
 int		len_after_char(char *input, char *env[], int quote, int expanded);
 char	*expanded_str(char *input, char *env[], int quote);
