@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/03 17:32:21 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/10 18:03:46 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/12 17:26:12 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void	signal_handler(int num)
 	if (num == SIGTERM)
 	{
 		//free here
+		//ft_printf("sigterm signal received \n");
 		exit(EXIT_SUCCESS);
 	}
 		

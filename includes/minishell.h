@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/11 10:37:28 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/12 20:16:11 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ typedef	struct		s_cmd{
 void	prompt(int error);
 
 /* parsing.c */
+char*
+get_env_var(char *var, char *env[]);
 t_cmd	*parse_input(char *input, char *env[]);
 int		len_after_char(char *input, char *env[], int quote, int expanded);
 char	*expanded_str(char *input, char *env[], int quote);
@@ -125,10 +127,10 @@ void	print_env(char *env[]);
 int		is_builtins(t_cmd *cmd, char *env[]);
 int		redirections(t_rdir *rd);
 void	error_exit(char *actor, char *msg);
-int		exec_cmd(t_cmd *cmd, char *env[]);
+int		exec_cmd(t_cmd *cmd, char *env[], int *child);
 void	close_fd(int fd);
 void	redirect_pipe(int old_fd, int new_fd);
-void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd);
-int		exec_cmds(t_cmd *cmd, char *env[]);
+void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd, int *child);
+int		exec_cmds(t_cmd *cmd, char *env[], int *child);
 
 #endif

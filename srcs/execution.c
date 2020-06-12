@@ -6,15 +6,17 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/11 09:41:17 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/11 10:41:38 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/12 20:20:14 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <dirent.h>
 
 /*
 ** is_builtin -> if cmd is a built-in and execute fonction accordingly
 */
+
 int		is_builtins(t_cmd *cmd, char *env[])
 {
 	if (ft_strcmp("exit", cmd->argv[0]) == 0)
@@ -43,6 +45,7 @@ int		is_builtins(t_cmd *cmd, char *env[])
 ** try to duplicate fd into the corresponding fd (in or out)
 ** close inactive fd
 */
+
 int		redirections(t_rdir *rd)
 {
 	int fd;
@@ -92,17 +95,72 @@ void	error_exit(char *actor, char *msg)
 	write(2, "\n", 1);
 	exit(EXIT_FAILURE);
 }
-/*
-char	**get_bin(char *path)
+
+void	path_join(char *bin, char **path)
 {
-	
+	int		bin_len;
+	int		path_len;
+	char	*new_path;
+	int		i;
+
+	bin_len = ft_strlen(bin);
+	path_len = ft_strlen(*path);
+	if ((new_path = malloc(bin_len + path_len + 2)) == NULL)
+		return ;
+	i = 0;
+	while (i < bin_len)
+	{
+		new_path[i] = bin[i];
+		i++;
+	}
+	new_path[i] = '/';
+	i++;
+	while (i < path_len + bin_len + 1)
+	{
+		new_path[i] = **path;
+		(*path)++;
+		i++;
+	}
+	new_path[i] = '\0';
+	free(path);
+	*path = new_path;
 }
 
-char	*path_join(char *bin, char *path)
+void	get_cmd_path(char **cmd, char *env[])
 {
-	
+	char			*path;
+	char			**bin_tab;
+	int				i;
+	DIR				*dir;
+	struct dirent	*entry;
+
+	if (*cmd[0] == '/' || !(ft_strncmp(*cmd, "./", 2)))
+		return ;
+	path = get_env_var("$PATH", env);
+	bin_tab = ft_split(path, ':');
+	free(path);
+	i = 0;
+	while (bin_tab[i])
+	{
+		if ((dir = opendir(bin_tab[i])) != NULL)
+		{
+			while ((entry = readdir(dir)))
+			{
+				if (!ft_strcmp(entry->d_name, *cmd))
+				{
+					closedir(dir);
+					path_join(bin_tab[i], cmd);
+					free_tab(bin_tab);
+					return ;
+				}
+			}
+			closedir(dir);
+		}
+		i++;
+	}
+	free_tab(bin_tab);
 }
-*/
+
 /*
 ** exec_cmd -> execute a single command
 ** Apply redirection
@@ -110,21 +168,27 @@ char	*path_join(char *bin, char *path)
 ** If not, execute with execve with correct path
 */
 
-int		exec_cmd(t_cmd *cmd, char *env[])
+int		exec_cmd(t_cmd *cmd, char *env[], int *child)
 {
+	int retour;
+
+	retour = 0;
+	(*child)++;
 	if (redirections(cmd->rdir) == -1)
 		error_exit("redirection", "failed.");
 	if (is_builtins(cmd, env) == -1)
 	{
+		get_cmd_path(&(cmd->argv[0]), env);
 		if (execve(cmd->argv[0], cmd->argv, env) == -1)
 			error_exit(cmd->argv[0], "command not found.");
 	}
-	return (0);
+	return (retour);
 }
 
 /*
 ** close_fd -> close a give fd
 */
+
 void	close_fd(int fd)
 {
 	if (close(fd) == -1)
@@ -148,23 +212,26 @@ void	redirect_pipe(int old_fd, int new_fd)
 
 /*
 ** exec_pipeline -> loops through a pipeline of cmd (recursive)
-** if there's no more cmd after the current one or if the current one has no pipe
+** if there's no more cmd after the current one or the current one has no pipe
 ** -> just redirect the previous cmd's out to current in and execute cmd
 ** else create a pipe and fork
-** in children -> redirect the given in fd in cmd in and the cmd's out in the pipe's out then execute cmd
+** in children -> redirect the given in fd in cmd in and the cmd's out
+** in the pipe's out then execute cmd
 ** in parent -> call exec_pipeline again with pipe fd
 */
 
-void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd)
+void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd, int *child)
 {
 	pid_t	pid;
 	int		fd[2];
+	int		status;
 
 	if (cmd->next == NULL || cmd->pipe == 0)
 	{
 		redirect_pipe(in_fd, STDIN_FILENO);
-		exec_cmd(cmd, env);
+		exec_cmd(cmd, env, child);
 		error_exit("execve", "failed.");
+		(*child)++;
 	}
 	else
 	{
@@ -177,15 +244,17 @@ void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd)
 			close_fd(fd[0]);
 			redirect_pipe(in_fd, STDIN_FILENO);
 			redirect_pipe(fd[1], STDOUT_FILENO);
-			exec_cmd(cmd, env);
+			exec_cmd(cmd, env, child);
 			error_exit("execve", "failed.");
 		}
 		else
 		{
 			close_fd(fd[1]);
 			close_fd(in_fd);
-			exec_pipeline(cmd->next, env, fd[0]);
+			exec_pipeline(cmd->next, env, fd[0], child);
+			waitpid(pid, &status, 0);
 		}
+		waitpid(pid, &status, 0);
 	}
 }
 
@@ -197,7 +266,7 @@ void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd)
 ** Wait for child process to finish
 */
 
-int		exec_cmds(t_cmd *cmd, char *env[])
+int		exec_cmds(t_cmd *cmd, char *env[], int *child)
 {
 	pid_t	pid;
 	int		status;
@@ -206,17 +275,25 @@ int		exec_cmds(t_cmd *cmd, char *env[])
 	{
 		if ((pid = fork()) == -1)
 			error_exit("fork", "failed."); //maybe return ici instead ?
-		if (pid == 0)
+		if (pid > 0)
+		{
+			waitpid(pid, &status, 0);
+			kill(pid, SIGTERM);
+		}
+		else
 		{
 			if (cmd->pipe == 1)
-				exec_pipeline(cmd, env, STDIN_FILENO);
+				exec_pipeline(cmd, env, STDIN_FILENO, child);
 			else
-				exec_cmd(cmd, env);
+				exec_cmd(cmd, env, child);
 		}
-		wait(&status);
-		if (cmd->pipe == 1)
+		ft_printf("%s\n", cmd->argv[0]);
+		while (cmd->next && cmd->pipe == 1)
 			cmd = cmd->next;
 		cmd = cmd->next;
+		ft_putstr("add child");
+		(*child)++;
 	}
 	return (status);
+	//return (WEXITSTATUS(status));
 }
