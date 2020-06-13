@@ -52,15 +52,25 @@
 # define CMD_SEP(x)		(x == '|' || x == ';')
 # define ARG_SEP(x)		(IFS(x) || RDIR(x) || CMD_SEP(x))
 
-/* arg types for some functions */
+/* arg types or options for some functions */
 # define RDIR_IN		1
 # define RDIR_OUT		2
 # define APP_RDIR_OUT	3
 # define EXP			1
 # define NOT_EXP		0
+# define YES			1
+# define NO				0
+//# define VALUE		1
+//# define NO_VALUE		0
+# define INVALID_NAME	2
 
 /* error types */
 # define UNEXPECTED_TOKEN 1
+
+typedef struct		s_env{
+	char			*var;
+	struct s_env	*env;
+}					t_env;
 
 typedef	struct		s_rdir{
 	int				type;
@@ -86,7 +96,12 @@ char	*expanded_str(char *input, char *env[], int quote);
 char	*get_var_value(char *input, char *env[]);
 char	*get_var_name(char *input);
 
+/* check.c */
+int		is_not_name(char *input);
+int		is_name(char *input);
+
 /* error.c */
+int		env_error(char *input, char *cmd, int error_type);
 int		parsing_error(char *input, int error_type);
 
 /* debug.c */
@@ -109,28 +124,29 @@ void	control_c(int num);
 void	signal_handler(int num);
 
 /* builtins.c */
-void	ft_exit(t_cmd *cmd, char *env[]);
-void	ft_echo(t_cmd *cmd, char *env[]);
-void	ft_cd(t_cmd *cmd, char *env[]);
-void	ft_pwd(t_cmd *cmd, char *env[]);
-void	ft_export(t_cmd *cmd, char *env[]);
-void	ft_unset(t_cmd *cmd, char *env[]);
-void	ft_env(t_cmd *cmd, char *env[]);
+void	ft_exit(t_cmd *cmd, char **env[]);
+int		ft_echo(t_cmd *cmd, char **env[]);
+void	ft_cd(t_cmd *cmd, char **env[]);
+void	ft_pwd(t_cmd *cmd, char **env[]);
+int		ft_export(t_cmd *cmd, char **env[]);
+int		ft_unset(t_cmd *cmd, char **env[]);
+void	ft_env(char **env[]);
 
 /* environment.c */
 char	**env_dup(char *env[]);
 char	**free_env(char **env[]);
-int		add_var(char **env[], char *var);
-void	print_env(char *env[]);
+int		remove_var(char **env[], char *cmd, char *var, int value_expected);
+int		add_var(char **env[], char *cmd, char *var);
+void	print_env(char *env[], int option);
 
 /* execution.c */
-int		is_builtin(t_cmd *cmd, char *env[]);
+int		is_builtin(t_cmd *cmd, char **env[]);
 int		redirections(t_rdir *rd);
 void	error_exit(char *actor, char *msg);
-int		exec_cmd(t_cmd *cmd, char *env[]);
+int		exec_cmd(t_cmd *cmd, char **env[]);
 void	close_fd(int fd);
 void	redirect_pipe(int old_fd, int new_fd);
-void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd);
-int		exec_cmds(t_cmd *cmd, char *env[]);
+void	exec_pipeline(t_cmd *cmd, char **env[], int in_fd);
+int		exec_cmds(t_cmd *cmd, char **env[]);
 
 #endif

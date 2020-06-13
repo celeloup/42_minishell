@@ -84,33 +84,25 @@ free_env(char **env[])
 	return (NULL);
 }
 
-/**
-** Adds a variable to the environment tab.
-** Var must be of format "VAR=value". VAR is lower or upper case or digit
+
+/*
+** If the var format is valid, var_is_valid returns '=' index, else -1;
 */
 	int
-var_is_valid(char *var)
+var_is_valid(char *var, char *cmd, int value_expected)
 {
-	int		i;
-
-	i = -1;
-	if (!var || !var[0])
-		ft_putstr_fd("env var to add : is null or empty", 2);
-	else if (!ft_isalnum(var[0]))//changer les msg d'erreur
-		ft_putstr_fd("env var to add : is not alphanumeric format", 2);
+	if (is_not_name(var) < 0 || (is_not_name(var) && !value_expected))
+		return (env_error(var, cmd, INVALID_NAME));
+	else if (is_not_name(var) && value_expected && var[is_not_name(var)] != '=')
+		return (env_error(var, cmd, INVALID_NAME));
+	else if (is_not_name(var) && value_expected && var[is_not_name(var)] == '=')
+		return (is_not_name(var));// retourne la pos de égal
+	else if (is_name(var) && value_expected)
+		return (0);//cas pour export 'VAR' sans egal 
+	else if (is_name(var))
+		return (is_name(var));
 	else
-	{
-		i = 0;
-		while (var[i] && ft_isalnum(var[i]))
-			i++;
-		if (!var[i])
-			ft_putstr_fd("env var to add : missing '=' after var name", 2);
-		else if (var[i] != '=')
-			ft_putstr_fd("env var to add : is not 'VAR=' format", 2);
-		else
-			return (i);// retourne la pos de égal
-	}
-	return (-1);
+		return (-1);
 }
 
 	int
@@ -140,15 +132,15 @@ var_is_set(char **env[], char *var)
 }
 
 	int
-edit_var(char **env[], char *var)
+edit_var(char **env[], char *cmd, char *var)
 {
 	int	name_len;
 	int	i;
 
-	if (var_is_valid(var) > 0)
-		name_len = var_is_valid(var);
+	if (var_is_valid(var, NULL, YES) > 0)
+		name_len = var_is_valid(var, NULL, YES);
 	else
-		return (-1);
+		return (-var_is_valid(var, cmd, YES));
 	i = 0;
 	while ((*env)[i])
 	{
@@ -160,56 +152,64 @@ edit_var(char **env[], char *var)
 		}
 		i++;
 	}
-	return (-1);
+	return (1);
 }
 
+/**
+** Adds a variable to the environment tab.
+** Var must be of format "VAR=value". VAR is lower or upper case or digit
+*/
 	int
-add_var(char **env[], char *var)
+add_var(char **env[], char *cmd, char *var)
 {
 	int		i;
 	char	**new_env;
 
-	if (var_is_valid(var) < 0)
-		return (-1);
+	if (var_is_valid(var, NULL, YES) <= 0)// = ne rien faire si pas de egal apres var
+		return (-(var_is_valid(var, cmd, YES)));
 	if (var_is_set(env, var))// vérifier qu'il fait bien ça
-		return (edit_var(env, var));
+		return (edit_var(env, cmd, var));
 	i = 0;
-	while (env && *env && (*env)[i])
+	while ((*env)[i])
 		i++;
-	if ((new_env = (char**)malloc(sizeof(char*) * i + 2)) == NULL)
-		return (-1);
+	if ((new_env = (char**)malloc(sizeof(char*) * (i + 2))) == NULL)
+		return (1);
 	new_env = env_ncpy(new_env, *env, 0, i);
 	new_env[i] = ft_strdup(var);
 	new_env[i + 1] = NULL;
-	if (env && *env)
+	if (*env)
 		*env = free_env(env);
 	*env = env_dup(new_env);
 	new_env = free_env(&new_env);
 	return (0);
 }
 
+/**
+** remove_var returns 0 if var does not exist because unset does not consider
+** this as an error (and therefore returns 0 too)
+*/
 	int
-remove_var(char **env[], char *var)
+remove_var(char **env[], char *cmd, char *var, int value_expected)
 {
 	char	**new_env;
 	int		name_len;
 	int		i;
 	
-	if ((name_len = var_is_valid(var)) <= 0)
-		return (-1);
+	if ((name_len = var_is_valid(var, NULL, value_expected)) <= 0)
+		return (-var_is_valid(var, cmd, value_expected));
 	i = 0;
-	while ((*env)[i] && !strncmp((*env)[i], var, name_len))
+	while ((*env)[i] && (ft_strncmp((*env)[i], var, name_len)
+		|| ((*env)[i])[name_len] != '='))
 		i++;
 	if (!(*env)[i])
-	{
-		ft_putstr_fd("var to remove does not exist", 2);//a modifier
-		return (-1);
-	}
+		return (0);
 	if ((new_env = (char**)malloc(sizeof(char*) * env_len(*env))) == NULL)
-		return (-1);
-	new_env[env_len(*env)] = NULL;
+		return (1);
 	new_env = env_ncpy(new_env, *env, 0, i);
-	new_env = env_ncpy(new_env, *env + i, i, env_len(*env) - i - 1);
+	new_env = env_ncpy(new_env, &((*env)[i + 1]), i, env_len(*env) - i - 1);
+	new_env[env_len(*env) - 1] = NULL;
+	ft_printf("\n----------------tmpenv =\n");
+	print_env(new_env, 0);
 	*env = free_env(env);
 	*env = env_dup(new_env);
 	new_env = free_env(&new_env);
@@ -217,15 +217,40 @@ remove_var(char **env[], char *var)
 }
 
 	void
-print_env(char *env[])
+print_env_export(char *var)
+{
+	int	in_quote;
+	int	i;
+
+	in_quote = 0;
+	i = 0;
+	ft_putstr_fd("declare -x ", 1);// + rajouter les "" a l'interieur
+	while (var[i])
+	{
+		ft_putchar_fd(var[i], 1);
+		if (var[i] == '=' && !in_quote)
+		{
+			ft_putchar_fd('\"', 1);
+			in_quote++;
+		}
+		i++;
+	}
+	ft_putchar_fd('\"', 1);
+}
+
+	void
+print_env(char *env[], int option)
 {
 	int i;
 
 	i = 0;
 	while (env[i])
 	{
-		ft_putstr(env[i]);
-		ft_putchar('\n');
+		if (option == EXP)
+			print_env_export(env[i]);
+		else
+			ft_putstr_fd(env[i], 1);
+		ft_putchar_fd('\n', 1);
 		i++;
 	}
 }

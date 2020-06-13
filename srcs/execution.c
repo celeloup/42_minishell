@@ -15,7 +15,7 @@
 /*
 ** is_builtin -> if cmd is a built-in and execute fonction accordingly
 */
-int		is_builtins(t_cmd *cmd, char *env[])
+int		is_builtin(t_cmd *cmd, char **env[])
 {
 	if (ft_strcmp("exit", cmd->argv[0]) == 0)
 		ft_exit(cmd, env);
@@ -30,7 +30,7 @@ int		is_builtins(t_cmd *cmd, char *env[])
 	else if (ft_strcmp("unset", cmd->argv[0]) == 0)
 		ft_unset(cmd, env);
 	else if (ft_strcmp("env", cmd->argv[0]) == 0)
-		ft_env(cmd, env);
+		ft_env(env);
 	else
 		return (-1);
 	return (0);
@@ -86,6 +86,7 @@ int		redirections(t_rdir *rd)
 
 void	error_exit(char *actor, char *msg)
 {
+	write(2, "minishell: ", 11);
 	write(2, actor, ft_strlen(actor));
 	write(2, ": ", 2);
 	write(2, msg, ft_strlen(msg));
@@ -110,14 +111,14 @@ char	*path_join(char *bin, char *path)
 ** If not, execute with execve with correct path
 */
 
-int		exec_cmd(t_cmd *cmd, char *env[])
+int		exec_cmd(t_cmd *cmd, char **env[])
 {
 	if (redirections(cmd->rdir) == -1)
 		error_exit("redirection", "failed.");
-	if (is_builtins(cmd, env) == -1)
+	if (is_builtin(cmd, env) == -1)
 	{
-		if (execve(cmd->argv[0], cmd->argv, env) == -1)
-			error_exit(cmd->argv[0], "command not found.");
+		if (execve(cmd->argv[0], cmd->argv, *env) == -1)
+			error_exit(cmd->argv[0], "command not found");
 	}
 	return (0);
 }
@@ -148,14 +149,16 @@ void	redirect_pipe(int old_fd, int new_fd)
 
 /*
 ** exec_pipeline -> loops through a pipeline of cmd (recursive)
-** if there's no more cmd after the current one or if the current one has no pipe
+** if there's no more cmd after the current one or if the current one has no 
+** pipe
 ** -> just redirect the previous cmd's out to current in and execute cmd
 ** else create a pipe and fork
-** in children -> redirect the given in fd in cmd in and the cmd's out in the pipe's out then execute cmd
+** in children -> redirect the given in fd in cmd in and the cmd's out in the 
+** pipe's out then execute cmd
 ** in parent -> call exec_pipeline again with pipe fd
 */
 
-void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd)
+void	exec_pipeline(t_cmd *cmd, char **env[], int in_fd)
 {
 	pid_t	pid;
 	int		fd[2];
@@ -197,7 +200,7 @@ void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd)
 ** Wait for child process to finish
 */
 
-int		exec_cmds(t_cmd *cmd, char *env[])
+int		exec_cmds(t_cmd *cmd, char **env[])
 {
 	pid_t	pid;
 	int		status;

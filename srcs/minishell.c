@@ -57,7 +57,7 @@ int		main(int argc, char *argv[], char *env[])
 			//print_cmd(cmd_list, 0);
 			if (cmd_list)
 			{
-				exec_cmds(cmd_list, environment);
+				exec_cmds(cmd_list, &environment);
 				cmd_list = free_cmd(cmd_list);
 			}
 			free(input);

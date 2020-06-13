@@ -12,10 +12,25 @@
 
 #include "../includes/minishell.h"
 
+
+	int
+env_error(char *input, char *cmd, int error_type)
+{
+    if (cmd && error_type == INVALID_NAME)
+    {
+        ft_putstr_fd("minishell: ", 2);
+        ft_putstr_fd(cmd, 2);
+        ft_putstr_fd(": `", 2);
+        ft_putstr_fd(input, 2);
+        ft_putstr_fd("': not a valid identifier\n", 2);
+    }
+    return (-1);
+}
+
     void
 unexpected_token_msg(char *input)
 {//verifier le \n a la fin
-    ft_putstr_fd("bash: syntax error near unexpected token `", 2);
+    ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
     if (!input)
         ft_putstr_fd("newline'\n", 2);
     else if (input[0])
