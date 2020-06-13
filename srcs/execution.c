@@ -6,7 +6,11 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/11 09:41:17 by celeloup          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2020/07/22 15:58:03 by celeloup         ###   ########.fr       */
+=======
+/*   Updated: 2020/06/13 17:46:38 by celeloup         ###   ########.fr       */
+>>>>>>> wip modified pipeline
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,12 +175,15 @@ void	get_cmd_path(char **cmd, char *env[])
 ** If not, execute with execve with correct path
 */
 
+<<<<<<< HEAD
 int		exec_cmd(t_cmd *cmd, char **env[])
+=======
+int		exec_cmd(t_cmd *cmd, char *env[])
+>>>>>>> wip modified pipeline
 {
 	int retour;
 
 	retour = 0;
-	(*child)++;
 	if (redirections(cmd->rdir) == -1)
 		error_exit("redirection", "failed.");
 	if (is_builtin(cmd, env) == -1)
@@ -223,7 +230,11 @@ void	redirect_pipe(int old_fd, int new_fd)
 ** in parent -> call exec_pipeline again with pipe fd
 */
 
+<<<<<<< HEAD
 void	exec_pipeline(t_cmd *cmd, char **env[], int in_fd)
+=======
+void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd)
+>>>>>>> wip modified pipeline
 {
 	pid_t	pid;
 	int		fd[2];
@@ -232,9 +243,8 @@ void	exec_pipeline(t_cmd *cmd, char **env[], int in_fd)
 	if (cmd->next == NULL || cmd->pipe == 0)
 	{
 		redirect_pipe(in_fd, STDIN_FILENO);
-		exec_cmd(cmd, env, child);
+		exec_cmd(cmd, env);
 		error_exit("execve", "failed.");
-		(*child)++;
 	}
 	else
 	{
@@ -247,18 +257,55 @@ void	exec_pipeline(t_cmd *cmd, char **env[], int in_fd)
 			close_fd(fd[0]);
 			redirect_pipe(in_fd, STDIN_FILENO);
 			redirect_pipe(fd[1], STDOUT_FILENO);
-			exec_cmd(cmd, env, child);
+			exec_cmd(cmd, env);
 			error_exit("execve", "failed.");
 		}
 		else
 		{
 			close_fd(fd[1]);
 			close_fd(in_fd);
-			exec_pipeline(cmd->next, env, fd[0], child);
+			exec_pipeline(cmd->next, env, fd[0]);
 			waitpid(pid, &status, 0);
 		}
 		waitpid(pid, &status, 0);
 	}
+}
+
+void	pipeline(t_cmd *cmd, char *env[]) //a proteger
+{
+	int fd[2];
+	pid_t pid;
+	int fdd = 0;
+	int status;
+
+	while (cmd != NULL) {
+		ft_printf("piping cmd %s \n", cmd->argv[0]);
+		pipe(fd);
+		if ((pid = fork()) == -1) {
+			error_exit("fork", "failed");
+			exit(1);
+		}
+		else if (pid == 0) {
+			dup2(fdd, 0);
+			if (cmd->next != NULL) {
+				dup2(fd[1], 1);
+			}
+			close(fd[0]);
+			exec_cmd(cmd, env);
+			exit(1);
+		}
+		else {
+			waitpid(pid, &status, 0);
+			kill(pid, SIGTERM);
+			close(fd[1]);
+			fdd = fd[0];
+			if (cmd->pipe)
+				cmd = cmd->next;
+			else
+				cmd = NULL;
+		}
+	}
+	ft_printf("end of pipeline\n");
 }
 
 /*
@@ -269,33 +316,80 @@ void	exec_pipeline(t_cmd *cmd, char **env[], int in_fd)
 ** Wait for child process to finish
 */
 
+<<<<<<< HEAD
+=======
+int		modify_var(char **env[], char *var)
+{
+	(*env)[0] = ft_strdup(var);
+	return 0;
+}
+
+int		modify_env(t_cmd *cmd, char **env[])
+{
+	if (redirections(cmd->rdir) == -1)
+		return(-1);
+	modify_var(env, cmd->argv[1]);
+	write(1, "modified env !", 14);
+	return (0);
+}
+
+
+>>>>>>> wip modified pipeline
 int		exec_cmds(t_cmd *cmd, char **env[])
 {
 	pid_t	pid;
 	int		status;
+	int saved_stdout;
+	int saved_stdin;
 
 	while (cmd)
 	{
-		if ((pid = fork()) == -1)
-			error_exit("fork", "failed."); //maybe return ici instead ?
-		if (pid > 0)
+		// duplicate stdin et stdout
+		saved_stdin = dup(0);
+		saved_stdout = dup(1);
+		// catch if it's a function that modifies env = export, unset, cd ?
+		/*if (cmd->argv[0] && ft_strcmp("export", cmd->argv[0]) == 0)
 		{
-			waitpid(pid, &status, 0);
-			kill(pid, SIGTERM);
+			modify_env(cmd, env);
 		}
 		else
-		{
+		{*/
 			if (cmd->pipe == 1)
-				exec_pipeline(cmd, env, STDIN_FILENO, child);
+					pipeline(cmd, *env);
 			else
-				exec_cmd(cmd, env, child);
-		}
-		ft_printf("%s\n", cmd->argv[0]);
+			{
+				if ((pid = fork()) == -1)
+					error_exit("fork", "failed."); //maybe return ici instead ?
+				if (pid > 0)
+				{
+					waitpid(pid, &status, 0);
+					kill(pid, SIGTERM);
+				}
+				else
+				{
+					//if (cmd->pipe == 1)
+					//	exec_pipeline(cmd, *env, STDIN_FILENO);
+					//else
+						exec_cmd(cmd, *env);
+				}
+			}
+		//}
 		while (cmd->next && cmd->pipe == 1)
-			cmd = cmd->next;
+				cmd = cmd->next;
 		cmd = cmd->next;
+<<<<<<< HEAD
 		ft_putstr("add child");
 		(*child)++;
 	}
 	return (status);
+=======
+		dup2(saved_stdout, 1);
+		close(saved_stdout);
+		dup2(saved_stdin, 0);
+		close(saved_stdin);
+	}	
+	return (0);
+	//return (status);
+	//return (WEXITSTATUS(status));
+>>>>>>> wip modified pipeline
 }
