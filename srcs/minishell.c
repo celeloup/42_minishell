@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/12 20:19:03 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/13 17:53:51 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int		main(int argc, char *argv[], char *env[])
 		error_exit("signal", "failed.");
 	}*/
 	environnement = init_env(env);
+	ft_printf("env0 = %s\n", environnement[0]);
 	cmd_list = NULL;
 	while (42)
 	{
@@ -56,17 +57,16 @@ int		main(int argc, char *argv[], char *env[])
 			cmd_list = parse_input(input, environnement);
 			//print_cmd(cmd_list, 0);
 			int test = 0;
-			int	child = 0;
 			if (cmd_list)
 			{
-				test = exec_cmds(cmd_list, environnement, &child);
+				test = exec_cmds(cmd_list, &environnement);
 				cmd_list = free_cmd(cmd_list);
 			}
-			ft_printf("ret child = %d\n", child);
-			ft_printf("ret test = %d\n", test);
+			//ft_printf("ret test = %d\n", test);
 			free(input);
 			input = NULL;
 		}
+		//ft_printf("env0 = %s\n", environnement[0]);
 		//free cmd ici ? (ft free_cmd existe dejà)
 	}
 	return (0);

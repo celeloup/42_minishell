@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/10 21:28:53 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/11 10:41:14 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/13 13:37:53 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,11 @@ int		add_env(char **env[], char *var) //ajouter check si variable existe avant a
 	}
 	new_env[i] = var;
 	new_env[i + 1] = NULL;
-	free_env(*env);
+	//free_env(*env);
 	*env = new_env;
 	return (0);
 }
+
 /*
 
 int		modify_env(char **env[], char *var, char *value)

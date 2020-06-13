@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/12 20:16:11 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/06/13 17:05:28 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,10 +127,12 @@ void	print_env(char *env[]);
 int		is_builtins(t_cmd *cmd, char *env[]);
 int		redirections(t_rdir *rd);
 void	error_exit(char *actor, char *msg);
-int		exec_cmd(t_cmd *cmd, char *env[], int *child);
+int		exec_cmd(t_cmd *cmd, char *env[]);
 void	close_fd(int fd);
 void	redirect_pipe(int old_fd, int new_fd);
-void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd, int *child);
-int		exec_cmds(t_cmd *cmd, char *env[], int *child);
+void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd);
+int		exec_cmds(t_cmd *cmd, char **env[]);
+
+void	pipeline(t_cmd *cmd, char *env[]);
 
 #endif
