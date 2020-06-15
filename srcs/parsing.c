@@ -366,6 +366,8 @@ get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 
 	i = 0;
 	j = 0;
+	if (!input)
+		return ;
 	while (input[i] && i < cmd_len)
 	{
 		if (token_len(&input[i], env, NOT_EXP))
@@ -390,9 +392,11 @@ cmd_len(t_cmd *cmd, char *input, char *env[])
 	int	len;
 
 	len = 0;
-	if (RDIR(input[0]) || CMD_SEP(input[0]))
+	while (input && input[len] && IFS(input[len]))
+		len++;
+	if (input && input[len] && (CMD_SEP(input[len])))
 		return (parsing_error(input, UNEXPECTED_TOKEN));
-	while (input[len] && !(CMD_SEP(input[len])))
+	while (input && input[len] && !(CMD_SEP(input[len])))
 	{	
 		if (token_len(&input[len], env, NOT_EXP))
 		{
@@ -409,8 +413,6 @@ cmd_len(t_cmd *cmd, char *input, char *env[])
 		else
 			len++;
 	}
-	if (input[len] && input[len + 1] && CMD_SEP(input[len + 1]))
-		return (parsing_error(&input[len], UNEXPECTED_TOKEN));
 	return (len);
 }
 
@@ -420,19 +422,20 @@ parse_input(char *input, char *env[])
 	t_cmd	*cmd = NULL;
 	int		len;
 	
-	if (!input || (!(cmd = init_cmd(input))))
-		return (NULL);// a vérifier dans les cas d'erreur
+	if (!(cmd = init_cmd()))
+		return (NULL);
 	if ((len = cmd_len(cmd, input, env)) == -1)
 		return (free_cmd(cmd));
-	cmd->argv = (char**)malloc(sizeof(char *) * (cmd->argc + 1));
+	if (input && input[len] && input[len + 1] && CMD_SEP(input[len + 1]))
+		parsing_error(&input[len], UNEXPECTED_TOKEN);
+	cmd->argv = (char **)malloc(sizeof(char *) * (cmd->argc + 1));
 	cmd->argv[cmd->argc] = NULL;
 	get_cmd_argv(cmd, input, env, len);
-	if (input[len] && input[len] == '|')
-		cmd->pipe++;
-	if (input[len] && (input[len] == ';' || input[len] == '|'))
-		len++;
-	if (input[len])
+	if (input && input[len] && (input[len] == ';' || input[len] == '|'))
 	{
+		if (input[len] == '|')
+			cmd->pipe++;
+		len++;
 		cmd->next = parse_input(&input[len], env);
 		if (!cmd->next)
 			return(free_cmd(cmd));

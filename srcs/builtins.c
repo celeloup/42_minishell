@@ -14,11 +14,17 @@
 
 void	ft_exit(t_cmd *cmd, char **env[])
 {
-	(void)cmd;
+	
 	(void)env;
-	ft_putstr_fd("Exit fonction\n", 2);
-	kill(0, SIGTERM);
-	exit(EXIT_SUCCESS);
+	if (kill(0, SIGTERM))
+	{
+		env_error(NULL, cmd->argv[0], errno)
+		exit(EXIT_FAILURE);
+	}
+	if (cmd && cmd->argv && cmd->argv[1])
+		exit(atoi(cmd->argv[1]));
+	else
+		exit(EXIT_SUCCESS);
 }
 
 int		ft_echo(t_cmd *cmd, char **env[])
@@ -49,11 +55,10 @@ int		ft_echo(t_cmd *cmd, char **env[])
 void	ft_cd(t_cmd *cmd, char **env[])
 {
 	int		ret;
+	char	*old_path = NULL;
 
 	ret = 0;
-	if (!cmd->argv[1])
-		exit(0);
-	else
+	if (cmd->argv[1])
 		ret = chdir(cmd->argv[1]);
 	if (ret)
 	{
@@ -61,9 +66,20 @@ void	ft_cd(t_cmd *cmd, char **env[])
 		ft_putstr_fd(strerror(errno), 2);
 		ft_putchar_fd('\n', 2);
 	}
+	if (ret || ft_strcmp(cmd->argv[0], "cd"))
+	{
+		old_path = getcwd(NULL, 0);
+		chdir(old_path);
+		free(old_path);
+		old_path = NULL;
+	}
 	exit(ret);
 	(void)env;
 }
+
+/*
+**
+*/
 
 	void
 ft_pwd(t_cmd *cmd, char **env[])
@@ -74,8 +90,11 @@ ft_pwd(t_cmd *cmd, char **env[])
 		ft_putchar_fd('\n', 1);
 	}
 	else
+	{
+		env_error();
 		exit(errno);
-	exit(0);
+	}
+	exit(EXIT_SUCCESS);
 	(void)env;
 	(void)cmd;
 }
@@ -120,9 +139,9 @@ ft_unset(t_cmd *cmd, char **env[])
 	i = 1;
 	ret = 0;
 	if (!cmd->argv)
-		exit(1);
+		exit(EXIT_FAILURE);
 	if (!cmd->argv[1])
-		exit(0);
+		exit(EXIT_SUCCESS);
 	while (cmd->argv[i])
 	{
 		if (remove_var(env, "unset", cmd->argv[i], NO) > 0)

@@ -184,7 +184,7 @@ add_var(char **env[], char *cmd, char *var)
 	return (0);
 }
 
-/**
+/*
 ** remove_var returns 0 if var does not exist because unset does not consider
 ** this as an error (and therefore returns 0 too)
 */

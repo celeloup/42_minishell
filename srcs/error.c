@@ -12,7 +12,11 @@
 
 #include "../includes/minishell.h"
 
-
+/*
+** The error code of an invalid identifier is actually 1. 
+** Because of var functions uses it is set to its negative value here and reset
+** to its positive value afterward
+*/
 	int
 env_error(char *input, char *cmd, int error_type)
 {
@@ -23,8 +27,9 @@ env_error(char *input, char *cmd, int error_type)
         ft_putstr_fd(": `", 2);
         ft_putstr_fd(input, 2);
         ft_putstr_fd("': not a valid identifier\n", 2);
+        return (-1);
     }
-    return (-1);
+    return (0);
 }
 
     void
@@ -47,8 +52,5 @@ parsing_error(char *input, int error_type)
 {
     if (error_type == UNEXPECTED_TOKEN)
         unexpected_token_msg(input);
-    //if (cmd)
-    //   free_cmd(cmd);
-    //cmd = NULL;
     return (-1);
 }

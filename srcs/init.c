@@ -28,13 +28,11 @@ init_rdir(void)
 }
 
     t_cmd*
-init_cmd(char *input)
+init_cmd(void)
 {
     t_cmd   *cmd;
 
     cmd = NULL;
-    if (!input)
-        return (NULL);
     cmd = (t_cmd *)malloc(sizeof(t_cmd));
     if (!cmd)
         return(NULL);

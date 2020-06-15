@@ -60,12 +60,16 @@
 # define NOT_EXP		0
 # define YES			1
 # define NO				0
+# define ECHO			1
+# define ENV			2
+# define PWD			3
+# define CD				4
 //# define VALUE		1
 //# define NO_VALUE		0
-# define INVALID_NAME	2
+# define INVALID_NAME	1
 
 /* error types */
-# define UNEXPECTED_TOKEN 1
+# define UNEXPECTED_TOKEN -1
 
 typedef struct		s_env{
 	char			*var;
@@ -99,6 +103,7 @@ char	*get_var_name(char *input);
 /* check.c */
 int		is_not_name(char *input);
 int		is_name(char *input);
+int		check_cmd_name(char *name);
 
 /* error.c */
 int		env_error(char *input, char *cmd, int error_type);
@@ -114,7 +119,7 @@ t_cmd	*free_cmd(t_cmd *cmd_list);
 void	free_rdir(t_rdir **rdir);
 
 /* init.c */
-t_cmd	*init_cmd(char *input);
+t_cmd	*init_cmd();
 t_rdir	*init_rdir();
 
 /* signal_handling.c */
