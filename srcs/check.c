@@ -56,6 +56,9 @@ is_not_name(char *input)
         return (0);
 }
 
+/*
+** returns 0 if input is not a name/identifier (cf man bash) else its size
+*/
     int
 is_name(char *input)
 {

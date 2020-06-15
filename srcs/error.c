@@ -13,23 +13,31 @@
 #include "../includes/minishell.h"
 
 /*
-** The error code of an invalid identifier is actually 1. 
+** The error code of an invalid identifier/name is actually 1. 
 ** Because of var functions uses it is set to its negative value here and reset
 ** to its positive value afterward
 */
 	int
 env_error(char *input, char *cmd, int error_type)
 {
-    if (cmd && error_type == INVALID_NAME)
+    ft_putstr_fd("minishell: ", 2);
+    if (cmd)
     {
-        ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(cmd, 2);
-        ft_putstr_fd(": `", 2);
+        ft_putstr_fd(": ", 2);
+    }
+    if (input && cmd && error_type == INVALID_NAME)
+    {
+        ft_putstr_fd("`", 2);
         ft_putstr_fd(input, 2);
         ft_putstr_fd("': not a valid identifier\n", 2);
         return (-1);
     }
-    return (0);
+    else if (cmd && error_type)
+    {
+        ft_putstr_fd(strerror(error_type), 2);
+    }
+    return (error_type);
 }
 
     void

@@ -66,10 +66,12 @@
 # define CD				4
 //# define VALUE		1
 //# define NO_VALUE		0
-# define INVALID_NAME	1
+
 
 /* error types */
-# define UNEXPECTED_TOKEN -1
+# define INVALID_NAME	-1
+# define UNEXPECTED_TOKEN -2
+
 
 typedef struct		s_env{
 	char			*var;

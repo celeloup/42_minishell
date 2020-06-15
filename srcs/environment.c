@@ -86,7 +86,7 @@ free_env(char **env[])
 
 
 /*
-** If the var format is valid, var_is_valid returns '=' index, else -1;
+** If the var format is valid, var_is_valid returns '=' index, else 0 or -errno;
 */
 	int
 var_is_valid(char *var, char *cmd, int value_expected)
@@ -99,10 +99,8 @@ var_is_valid(char *var, char *cmd, int value_expected)
 		return (is_not_name(var));// retourne la pos de égal
 	else if (is_name(var) && value_expected)
 		return (0);//cas pour export 'VAR' sans egal 
-	else if (is_name(var))
-		return (is_name(var));
 	else
-		return (-1);
+		return (is_name(var));
 }
 
 	int

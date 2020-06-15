@@ -18,7 +18,7 @@ void	ft_exit(t_cmd *cmd, char **env[])
 	(void)env;
 	if (kill(0, SIGTERM))
 	{
-		env_error(NULL, cmd->argv[0], errno)
+		env_error(NULL, cmd->argv[0], errno);
 		exit(EXIT_FAILURE);
 	}
 	if (cmd && cmd->argv && cmd->argv[1])
@@ -84,19 +84,18 @@ void	ft_cd(t_cmd *cmd, char **env[])
 	void
 ft_pwd(t_cmd *cmd, char **env[])
 {
-	if (getcwd(NULL, 0))
+	if (getcwd(NULL, 0))// verifier que pas de leak sinon faire un char *tmp
 	{
 		ft_putstr_fd(getcwd(NULL, 0), 1);
 		ft_putchar_fd('\n', 1);
 	}
 	else
 	{
-		env_error();
-		exit(errno);
+		env_error(NULL, cmd->argv[0], errno);
+		exit(EXIT_FAILURE);
 	}
 	exit(EXIT_SUCCESS);
 	(void)env;
-	(void)cmd;
 }
 
 	int	
@@ -113,7 +112,7 @@ ft_export(t_cmd *cmd, char **env[])
 		print_env(*env, EXP);
 	while (cmd->argv[i])
 	{
-		if (add_var(env, "export", cmd->argv[i]) > 0)
+		if (add_var(env, cmd->argv[0], cmd->argv[i]) > 0)
 			ret = 1;
 		i++;
 	}
@@ -144,7 +143,7 @@ ft_unset(t_cmd *cmd, char **env[])
 		exit(EXIT_SUCCESS);
 	while (cmd->argv[i])
 	{
-		if (remove_var(env, "unset", cmd->argv[i], NO) > 0)
+		if (remove_var(env, cmd->argv[0], cmd->argv[i], NO) > 0)
 			ret = 1;
 		i++;
 	}
