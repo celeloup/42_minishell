@@ -21,13 +21,13 @@ int		is_builtin(t_cmd *cmd, char **env[])
 
 	cmd_name = check_cmd_name(cmd->argv[0]);
 	if (ft_strcmp("exit", cmd->argv[0]) == 0)
-		ft_exit(cmd, env);
+		ft_exit(cmd);
 	else if (cmd_name == ECHO)
-		ft_echo(cmd, env);
+		ft_echo(cmd);
 	else if (cmd_name == CD)
-		ft_cd(cmd, env);
+		ft_cd(cmd);
 	else if (cmd_name == PWD)
-		ft_pwd(cmd, env);
+		ft_pwd(cmd);
 	else if (ft_strcmp("export", cmd->argv[0]) == 0)
 		ft_export(cmd, env);
 	else if (ft_strcmp("unset", cmd->argv[0]) == 0)

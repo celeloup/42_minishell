@@ -18,7 +18,7 @@
 ** to its positive value afterward
 */
 	int
-env_error(char *input, char *cmd, int error_type)
+print_env_error(char *input, char *cmd, int error_type)
 {
     ft_putstr_fd("minishell: ", 2);
     if (cmd)
@@ -42,7 +42,7 @@ env_error(char *input, char *cmd, int error_type)
 
     void
 unexpected_token_msg(char *input)
-{//verifier le \n a la fin
+{
     ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
     if (!input)
         ft_putstr_fd("newline'\n", 2);

@@ -12,28 +12,26 @@
 
 #include "../includes/minishell.h"
 
-void	ft_exit(t_cmd *cmd, char **env[])
+void	ft_exit(t_cmd *cmd)
 {
-	
-	(void)env;
-	if (kill(0, SIGTERM))
-	{
-		env_error(NULL, cmd->argv[0], errno);
-		exit(EXIT_FAILURE);
-	}
 	if (cmd && cmd->argv && cmd->argv[1])
 		exit(atoi(cmd->argv[1]));
+	if (kill(0, SIGTERM))
+	{
+		print_env_error(NULL, cmd->argv[0], errno);
+		exit(EXIT_FAILURE);
+	}
 	else
 		exit(EXIT_SUCCESS);
 }
 
-int		ft_echo(t_cmd *cmd, char **env[])
+int		ft_echo(t_cmd *cmd)
 {
 	int		ret;
 	int		i;
 	int		n_option;
 
-	ret = 0;
+	ret = EXIT_SUCCESS;
 	i = 1;
 	n_option = 0;
 	if (cmd && cmd->argv[1] && !(ft_strcmp("-n", cmd->argv[1])))
@@ -41,23 +39,27 @@ int		ft_echo(t_cmd *cmd, char **env[])
 	while (cmd && cmd->argv[i])
 	{
 		if (ft_putstr_fd(cmd->argv[i], 1) < 0)
-			ret = 1;
+			ret = EXIT_FAILURE;
 		if (cmd->argv[i + 1] && ft_putchar_fd(SPACE, 1) < 0)
-			ret = 1;
+			ret = EXIT_FAILURE;
 		i++;
 	}
 	if (!n_option && ft_putchar_fd('\n', 1) < 0)
-		ret = 1;
-	(void)env;
+		ret = EXIT_FAILURE;
 	exit(ret);
 }
 
-void	ft_cd(t_cmd *cmd, char **env[])
+/*
+** CD, Cd and cD won't do anything if the directory exists (No error msg) but 
+** they won't change the working directory accordingly either. Hence the last if
+*/
+
+void	ft_cd(t_cmd *cmd)
 {
 	int		ret;
 	char	*old_path = NULL;
 
-	ret = 0;
+	ret = EXIT_SUCCESS;
 	if (cmd->argv[1])
 		ret = chdir(cmd->argv[1]);
 	if (ret)
@@ -74,15 +76,13 @@ void	ft_cd(t_cmd *cmd, char **env[])
 		old_path = NULL;
 	}
 	exit(ret);
-	(void)env;
 }
 
 /*
-**
+** getcwd returns a string if success, else NULL
 */
-
 	void
-ft_pwd(t_cmd *cmd, char **env[])
+ft_pwd(t_cmd *cmd)
 {
 	if (getcwd(NULL, 0))// verifier que pas de leak sinon faire un char *tmp
 	{
@@ -91,11 +91,10 @@ ft_pwd(t_cmd *cmd, char **env[])
 	}
 	else
 	{
-		env_error(NULL, cmd->argv[0], errno);
+		print_env_error(NULL, cmd->argv[0], errno);
 		exit(EXIT_FAILURE);
 	}
 	exit(EXIT_SUCCESS);
-	(void)env;
 }
 
 	int	
@@ -105,18 +104,21 @@ ft_export(t_cmd *cmd, char **env[])
 	int		ret;
 
 	i = 1;
-	ret = 0;
+	ret = EXIT_SUCCESS;
 	if (!cmd->argv)
-		exit(1);
+		exit(EXIT_SUCCESS);
 	if (!cmd->argv[1])
 		print_env(*env, EXP);
 	while (cmd->argv[i])
 	{
 		if (add_var(env, cmd->argv[0], cmd->argv[i]) > 0)
-			ret = 1;
+		{
+			print_env_error(cmd->argv[i], cmd->argv[0], errno);
+			ret = EXIT_FAILURE;
+		}
+			
 		i++;
 	}
-	print_env(*env, 0);
 	exit(ret);
 }
 
@@ -136,7 +138,7 @@ ft_unset(t_cmd *cmd, char **env[])
 	int		ret;
 
 	i = 1;
-	ret = 0;
+	ret = EXIT_SUCCESS;
 	if (!cmd->argv)
 		exit(EXIT_FAILURE);
 	if (!cmd->argv[1])
@@ -144,10 +146,12 @@ ft_unset(t_cmd *cmd, char **env[])
 	while (cmd->argv[i])
 	{
 		if (remove_var(env, cmd->argv[0], cmd->argv[i], NO) > 0)
-			ret = 1;
+		{
+			print_env_error(cmd->argv[i], cmd->argv[0], errno);
+			ret = EXIT_FAILURE;
+		}
 		i++;
 	}
-	//print_env(*env, 0);
 	exit(ret);
 }
 

@@ -108,7 +108,7 @@ int		is_name(char *input);
 int		check_cmd_name(char *name);
 
 /* error.c */
-int		env_error(char *input, char *cmd, int error_type);
+int		print_env_error(char *input, char *cmd, int error_type);
 int		parsing_error(char *input, int error_type);
 
 /* debug.c */
@@ -131,10 +131,10 @@ void	control_c(int num);
 void	signal_handler(int num);
 
 /* builtins.c */
-void	ft_exit(t_cmd *cmd, char **env[]);
-int		ft_echo(t_cmd *cmd, char **env[]);
-void	ft_cd(t_cmd *cmd, char **env[]);
-void	ft_pwd(t_cmd *cmd, char **env[]);
+void	ft_exit(t_cmd *cmd);
+int		ft_echo(t_cmd *cmd);
+void	ft_cd(t_cmd *cmd);
+void	ft_pwd(t_cmd *cmd);
 int		ft_export(t_cmd *cmd, char **env[]);
 int		ft_unset(t_cmd *cmd, char **env[]);
 void	ft_env(char **env[]);

@@ -92,9 +92,9 @@ free_env(char **env[])
 var_is_valid(char *var, char *cmd, int value_expected)
 {
 	if (is_not_name(var) < 0 || (is_not_name(var) && !value_expected))
-		return (env_error(var, cmd, INVALID_NAME));
+		return (print_env_error(var, cmd, INVALID_NAME));
 	else if (is_not_name(var) && value_expected && var[is_not_name(var)] != '=')
-		return (env_error(var, cmd, INVALID_NAME));
+		return (print_env_error(var, cmd, INVALID_NAME));
 	else if (is_not_name(var) && value_expected && var[is_not_name(var)] == '=')
 		return (is_not_name(var));// retourne la pos de égal
 	else if (is_name(var) && value_expected)
@@ -163,15 +163,15 @@ add_var(char **env[], char *cmd, char *var)
 	int		i;
 	char	**new_env;
 
-	if (var_is_valid(var, NULL, YES) <= 0)// = ne rien faire si pas de egal apres var
+	if (var_is_valid(var, NULL, YES) <= 0)
 		return (-(var_is_valid(var, cmd, YES)));
-	if (var_is_set(env, var))// vérifier qu'il fait bien ça
+	if (var_is_set(env, var))
 		return (edit_var(env, cmd, var));
 	i = 0;
 	while ((*env)[i])
 		i++;
 	if ((new_env = (char**)malloc(sizeof(char*) * (i + 2))) == NULL)
-		return (1);
+		return (EXIT_FAILURE);
 	new_env = env_ncpy(new_env, *env, 0, i);
 	new_env[i] = ft_strdup(var);
 	new_env[i + 1] = NULL;
@@ -179,12 +179,12 @@ add_var(char **env[], char *cmd, char *var)
 		*env = free_env(env);
 	*env = env_dup(new_env);
 	new_env = free_env(&new_env);
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 /*
-** remove_var returns 0 if var does not exist because unset does not consider
-** this as an error (and therefore returns 0 too)
+** remove_var returns 0 if var does is not already in the environment because
+** unset does not consider this as an error (and therefore returns 0 too)
 */
 	int
 remove_var(char **env[], char *cmd, char *var, int value_expected)
@@ -200,18 +200,16 @@ remove_var(char **env[], char *cmd, char *var, int value_expected)
 		|| ((*env)[i])[name_len] != '='))
 		i++;
 	if (!(*env)[i])
-		return (0);
+		return (EXIT_SUCCESS);
 	if ((new_env = (char**)malloc(sizeof(char*) * env_len(*env))) == NULL)
-		return (1);
+		return (EXIT_FAILURE);
 	new_env = env_ncpy(new_env, *env, 0, i);
 	new_env = env_ncpy(new_env, &((*env)[i + 1]), i, env_len(*env) - i - 1);
 	new_env[env_len(*env) - 1] = NULL;
-	ft_printf("\n----------------tmpenv =\n");
-	print_env(new_env, 0);
 	*env = free_env(env);
 	*env = env_dup(new_env);
 	new_env = free_env(&new_env);
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 	void
