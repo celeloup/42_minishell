@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/13 17:53:51 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/22 15:08:33 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int		main(int argc, char *argv[], char *env[])
 		error_exit("signal", "failed.");
 	}*/
 	environnement = init_env(env);
-	ft_printf("env0 = %s\n", environnement[0]);
+	//ft_printf("env0 = %s\n", environnement[0]);
 	cmd_list = NULL;
 	while (42)
 	{

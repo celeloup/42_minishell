@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/11 09:41:17 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/13 17:46:38 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/03 13:41:31 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,11 +173,13 @@ int		exec_cmd(t_cmd *cmd, char *env[])
 	int retour;
 
 	retour = 0;
+	//write(1, cmd->argv[0], ft_strlen(cmd->argv[0]));
+	//write(1, "\n", 1);
 	if (redirections(cmd->rdir) == -1)
 		error_exit("redirection", "failed.");
 	if (is_builtins(cmd, env) == -1)
 	{
-		get_cmd_path(&(cmd->argv[0]), env);
+		//get_cmd_path(&(cmd->argv[0]), env);
 		if (execve(cmd->argv[0], cmd->argv, env) == -1)
 			error_exit(cmd->argv[0], "command not found.");
 	}
@@ -255,7 +257,7 @@ void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd)
 		waitpid(pid, &status, 0);
 	}
 }
-
+/*
 void	pipeline(t_cmd *cmd, char *env[]) //a proteger
 {
 	int fd[2];
@@ -264,7 +266,7 @@ void	pipeline(t_cmd *cmd, char *env[]) //a proteger
 	int status;
 
 	while (cmd != NULL) {
-		ft_printf("piping cmd %s \n", cmd->argv[0]);
+		//ft_printf("piping cmd %s \n", cmd->argv[0]);
 		pipe(fd);
 		if ((pid = fork()) == -1) {
 			error_exit("fork", "failed");
@@ -290,16 +292,10 @@ void	pipeline(t_cmd *cmd, char *env[]) //a proteger
 				cmd = NULL;
 		}
 	}
-	ft_printf("end of pipeline\n");
+	//ft_printf("end of pipeline\n");
 }
-
-/*
-** exec_cmds -> loops through each command and execute it
-** Create a child process to execute cmd,
-** Check if cmd has a pipe -> to exec_pipeline
-** Else -> to exec_cmd
-** Wait for child process to finish
 */
+
 
 int		modify_var(char **env[], char *var)
 {
@@ -317,54 +313,104 @@ int		modify_env(t_cmd *cmd, char **env[])
 }
 
 
+void		pipeline(t_cmd *cmd, char *env[])
+{
+	int saved_stdout = dup(1);
+	if (saved_stdout == -1)
+		write(1, "bad stdout dup", 14);
+	int	saved_stdin = dup(0);
+	if (saved_stdin == -1)
+		write(1, "bad stdin dup", 13);
+	int fdin;
+	fdin = dup(saved_stdin);
+	if (fdin == -1)
+		write(1, "bad fdin dup", 12);
+	int ret;
+	int fdout;
+	while (1)
+	{
+		dup2(fdin, 0);
+		if (fdin == -1)
+			write(1, "bad fdin dup 2", 14);
+		close(fdin);
+		
+		if (cmd->next == NULL)
+			fdout = dup(saved_stdout);
+		else
+		{
+			int fdpipe[2];
+			pipe(fdpipe);
+			fdout = fdpipe[1];
+			fdin = fdpipe[0];
+		}
+		dup2(fdout, 1);
+		if (fdin == -1)
+			write(1, "bad fdout dup 2", 15);
+		close(fdout);
+		ret = fork();
+		if (ret == 0)
+		{
+			exec_cmd(cmd, env);
+		}
+		if (cmd->pipe)
+			cmd = cmd->next;
+		else
+			break;
+	}
+	dup2(saved_stdin, 0);
+	dup2(saved_stdout, 1);
+	close(saved_stdin);
+	close(saved_stdout);
+	waitpid(ret, NULL, 0);
+}
+
+/*
+** exec_cmds -> loops through each command and execute it
+** Create a child process to execute cmd,
+** Check if cmd has a pipe -> to exec_pipeline
+** Else -> to exec_cmd
+** Wait for child process to finish
+*/
+
 int		exec_cmds(t_cmd *cmd, char **env[])
 {
 	pid_t	pid;
 	int		status;
-	int saved_stdout;
-	int saved_stdin;
+	//int saved_stdout;
+	//int saved_stdin;
 
 	while (cmd)
 	{
-		// duplicate stdin et stdout
-		saved_stdin = dup(0);
-		saved_stdout = dup(1);
-		// catch if it's a function that modifies env = export, unset, cd ?
-		/*if (cmd->argv[0] && ft_strcmp("export", cmd->argv[0]) == 0)
-		{
-			modify_env(cmd, env);
-		}
-		else
-		{*/
-			if (cmd->pipe == 1)
-					pipeline(cmd, *env);
+		//saved_stdin = dup(0);
+		//saved_stdout = dup(1);
+		
+		//else
+		//{
+			if ((pid = fork()) == -1)
+				error_exit("fork", "failed."); //maybe return ici instead ?
+			if (pid > 0)
+			{
+				waitpid(pid, &status, 0);
+				kill(pid, SIGTERM);
+			}
 			else
 			{
-				if ((pid = fork()) == -1)
-					error_exit("fork", "failed."); //maybe return ici instead ?
-				if (pid > 0)
-				{
-					waitpid(pid, &status, 0);
-					kill(pid, SIGTERM);
-				}
+				if (cmd->pipe == 1)
+					pipeline(cmd, *env);
 				else
-				{
-					//if (cmd->pipe == 1)
-					//	exec_pipeline(cmd, *env, STDIN_FILENO);
-					//else
-						exec_cmd(cmd, *env);
-				}
+					exec_cmd(cmd, *env);
 			}
 		//}
 		while (cmd->next && cmd->pipe == 1)
 				cmd = cmd->next;
 		cmd = cmd->next;
+		/*
 		dup2(saved_stdout, 1);
 		close(saved_stdout);
 		dup2(saved_stdin, 0);
-		close(saved_stdin);
+		close(saved_stdin);*/
 	}	
-	return (0);
+	//return (0);
 	//return (status);
-	//return (WEXITSTATUS(status));
+	return (WEXITSTATUS(status));
 }
