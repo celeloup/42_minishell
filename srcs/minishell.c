@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/07/22 16:01:45 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/22 16:04:29 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int		main(int argc, char *argv[], char *env[])
 			int test = 0;
 			if (cmd_list)
 			{
-				exec_cmds(cmd_list, &environment);
+				test = exec_cmds(cmd_list, &environnement);
 				cmd_list = free_cmd(cmd_list);
 			}
 			//ft_printf("ret test = %d\n", test);

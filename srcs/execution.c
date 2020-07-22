@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/11 09:41:17 by celeloup          #+#    #+#             */
-/*   Updated: 2020/07/22 16:02:23 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/22 16:04:09 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,112 @@ void	exec_pipeline(t_cmd *cmd, char **env[], int in_fd)
 		waitpid(pid, &status, 0);
 	}
 }
+/*
+void	pipeline(t_cmd *cmd, char *env[]) //a proteger
+{
+	int fd[2];
+	pid_t pid;
+	int fdd = 0;
+	int status;
+
+	while (cmd != NULL) {
+		//ft_printf("piping cmd %s \n", cmd->argv[0]);
+		pipe(fd);
+		if ((pid = fork()) == -1) {
+			error_exit("fork", "failed");
+			exit(1);
+		}
+		else if (pid == 0) {
+			dup2(fdd, 0);
+			if (cmd->next != NULL) {
+				dup2(fd[1], 1);
+			}
+			close(fd[0]);
+			exec_cmd(cmd, env);
+			exit(1);
+		}
+		else {
+			waitpid(pid, &status, 0);
+			kill(pid, SIGTERM);
+			close(fd[1]);
+			fdd = fd[0];
+			if (cmd->pipe)
+				cmd = cmd->next;
+			else
+				cmd = NULL;
+		}
+	}
+	//ft_printf("end of pipeline\n");
+}
+*/
+
+
+int		modify_var(char **env[], char *var)
+{
+	(*env)[0] = ft_strdup(var);
+	return 0;
+}
+
+int		modify_env(t_cmd *cmd, char **env[])
+{
+	if (redirections(cmd->rdir) == -1)
+		return(-1);
+	modify_var(env, cmd->argv[1]);
+	write(1, "modified env !", 14);
+	return (0);
+}
+
+
+void		pipeline(t_cmd *cmd, char *env[])
+{
+	int saved_stdout = dup(1);
+	if (saved_stdout == -1)
+		write(1, "bad stdout dup", 14);
+	int	saved_stdin = dup(0);
+	if (saved_stdin == -1)
+		write(1, "bad stdin dup", 13);
+	int fdin;
+	fdin = dup(saved_stdin);
+	if (fdin == -1)
+		write(1, "bad fdin dup", 12);
+	int ret;
+	int fdout;
+	while (1)
+	{
+		dup2(fdin, 0);
+		if (fdin == -1)
+			write(1, "bad fdin dup 2", 14);
+		close(fdin);
+		
+		if (cmd->next == NULL)
+			fdout = dup(saved_stdout);
+		else
+		{
+			int fdpipe[2];
+			pipe(fdpipe);
+			fdout = fdpipe[1];
+			fdin = fdpipe[0];
+		}
+		dup2(fdout, 1);
+		if (fdin == -1)
+			write(1, "bad fdout dup 2", 15);
+		close(fdout);
+		ret = fork();
+		if (ret == 0)
+		{
+			exec_cmd(cmd, env);
+		}
+		if (cmd->pipe)
+			cmd = cmd->next;
+		else
+			break;
+	}
+	dup2(saved_stdin, 0);
+	dup2(saved_stdout, 1);
+	close(saved_stdin);
+	close(saved_stdout);
+	waitpid(ret, NULL, 0);
+}
 
 void	pipeline(t_cmd *cmd, char *env[]) //a proteger
 {
@@ -346,8 +452,13 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 		while (cmd->next && cmd->pipe == 1)
 				cmd = cmd->next;
 		cmd = cmd->next;
-		ft_putstr("add child");
-		(*child)++;
-	}
-	return (status);
+		/*
+		dup2(saved_stdout, 1);
+		close(saved_stdout);
+		dup2(saved_stdin, 0);
+		close(saved_stdin);*/
+	}	
+	//return (0);
+	//return (status);
+	return (WEXITSTATUS(status));
 }
