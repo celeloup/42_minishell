@@ -6,11 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/11 09:41:17 by celeloup          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2020/07/22 15:58:03 by celeloup         ###   ########.fr       */
-=======
-/*   Updated: 2020/06/13 17:46:38 by celeloup         ###   ########.fr       */
->>>>>>> wip modified pipeline
+/*   Updated: 2020/07/22 16:02:23 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,11 +171,7 @@ void	get_cmd_path(char **cmd, char *env[])
 ** If not, execute with execve with correct path
 */
 
-<<<<<<< HEAD
 int		exec_cmd(t_cmd *cmd, char **env[])
-=======
-int		exec_cmd(t_cmd *cmd, char *env[])
->>>>>>> wip modified pipeline
 {
 	int retour;
 
@@ -230,11 +222,7 @@ void	redirect_pipe(int old_fd, int new_fd)
 ** in parent -> call exec_pipeline again with pipe fd
 */
 
-<<<<<<< HEAD
 void	exec_pipeline(t_cmd *cmd, char **env[], int in_fd)
-=======
-void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd)
->>>>>>> wip modified pipeline
 {
 	pid_t	pid;
 	int		fd[2];
@@ -316,25 +304,6 @@ void	pipeline(t_cmd *cmd, char *env[]) //a proteger
 ** Wait for child process to finish
 */
 
-<<<<<<< HEAD
-=======
-int		modify_var(char **env[], char *var)
-{
-	(*env)[0] = ft_strdup(var);
-	return 0;
-}
-
-int		modify_env(t_cmd *cmd, char **env[])
-{
-	if (redirections(cmd->rdir) == -1)
-		return(-1);
-	modify_var(env, cmd->argv[1]);
-	write(1, "modified env !", 14);
-	return (0);
-}
-
-
->>>>>>> wip modified pipeline
 int		exec_cmds(t_cmd *cmd, char **env[])
 {
 	pid_t	pid;
@@ -377,19 +346,8 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 		while (cmd->next && cmd->pipe == 1)
 				cmd = cmd->next;
 		cmd = cmd->next;
-<<<<<<< HEAD
 		ft_putstr("add child");
 		(*child)++;
 	}
 	return (status);
-=======
-		dup2(saved_stdout, 1);
-		close(saved_stdout);
-		dup2(saved_stdin, 0);
-		close(saved_stdin);
-	}	
-	return (0);
-	//return (status);
-	//return (WEXITSTATUS(status));
->>>>>>> wip modified pipeline
 }

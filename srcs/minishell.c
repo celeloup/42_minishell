@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/07/22 16:01:11 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/22 16:01:45 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,9 @@ int		main(int argc, char *argv[], char *env[])
 	{
 		ft_putstr_fd("SIGCHLD\n", 2);
 		error_exit("signal", "failed.");
-	}
-	environment = env_dup(env);
+	}*/
+	environnement = init_env(env);
+	//ft_printf("env0 = %s\n", environnement[0]);
 	cmd_list = NULL;
 	while (42)
 	{
