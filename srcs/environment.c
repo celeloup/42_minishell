@@ -1,17 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   environnement.c                                    :+:      :+:    :+:   */
+/*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/10 21:28:53 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/11 10:41:14 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/25 15:48:04 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <stdio.h>
+
+char	**init_env(char *env[])
+{
+	int	i;
+	char	**new_env;
+
+	i = 0;
+	while (env[i])
+		i++;
+	if ((new_env = malloc((i + 1) * sizeof(char*))) == NULL)
+		return (NULL);
+	i = 0;
+	while (env[i])
+	{
+		new_env[i] = ft_strdup(env[i]);
+		i++;
+	}
+	new_env[i] = NULL;
+	return (new_env);
+}
 
 	int
 env_len(char *env[])
@@ -54,7 +74,7 @@ env_dup(char *env[])
 	char	**new_env;
 
 	i = env_len(env);
-	if ((new_env = (char**)malloc(sizeof(char*) * i + 1)) == NULL)
+	if ((new_env = malloc((i + 1) * sizeof(char*))) == NULL)
 		return (NULL);
 	i = 0;
 	while (env[i])
@@ -66,22 +86,21 @@ env_dup(char *env[])
 	return (new_env);
 }
 
-	char**
-free_env(char **env[])
+	void
+free_env(char *env[])
 {
 	int		i;
 
 	i = 0;
-	while ((*env) && (*env)[i])
+	while (env && env[i])
 	{
-		free((*env)[i]);
+		free(env[i]);
 		env[i] = NULL;
 		i++;
 	}
-	if (*env)
-		free(*env);
-	*env = NULL;
-	return (NULL);
+	if (env)
+		free(env);
+	env = NULL;
 }
 
 
@@ -176,9 +195,9 @@ add_var(char **env[], char *cmd, char *var)
 	new_env[i] = ft_strdup(var);
 	new_env[i + 1] = NULL;
 	if (*env)
-		*env = free_env(env);
+		free_env(*env);
 	*env = env_dup(new_env);
-	new_env = free_env(&new_env);
+	free_env(new_env);
 	return (EXIT_SUCCESS);
 }
 
@@ -206,9 +225,9 @@ remove_var(char **env[], char *cmd, char *var, int value_expected)
 	new_env = env_ncpy(new_env, *env, 0, i);
 	new_env = env_ncpy(new_env, &((*env)[i + 1]), i, env_len(*env) - i - 1);
 	new_env[env_len(*env) - 1] = NULL;
-	*env = free_env(env);
+	free_env(*env);
 	*env = env_dup(new_env);
-	new_env = free_env(&new_env);
+	free_env(new_env);
 	return (EXIT_SUCCESS);
 }
 

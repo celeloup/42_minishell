@@ -6,12 +6,13 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 21:22:06 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/25 14:10:39 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+/* INUTILE SUR LINUX ?? 
 	int
 check_cmd_name(char *name)
 {
@@ -39,7 +40,7 @@ check_cmd_name(char *name)
     low_name = NULL;
     return (i);
 }
-
+*/
     int
 is_not_name(char *input)
 {

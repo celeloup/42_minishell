@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/07/22 16:04:50 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/08/08 15:26:27 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,13 @@
 # define NOT_EXP		0
 # define YES			1
 # define NO				0
-# define ECHO			1
-# define ENV			2
-# define PWD			3
-# define CD				4
+# define FT_EXIT		0
+# define FT_ECHO		1
+# define FT_ENV			2
+# define FT_PWD			3
+# define FT_CD			4
+# define FT_EXPORT		5
+# define FT_UNSET		6
 //# define VALUE		1
 //# define NO_VALUE		0
 
@@ -133,29 +136,30 @@ void	control_c(int num);
 void	signal_handler(int num);
 
 /* builtins.c */
-void	ft_exit(t_cmd *cmd);
-int		ft_echo(t_cmd *cmd);
-void	ft_cd(t_cmd *cmd);
-void	ft_pwd(t_cmd *cmd);
+int		ft_exit(t_cmd *cmd, char **env[]);
+int		ft_echo(t_cmd *cmd, char **env[]);
+int		ft_cd(t_cmd *cmd, char **env[]);
+int		ft_pwd(t_cmd *cmd, char **env[]);
 int		ft_export(t_cmd *cmd, char **env[]);
 int		ft_unset(t_cmd *cmd, char **env[]);
-void	ft_env(char **env[]);
+int		ft_env(t_cmd *cmd, char **env[]);
 
 /* environment.c */
+char	**init_env(char *env[]);
 char	**env_dup(char *env[]);
-char	**free_env(char **env[]);
+void	free_env(char *env[]);
 int		remove_var(char **env[], char *cmd, char *var, int value_expected);
 int		add_var(char **env[], char *cmd, char *var);
 void	print_env(char *env[], int option);
 
 /* execution.c */
-int		is_builtin(t_cmd *cmd, char **env[]);
-int		redirections(t_rdir *rd);
+int		is_builtin(t_cmd *cmd, char *env[]);
+int		redirections(t_rdir *rd, int type);
 void	error_exit(char *actor, char *msg);
-int		exec_cmd(t_cmd *cmd, char **env[]);
+int		exec_cmd(t_cmd *cmd, char *env[]);
 void	close_fd(int fd);
 void	redirect_pipe(int old_fd, int new_fd);
-void	exec_pipeline(t_cmd *cmd, char **env[], int in_fd);
+void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd);
 int		exec_cmds(t_cmd *cmd, char **env[]);
 
 #endif

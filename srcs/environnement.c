@@ -6,10 +6,11 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/10 21:28:53 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/13 13:37:53 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/07/23 10:13:42 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "../includes/minishell.h"
 #include <stdio.h>
 
@@ -45,11 +46,12 @@ void	free_env(char *env[])
 		i++;
 	}
 }
-
+*/
 /**
 ** Adds a variable to the environnement tab.
 ** Var must be of format "VAR=value".
 */
+/*
 int		add_env(char **env[], char *var) //ajouter check si variable existe avant ajout (et si oui, juste modifier) et check variable bon format ?
 {
 	int i;
@@ -72,7 +74,7 @@ int		add_env(char **env[], char *var) //ajouter check si variable existe avant a
 	*env = new_env;
 	return (0);
 }
-
+*/
 /*
 
 int		modify_env(char **env[], char *var, char *value)
@@ -85,7 +87,7 @@ int		remove_env(char **env[], char *var)
 	
 }
 */
-
+/*
 void	print_env(char *env[])
 {
 	int i;
@@ -98,3 +100,4 @@ void	print_env(char *env[])
 		i++;
 	}
 }
+*/

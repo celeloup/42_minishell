@@ -6,7 +6,7 @@
 #    By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/28 15:51:10 by celeloup          #+#    #+#              #
-#    Updated: 2020/05/28 10:46:51 by celeloup         ###   ########.fr        #
+#    Updated: 2020/07/26 21:28:47 by celeloup         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -99,7 +99,7 @@ _WHITE=$ \033[37m
 _END=$ \033[0m
 
 all: $(OBJ_PATH) $(NAME)
-	printf "\33[2K\r$(_GREEN)created: $(NAME)$(_END)\n"
+	printf "\33[2K\r$(_GREEN)created: $(NAME)$(_END)"
 
 $(OBJ_PATH):
 	mkdir $@

@@ -6,7 +6,7 @@
 #    By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-#    Updated: 2020/06/11 11:55:39 by celeloup         ###   ########.fr        #
+#    Updated: 2020/07/26 21:30:21 by celeloup         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,10 +53,11 @@ _CUT		= "\033[k"
 all: launch
 
 launch:
+	echo $(_BLUE)MINISHELL PROJECT$(_END)
 	$(MAKE) $(LIBFT)
-	echo $(_CLEAR)$(_YELLOW)"building - "$(_GREEN)$(NAME)$(_END)
+	echo -n $(_CLEAR)$(_YELLOW)"building - "$(_GREEN)$(NAME)$(_END)
 	$(MAKE) $(NAME)
-	echo $(_GREEN)"\nDone."$(_END)$(_SHOW_CURS)
+	echo $(_GREEN)"\nDone."$(_END)
 
 $(OBJS_DIR):
 	mkdir $@

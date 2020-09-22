@@ -1,0 +1,4 @@
+pwd
+echo hehehhe
+echo hahah ; echo hihi
+env

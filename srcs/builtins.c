@@ -6,31 +6,39 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/12 17:26:04 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/08/06 11:19:37 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	ft_exit(t_cmd *cmd)
+int	 ft_exit(t_cmd *cmd, char **env[])
 {
+	(void)cmd;
+	(void)env;
+	//free_cmd(cmd);
+	//free_env(*env);
+	/*
 	if (cmd && cmd->argv && cmd->argv[1])
 		exit(atoi(cmd->argv[1]));
+	*/
+	/* ???? don't know what it does and have a weird behavior 
 	if (kill(0, SIGTERM))
 	{
 		print_env_error(NULL, cmd->argv[0], errno);
-		exit(EXIT_FAILURE);
-	}
-	else
 		exit(EXIT_SUCCESS);
+	}*/
+	//else
+		//exit(EXIT_SUCCESS);
+	return (-1);
 }
 
-int		ft_echo(t_cmd *cmd)
+int		ft_echo(t_cmd *cmd, char **env[])
 {
 	int		ret;
 	int		i;
 	int		n_option;
-
+	(void)env;
 	ret = EXIT_SUCCESS;
 	i = 1;
 	n_option = 0;
@@ -46,7 +54,8 @@ int		ft_echo(t_cmd *cmd)
 	}
 	if (!n_option && ft_putchar_fd('\n', 1) < 0)
 		ret = EXIT_FAILURE;
-	exit(ret);
+	//exit(ret);
+	return (ret);
 }
 
 /*
@@ -54,11 +63,11 @@ int		ft_echo(t_cmd *cmd)
 ** they won't change the working directory accordingly either. Hence the last if
 */
 
-void	ft_cd(t_cmd *cmd)
+int	ft_cd(t_cmd *cmd, char **env[])
 {
 	int		ret;
 	char	*old_path = NULL;
-
+	(void)env;
 	ret = EXIT_SUCCESS;
 	if (cmd->argv[1])
 		ret = chdir(cmd->argv[1]);
@@ -75,26 +84,32 @@ void	ft_cd(t_cmd *cmd)
 		free(old_path);
 		old_path = NULL;
 	}
-	exit(ret);
+	//exit(ret);
+	return (ret);
 }
 
 /*
 ** getcwd returns a string if success, else NULL
 */
-	void
-ft_pwd(t_cmd *cmd)
+	int
+ft_pwd(t_cmd *cmd, char **env[])
 {
-	if (getcwd(NULL, 0))// verifier que pas de leak sinon faire un char *tmp
+	char *tmp;
+
+	(void)env;
+	if ((tmp = getcwd(NULL, 0)))
 	{
-		ft_putstr_fd(getcwd(NULL, 0), 1);
+		ft_putstr_fd(tmp, 1);
 		ft_putchar_fd('\n', 1);
+		free(tmp);
 	}
 	else
 	{
 		print_env_error(NULL, cmd->argv[0], errno);
 		exit(EXIT_FAILURE);
 	}
-	exit(EXIT_SUCCESS);
+	//exit(EXIT_SUCCESS);
+	return (1);
 }
 
 	int	
@@ -116,10 +131,10 @@ ft_export(t_cmd *cmd, char **env[])
 			print_env_error(cmd->argv[i], cmd->argv[0], errno);
 			ret = EXIT_FAILURE;
 		}
-			
 		i++;
 	}
-	exit(ret);
+	//exit(ret);
+	return (ret);
 }
 
 /*
@@ -152,11 +167,14 @@ ft_unset(t_cmd *cmd, char **env[])
 		}
 		i++;
 	}
-	exit(ret);
+	//exit(ret);
+	return (ret);
 }
 
-void	ft_env(char **env[])
+int	ft_env(t_cmd *cmd, char **env[])
 {
+	(void)cmd;
 	print_env(*env, NO);
-	exit(EXIT_SUCCESS);
+	//exit(EXIT_SUCCESS);
+	return (1);
 }
