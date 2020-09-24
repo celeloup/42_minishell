@@ -6,13 +6,18 @@
 /*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/23 17:59:10 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/24 14:10:23 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 //IFS = Internal Field Separator
+
+/*
+** finds the value of the var (input) in env
+** input starts with a $ sign
+*/
 
 char	*get_var_value(char *input, char *env[])//input démarre avec $
 {
@@ -21,10 +26,10 @@ char	*get_var_value(char *input, char *env[])//input démarre avec $
 	i = 0;
 	// ft_printf("get_var_value env[i] = %s\n", env[i]);
 	// ft_printf("get_var_value input = %s\n", input);
-	if (!input[1])
+	if (input && !input[1])
 		return (ft_strdup("$"));
 	// ft_printf("get_var_value input 1 = %s\n", input);
-	while (env[i])
+	while (input && env[i])
 	{
 		// ft_printf("get_var_value env[i] = %s\n", env[i]);
 		if (!strncmp(env[i], input + 1, ft_strlen(input + 1))

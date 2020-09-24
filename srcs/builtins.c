@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/08/06 11:19:37 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/24 11:16:46 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	 ft_exit(t_cmd *cmd, char **env[])
+int	 	ft_exit(t_cmd *cmd, char **env[])
 {
 	(void)cmd;
 	(void)env;
@@ -63,7 +63,7 @@ int		ft_echo(t_cmd *cmd, char **env[])
 ** they won't change the working directory accordingly either. Hence the last if
 */
 
-int	ft_cd(t_cmd *cmd, char **env[])
+int		ft_cd(t_cmd *cmd, char **env[])
 {
 	int		ret;
 	char	*old_path = NULL;
@@ -91,8 +91,7 @@ int	ft_cd(t_cmd *cmd, char **env[])
 /*
 ** getcwd returns a string if success, else NULL
 */
-	int
-ft_pwd(t_cmd *cmd, char **env[])
+int		ft_pwd(t_cmd *cmd, char **env[])
 {
 	char *tmp;
 
@@ -112,8 +111,7 @@ ft_pwd(t_cmd *cmd, char **env[])
 	return (1);
 }
 
-	int	
-ft_export(t_cmd *cmd, char **env[])
+int		ft_export(t_cmd *cmd, char **env[])
 {
 	int		i;
 	int		ret;
@@ -146,8 +144,7 @@ ft_export(t_cmd *cmd, char **env[])
 **       is not equivalent to an unset of VARIABLE; in the example, VARIABLE
 **       is set to "".
 */
-	int
-ft_unset(t_cmd *cmd, char **env[])
+int		ft_unset(t_cmd *cmd, char **env[])
 {
 	int		i;
 	int		ret;
@@ -171,7 +168,7 @@ ft_unset(t_cmd *cmd, char **env[])
 	return (ret);
 }
 
-int	ft_env(t_cmd *cmd, char **env[])
+int		ft_env(t_cmd *cmd, char **env[])
 {
 	(void)cmd;
 	print_env(*env, NO);
