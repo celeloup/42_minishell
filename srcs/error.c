@@ -6,7 +6,7 @@
 /*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/23 16:25:57 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/24 18:41:58 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,11 @@
 ** Because of var functions uses it is set to its negative value here and reset
 ** to its positive value afterward
 */
-	int
-print_env_error(char *input, char *cmd, int error_type)
+int     print_env_error(char *input, char *cmd, int error_type)
 {
-    ft_putstr_fd("minishell: ", 2);
     if (cmd)
     {
+        ft_putstr_fd("minishell: ", 2);
         ft_putstr_fd(cmd, 2);
         ft_putstr_fd(": ", 2);
     }
@@ -40,8 +39,7 @@ print_env_error(char *input, char *cmd, int error_type)
     return (error_type);
 }
 
-    void
-unexpected_token_msg(char *input)
+void    unexpected_token_msg(char *input)
 {
     // ft_printf("unexpected token msg input = %s\n", input);//debug a supprimer
     if (input && input[1] && input[0] == input[1] && input[1] == '|')

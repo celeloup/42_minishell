@@ -6,7 +6,7 @@
 /*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/24 09:08:35 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/24 18:03:04 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int		main(int argc, char *argv[], char *env[])
 	char	*input;
 	t_cmd	*cmd_list;
 	char	**environment;
-	int	ret;
+	int		status;
 	
 	(void)argc;
 	(void)argv;
@@ -53,8 +53,8 @@ int		main(int argc, char *argv[], char *env[])
 	}*/
 	environment = init_env(env);
 	cmd_list = NULL;
-	ret = 1;
-	while (ret != -1)
+	status = 0;
+	while (status != -1)
 	{
 		prompt(0);
 		get_next_line(0, &input);
@@ -65,10 +65,11 @@ int		main(int argc, char *argv[], char *env[])
 		}
 		else
 		{
+			edit_exit_status(&environment, status);
 			cmd_list = parse_input(input, environment);
 			//print_cmd(cmd_list, 0);
 			if (cmd_list && cmd_list->argv && cmd_list->argv[0])
-				ret = exec_cmds(cmd_list, &environment);
+				status = exec_cmds(cmd_list, &environment);
 			//ft_printf("ret test = %d\n", test);
 			cmd_list = free_cmd(cmd_list);
 			free(input);

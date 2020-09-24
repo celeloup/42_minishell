@@ -6,7 +6,7 @@
 /*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/24 11:05:07 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/24 18:02:53 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,8 +98,7 @@ int     is_cmd_sep(char c);
 int     is_arg_sep(char c);
 
 /* parsing.c */
-char*
-get_env_var(char *var, char *env[]);
+char*	get_env_var(char *var, char *env[]);
 t_cmd	*parse_input(char *input, char *env[]);
 int		len_after_char(char *input, char *env[], int quote, int expanded);
 char	*expanded_str(char *input, char *env[], int quote);
@@ -114,6 +113,9 @@ int		check_cmd_name(char *name);
 /* error.c */
 int		print_env_error(char *input, char *cmd, int error_type);
 int		parsing_error(char *input, int error_type);
+
+/* exit_status.c */
+void	edit_exit_status(char **env[], int status);
 
 /* debug.c */
 void	print_args(int argc, char **argv);

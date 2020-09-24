@@ -6,7 +6,7 @@
 /*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/23 17:59:10 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/24 17:07:30 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,26 @@
 
 //IFS = Internal Field Separator
 
-char	*get_var_value(char *input, char *env[])//input démarre avec $
+/*
+** returns the value of a var (input) in env
+** also returns the value of $?
+** input[0] == '$'
+*/
+char	*get_var_value(char *input, char *env[])
 {
 	size_t	i;
 	
 	i = 0;
-	// ft_printf("get_var_value env[i] = %s\n", env[i]);
-	// ft_printf("get_var_value input = %s\n", input);
-	if (!input[1])
+	if (input && !input[1])
 		return (ft_strdup("$"));
 	// ft_printf("get_var_value input 1 = %s\n", input);
-	while (env[i])
+	while (input && env[i])
 	{
 		// ft_printf("get_var_value env[i] = %s\n", env[i]);
 		if (!strncmp(env[i], input + 1, ft_strlen(input + 1))
 			&& env[i][ft_strlen(input + 1)] 
 			&& env[i][ft_strlen(input + 1)] == '=')
-			return (ft_strdup(ft_strrchr(env[i], '=') + 1));//strrchr ne crée pas un leak ? pas de malloc + => la fonction retourne NULL si rien apres le = 
+			return (ft_strdup(ft_strrchr(env[i], '=') + 1));
 		i++;
 	}
 	return (ft_strdup(""));//vérifier s'il ne renvoie pas plutôt une chaine vide
@@ -100,20 +103,22 @@ int		quote_len(char *input, char *env[], int expanded)
 	else
 		return (single_quote_len(input, expanded));
 }
-	
+
+/*
+** gets the len of a var (input) after =
+** input[0] == '$' 
+*/
 int		var_len(char *input, char *env[], int expanded)//dollar inclus
 {
 	int		len;
 	char	*var_name = NULL;
 	char	*var_value = NULL;
 
-// ft_printf("var_len _ input = %s\n", input);
 	len = 1;
-	// ft_printf("var_len _ &input[len]0 = %s\n", &input[len]);
-	if (input[len] && input[len] == '?')
+	if (input[len] && input[len] == '?' && !expanded)
 		len = 2;
-	else if (input[len])
-		while (input[len] && ft_isalnum(input[len]))// a confirmer
+	//else if
+	while (input[len] && ft_isalnum(input[len]))// a confirmer
 			len++;
 	if (!expanded)
 		return (len);

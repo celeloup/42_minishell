@@ -6,21 +6,24 @@
 /*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/24 11:03:09 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/24 17:18:49 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+/*
+** "?=" is set at the last line of env to store the last exit status value
+*/
 char	**init_env(char *env[])
 {
-	int	i;
-	char	**new_env;
+	int     i;
+	char    **new_env;
 
 	i = 0;
 	while (env[i])
 		i++;
-	if ((new_env = malloc((i + 1) * sizeof(char*))) == NULL)
+	if ((new_env = malloc((i + 2) * sizeof(char*))) == NULL)
 		return (NULL);
 	i = 0;
 	while (env[i])
@@ -28,9 +31,11 @@ char	**init_env(char *env[])
 		new_env[i] = ft_strdup(env[i]);
 		i++;
 	}
-	new_env[i] = NULL;
+	new_env[i] = ft_strdup("?=");
+    new_env[i + 1] = NULL;
 	return (new_env);
 }
+
 t_rdir  *init_rdir(void)
 {
     t_rdir  *rdir;

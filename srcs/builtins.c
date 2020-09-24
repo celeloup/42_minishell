@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/08/06 11:19:37 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/24 18:59:06 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	 ft_exit(t_cmd *cmd, char **env[])
+int		ft_exit(t_cmd *cmd, char **env[])
 {
 	(void)cmd;
 	(void)env;
@@ -35,9 +35,9 @@ int	 ft_exit(t_cmd *cmd, char **env[])
 
 int		ft_echo(t_cmd *cmd, char **env[])
 {
-	int		ret;
 	int		i;
 	int		n_option;
+
 	(void)env;
 	ret = EXIT_SUCCESS;
 	i = 1;
@@ -47,15 +47,14 @@ int		ft_echo(t_cmd *cmd, char **env[])
 	while (cmd && cmd->argv[i])
 	{
 		if (ft_putstr_fd(cmd->argv[i], 1) < 0)
-			ret = EXIT_FAILURE;
+			return (EXIT_FAILURE);
 		if (cmd->argv[i + 1] && ft_putchar_fd(SPACE, 1) < 0)
-			ret = EXIT_FAILURE;
+			return (EXIT_FAILURE);
 		i++;
 	}
 	if (!n_option && ft_putchar_fd('\n', 1) < 0)
-		ret = EXIT_FAILURE;
-	//exit(ret);
-	return (ret);
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 
 /*
@@ -63,10 +62,11 @@ int		ft_echo(t_cmd *cmd, char **env[])
 ** they won't change the working directory accordingly either. Hence the last if
 */
 
-int	ft_cd(t_cmd *cmd, char **env[])
+int		ft_cd(t_cmd *cmd, char **env[])
 {
 	int		ret;
 	char	*old_path = NULL;
+
 	(void)env;
 	ret = EXIT_SUCCESS;
 	if (cmd->argv[1])
@@ -84,15 +84,13 @@ int	ft_cd(t_cmd *cmd, char **env[])
 		free(old_path);
 		old_path = NULL;
 	}
-	//exit(ret);
 	return (ret);
 }
 
 /*
 ** getcwd returns a string if success, else NULL
 */
-	int
-ft_pwd(t_cmd *cmd, char **env[])
+int		ft_pwd(t_cmd *cmd, char **env[])
 {
 	char *tmp;
 
@@ -108,18 +106,14 @@ ft_pwd(t_cmd *cmd, char **env[])
 		print_env_error(NULL, cmd->argv[0], errno);
 		exit(EXIT_FAILURE);
 	}
-	//exit(EXIT_SUCCESS);
-	return (1);
+	return (EXIT_SUCCESS);
 }
 
-	int	
-ft_export(t_cmd *cmd, char **env[])
+int		ft_export(t_cmd *cmd, char **env[])
 {
 	int		i;
-	int		ret;
 
 	i = 1;
-	ret = EXIT_SUCCESS;
 	if (!cmd->argv)
 		exit(EXIT_SUCCESS);
 	if (!cmd->argv[1])
@@ -128,13 +122,14 @@ ft_export(t_cmd *cmd, char **env[])
 	{
 		if (add_var(env, cmd->argv[0], cmd->argv[i]) > 0)
 		{
-			print_env_error(cmd->argv[i], cmd->argv[0], errno);
-			ret = EXIT_FAILURE;
+			//ft_printf("printenvexport");//debug
+			//print_env_error(cmd->argv[i], cmd->argv[0], errno);
+			return(EXIT_FAILURE);
 		}
 		i++;
 	}
 	//exit(ret);
-	return (ret);
+	return (EXIT_SUCCESS);
 }
 
 /*
@@ -146,35 +141,31 @@ ft_export(t_cmd *cmd, char **env[])
 **       is not equivalent to an unset of VARIABLE; in the example, VARIABLE
 **       is set to "".
 */
-	int
-ft_unset(t_cmd *cmd, char **env[])
+
+int		ft_unset(t_cmd *cmd, char **env[])
 {
 	int		i;
-	int		ret;
 
 	i = 1;
-	ret = EXIT_SUCCESS;
 	if (!cmd->argv)
-		exit(EXIT_FAILURE);
+		return(EXIT_FAILURE);
 	if (!cmd->argv[1])
-		exit(EXIT_SUCCESS);
+		return(EXIT_SUCCESS);
 	while (cmd->argv[i])
 	{
 		if (remove_var(env, cmd->argv[0], cmd->argv[i], NO) > 0)
 		{
 			print_env_error(cmd->argv[i], cmd->argv[0], errno);
-			ret = EXIT_FAILURE;
+			return(EXIT_FAILURE);
 		}
 		i++;
 	}
-	//exit(ret);
-	return (ret);
+	return (EXIT_SUCCESS);
 }
 
-int	ft_env(t_cmd *cmd, char **env[])
+int		ft_env(t_cmd *cmd, char **env[])
 {
 	(void)cmd;
 	print_env(*env, NO);
-	//exit(EXIT_SUCCESS);
-	return (1);
+	return (EXIT_SUCCESS);
 }

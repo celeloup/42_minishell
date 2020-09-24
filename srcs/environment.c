@@ -6,7 +6,7 @@
 /*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/10 21:28:53 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/24 11:03:15 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/24 18:43:20 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ int		edit_var(char **env[], char *cmd, char *var)
 
 /**
 ** Adds a variable to the environment tab.
-** Var must be of format "VAR=value". VAR is lower or upper case or digit
+** Var must be of format "VAR=value". VAR is lower or upper case or digit or ?
 */
 int		add_var(char **env[], char *cmd, char *var)
 {
@@ -230,9 +230,9 @@ void	print_env(char *env[], int option)
 	i = 0;
 	while (env[i])
 	{
-		if (option == EXP)
+		if (ft_strncmp(env[i], "?=", 2) && option == EXP)
 			print_env_export(env[i]);
-		else
+		else if (ft_strncmp(env[i], "?=", 2))
 			ft_putstr_fd(env[i], 1);
 		ft_putchar_fd('\n', 1);
 		i++;

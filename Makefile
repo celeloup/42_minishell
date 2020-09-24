@@ -6,13 +6,13 @@
 #    By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-#    Updated: 2020/09/24 11:05:30 by amenadier        ###   ########.fr        #
+#    Updated: 2020/09/24 17:40:22 by amenadier        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			= minishell
 
-SRCS_FILE		= minishell.c parsing.c debug.c init.c free.c signal_handling.c builtins.c error.c environment.c execution.c check.c parsing_utils.c
+SRCS_FILE		= minishell.c parsing.c debug.c init.c free.c signal_handling.c builtins.c error.c environment.c execution.c check.c parsing_utils.c exit_status.c
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS			= $(addprefix $(OBJS_DIR), $(SRCS_FILE:.c=.o))
