@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/25 16:51:21 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/25 16:58:26 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,6 @@ int		ft_cd(t_cmd *cmd, char **env[])
 /*
 ** getcwd returns a string if success, else NULL
 */
-
 int		ft_pwd(t_cmd *cmd, char **env[])
 {
 	char *tmp;
