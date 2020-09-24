@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   check.c                                            :+:      :+:    :+:   */
+/*   debug.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/05/28 12:22:22 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/23 15:25:53 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,14 @@ print_args(int argc, char **argv)
 {  
     int i;
 
-    ft_printf("\nARGC = %d\nARGV = ", argc);
+    ft_printf("\nARGV = ");
     i = 0;
     while (i < argc)
     {
-        ft_printf("%s,", argv[i]);
+        if (argv[i])
+            ft_printf("%s,", argv[i]);
+        else
+            ft_printf("argc > argv count...");
         i++;
     }
 }
@@ -58,9 +61,9 @@ print_cmd(t_cmd *cmd, int i)
         return ;
     }
     ft_printf("\n----CMD%d----", i);
-    if (cmd->argv && cmd->argc)
+    if (cmd->argc)
         ft_printf("\nARGC = %d", cmd->argc);
-    if (cmd->argv && cmd->argc)
+    if (cmd->argc && cmd->argv)
         print_args(cmd->argc, cmd->argv);
     else
         ft_printf("\nARGV = no arg found");
@@ -73,5 +76,10 @@ print_cmd(t_cmd *cmd, int i)
         ft_printf("\nRDIR = no rdir found");
     ft_printf("\nPIPE = %d", cmd->pipe);
     if (cmd->next)
+    {
+        ft_printf("\nNext command...");
         print_cmd(cmd->next, i + 1);
+    }
+    else
+        ft_printf("\nlast command printed");
 }

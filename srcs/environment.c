@@ -3,38 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/10 21:28:53 by celeloup          #+#    #+#             */
-/*   Updated: 2020/07/25 15:48:04 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/24 11:03:15 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <stdio.h>
 
-char	**init_env(char *env[])
-{
-	int	i;
-	char	**new_env;
-
-	i = 0;
-	while (env[i])
-		i++;
-	if ((new_env = malloc((i + 1) * sizeof(char*))) == NULL)
-		return (NULL);
-	i = 0;
-	while (env[i])
-	{
-		new_env[i] = ft_strdup(env[i]);
-		i++;
-	}
-	new_env[i] = NULL;
-	return (new_env);
-}
-
-	int
-env_len(char *env[])
+int		env_len(char *env[])
 {
 	int		i;
 
@@ -44,8 +23,7 @@ env_len(char *env[])
 	return (i);
 }
 
-	char**
-env_ncpy(char *dest[], char *src[], int start, int n)
+char	**env_ncpy(char *dest[], char *src[], int start, int n)
 {
 	int		i;
 
@@ -67,8 +45,7 @@ env_ncpy(char *dest[], char *src[], int start, int n)
 	return (dest);
 }
 
-	char**
-env_dup(char *env[])
+char	**env_dup(char *env[])
 {
 	int		i;
 	char	**new_env;
@@ -86,8 +63,7 @@ env_dup(char *env[])
 	return (new_env);
 }
 
-	void
-free_env(char *env[])
+void	free_env(char *env[])
 {
 	int		i;
 
@@ -107,8 +83,7 @@ free_env(char *env[])
 /*
 ** If the var format is valid, var_is_valid returns '=' index, else 0 or -errno;
 */
-	int
-var_is_valid(char *var, char *cmd, int value_expected)
+int		var_is_valid(char *var, char *cmd, int value_expected)
 {
 	if (is_not_name(var) < 0 || (is_not_name(var) && !value_expected))
 		return (print_env_error(var, cmd, INVALID_NAME));
@@ -122,8 +97,7 @@ var_is_valid(char *var, char *cmd, int value_expected)
 		return (is_name(var));
 }
 
-	int
-var_is_set(char **env[], char *var)
+int		var_is_set(char **env[], char *var)
 {
 	char	*tmp;
 	char	*to_check;
@@ -148,8 +122,7 @@ var_is_set(char **env[], char *var)
 	return (ret);
 }
 
-	int
-edit_var(char **env[], char *cmd, char *var)
+int		edit_var(char **env[], char *cmd, char *var)
 {
 	int	name_len;
 	int	i;
@@ -176,8 +149,7 @@ edit_var(char **env[], char *cmd, char *var)
 ** Adds a variable to the environment tab.
 ** Var must be of format "VAR=value". VAR is lower or upper case or digit
 */
-	int
-add_var(char **env[], char *cmd, char *var)
+int		add_var(char **env[], char *cmd, char *var)
 {
 	int		i;
 	char	**new_env;
@@ -205,8 +177,7 @@ add_var(char **env[], char *cmd, char *var)
 ** remove_var returns 0 if var does is not already in the environment because
 ** unset does not consider this as an error (and therefore returns 0 too)
 */
-	int
-remove_var(char **env[], char *cmd, char *var, int value_expected)
+int		remove_var(char **env[], char *cmd, char *var, int value_expected)
 {
 	char	**new_env;
 	int		name_len;
@@ -231,8 +202,7 @@ remove_var(char **env[], char *cmd, char *var, int value_expected)
 	return (EXIT_SUCCESS);
 }
 
-	void
-print_env_export(char *var)
+void	print_env_export(char *var)
 {
 	int	in_quote;
 	int	i;
@@ -253,8 +223,7 @@ print_env_export(char *var)
 	ft_putchar_fd('\"', 1);
 }
 
-	void
-print_env(char *env[], int option)
+void	print_env(char *env[], int option)
 {
 	int i;
 

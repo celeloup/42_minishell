@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/08/04 15:39:49 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/23 17:59:10 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,19 @@
 
 //IFS = Internal Field Separator
 
-	char*
-get_var_value(char *input, char *env[])//input démarre avec $
+char	*get_var_value(char *input, char *env[])//input démarre avec $
 {
 	size_t	i;
 	
 	i = 0;
+	// ft_printf("get_var_value env[i] = %s\n", env[i]);
+	// ft_printf("get_var_value input = %s\n", input);
 	if (!input[1])
 		return (ft_strdup("$"));
+	// ft_printf("get_var_value input 1 = %s\n", input);
 	while (env[i])
 	{
+		// ft_printf("get_var_value env[i] = %s\n", env[i]);
 		if (!strncmp(env[i], input + 1, ft_strlen(input + 1))
 			&& env[i][ft_strlen(input + 1)] 
 			&& env[i][ft_strlen(input + 1)] == '=')
@@ -33,8 +36,7 @@ get_var_value(char *input, char *env[])//input démarre avec $
 	return (ft_strdup(""));//vérifier s'il ne renvoie pas plutôt une chaine vide
 }
 
-	int
-backslash_len(char *input, int quote, int expanded)
+int		backslash_len(char *input, int quote, int expanded)
 {
 	if (input[0] != BKSLASH)
 		return (0);
@@ -49,8 +51,7 @@ backslash_len(char *input, int quote, int expanded)
 		return (1);
 }
 	
-	int
-single_quote_len(char *input, int expanded)
+int		single_quote_len(char *input, int expanded)
 {
 	int len;
 	int	exp_len;
@@ -69,8 +70,7 @@ single_quote_len(char *input, int expanded)
 	return (len);
 }
 	
-	int
-double_quote_len(char *input, char *env[], int expanded)
+int		double_quote_len(char *input, char *env[], int expanded)
 {
 	int len;
 	int	exp_len;
@@ -93,8 +93,7 @@ double_quote_len(char *input, char *env[], int expanded)
 	return (len);
 }
 
-	int
-quote_len(char *input, char *env[], int expanded)
+int		quote_len(char *input, char *env[], int expanded)
 {
 	if (input[0] == DOUBLE_QUOTE)
 		return (double_quote_len(input, env, expanded));
@@ -102,14 +101,15 @@ quote_len(char *input, char *env[], int expanded)
 		return (single_quote_len(input, expanded));
 }
 	
-	int
-var_len(char *input, char *env[], int expanded)//dollar inclus
+int		var_len(char *input, char *env[], int expanded)//dollar inclus
 {
 	int		len;
 	char	*var_name = NULL;
 	char	*var_value = NULL;
 
+// ft_printf("var_len _ input = %s\n", input);
 	len = 1;
+	// ft_printf("var_len _ &input[len]0 = %s\n", &input[len]);
 	if (input[len] && input[len] == '?')
 		len = 2;
 	else if (input[len])
@@ -133,12 +133,12 @@ var_len(char *input, char *env[], int expanded)//dollar inclus
 	return (len);
 }
 	
-	int
-len_after_char(char *input, char *env[], int quote, int expanded)
+int		len_after_char(char *input, char *env[], int quote, int expanded)
 {
+	// ft_printf("len_after_char _ input = %s\n", input);
 	if (!input)
 		return(0);
-	else if (QUOTE(input[0]) && !quote)
+	else if (is_quote(input[0]) && !quote)
 		return (quote_len(input, env, expanded));
 	else if (input[0] == BKSLASH)
 		return (backslash_len(input, quote, expanded));
@@ -148,15 +148,15 @@ len_after_char(char *input, char *env[], int quote, int expanded)
 		return (1);
 }
 		
-	int
-token_len(char *input, char *env[], int expanded)
+int		token_len(char *input, char *env[], int expanded)
 {
 	int len;
 	int exp_len;
 
 	len = 0;
 	exp_len = 0;
-	while (input[len] && !(ARG_SEP(input[len])))
+	// ft_printf("token_len _ input = %s\n", input);
+	while (input[len] && !(is_arg_sep(input[len])))
 	{
 		exp_len -= len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
 		exp_len += len_after_char(&input[len], env, NO_QUOTE, EXP);
@@ -167,8 +167,7 @@ token_len(char *input, char *env[], int expanded)
 	return (len);
 }
 
-	char*
-get_var_name(char *input)
+char	*get_var_name(char *input)
 {
 	int		i;
 	int		len;
@@ -182,16 +181,17 @@ get_var_name(char *input)
 	name[0] = DOLLAR;
 	name[len] = '\0';
 	i = 1;
+	// ft_printf("parse55");
 	while (input[i] && ft_isalnum(input[i]))
 	{
 		name[i] = input[i];
 		i++;
 	}
+	// ft_printf("parse56");
 	return (name);
 }
 
-	char*
-get_escaped_char(char *input, int quote)
+char	*get_escaped_char(char *input, int quote)
 {
 	char	*ret = NULL;
 	int		len;
@@ -215,8 +215,7 @@ get_escaped_char(char *input, int quote)
 	return (ret);
 }
 
-	char*
-get_single_quote(char *input)
+char	*get_single_quote(char *input)
 {
 	char	*ret;
 	int		len;
@@ -226,8 +225,7 @@ get_single_quote(char *input)
 	return (ret);
 }
 
-	char*
-get_double_quote(char *input, char *env[])
+char	*get_double_quote(char *input, char *env[])
 {
 	char	*ret;
 	char	*str;
@@ -254,8 +252,7 @@ get_double_quote(char *input, char *env[])
 	return (ret);
 }
 
-	char*
-get_quote(char *input, char *env[])
+char	*get_quote(char *input, char *env[])
 {
 	if (input[0] == SINGLE_QUOTE)
 		return (get_single_quote(input));
@@ -263,14 +260,14 @@ get_quote(char *input, char *env[])
 		return (get_double_quote(input, env));
 }
 	
-	char*
-expanded_str(char *input, char *env[], int quote)
+char	*expanded_str(char *input, char *env[], int quote)
 {
+	// ft_printf("parse65");
 	if (!input)
 		return (NULL);//vérfier ?
 	else if (input[0] == BKSLASH)
 		return (get_escaped_char(input, quote));
-	else if (QUOTE(input[0]) && !quote)
+	else if (is_quote(input[0]) && !quote)
 		return (get_quote(input, env));
 	else if (input[0] == DOLLAR)
 		return (get_var_value(get_var_name(input), env));
@@ -278,8 +275,7 @@ expanded_str(char *input, char *env[], int quote)
 		return (ft_substr(input, 0, 1));
 }
 		
-	char*
-get_token(char *input, char *env[])
+char	*get_token(char *input, char *env[])
 {
 	char	*token = NULL;
 	char	*str = NULL;
@@ -305,8 +301,7 @@ get_token(char *input, char *env[])
 	return (token);
 }
 
-	int
-get_rdir_type(t_rdir *rdir, char *input)
+int		get_rdir_type(t_rdir *rdir, char *input)
 {
 	int	i;
 	int rdir_type;
@@ -322,19 +317,18 @@ get_rdir_type(t_rdir *rdir, char *input)
 		i++;
 	else
 		i += 2;
-	while (input[i] && IFS(input[i]))
+	while (input[i] && is_ifs(input[i]))
 		i++;
 	if (!input[i])
 		return (parsing_error(NULL, UNEXPECTED_TOKEN));
-	else if (input[i] && (RDIR(input[i]) || CMD_SEP(input[i])))
+	else if (input[i] && (is_rdir(input[i]) || is_cmd_sep(input[i])))
 		return (parsing_error(&input[i], UNEXPECTED_TOKEN));
 	if (rdir)
 		rdir->type = rdir_type;
 	return (i);
 }
 
-	int
-get_rdir_value(t_rdir *rdir, char *input, char *env[])
+int		get_rdir_value(t_rdir *rdir, char *input, char *env[])
 {
 	// cas d'erreur si token_len = 0 ?
 	if (!rdir)// a confirmer
@@ -346,8 +340,7 @@ get_rdir_value(t_rdir *rdir, char *input, char *env[])
 	return (token_len(input, env, NOT_EXP));
 }
 	
-	int
-get_cmd_rdir(t_rdir **rdir, char *input, char *env[])
+int		get_cmd_rdir(t_rdir **rdir, char *input, char *env[])
 {
 	int		i;
 
@@ -366,8 +359,7 @@ get_cmd_rdir(t_rdir **rdir, char *input, char *env[])
 	return (i);
 }
 
-	void
-get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
+void	get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 {
 	int	i;
 	int	j;
@@ -384,7 +376,7 @@ get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 			i += token_len(&input[i], env, NOT_EXP);
 			j++;
 		}
-		else if (RDIR(input[i]))
+		else if (is_rdir(input[i]))
 		{
 			i += get_rdir_type(NULL, &input[i]);
 			i += token_len(&input[i], env, NOT_EXP);
@@ -394,50 +386,62 @@ get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 	}
 }
 
-	int
-cmd_len(t_cmd *cmd, char *input, char *env[])
+int		cmd_len(t_cmd *cmd, char *input, char *env[])
 {
 	int	len;
 
 	len = 0;
-	while (input && input[len] && IFS(input[len]))
+	// ft_printf("parse21\n");
+	while (input && input[len] && is_ifs(input[len]))
 		len++;
-	if (input && input[len] && (CMD_SEP(input[len])))
+		// ft_printf("cmd_len &input[len] 22 = %s\n", &input[len]);
+	if (input && input[len] && (is_cmd_sep(input[len])))
 		return (parsing_error(input, UNEXPECTED_TOKEN));
-	while (input && input[len] && !(CMD_SEP(input[len])))
+		// ft_printf("parse23\n");
+	while (input && input[len] && !(is_cmd_sep(input[len])))
 	{	
+		// ft_printf("input[len]=%s\n", &input[len]);
 		if (token_len(&input[len], env, NOT_EXP))
 		{
+			// ft_printf("parse2401\n");
 			cmd->argc++;
 			len += token_len(&input[len], env, NOT_EXP);
 		}
-		else if (RDIR(input[len]))
+		else if (is_rdir(input[len]))
 		{
+			// ft_printf("parse241\n");
 			if (get_rdir_type(NULL, &input[len]) > 0)
 				len += get_cmd_rdir(&cmd->rdir, &input[len], env);
 			else
 				return (-1);
+			// ft_printf("parse242\n");
 		}
 		else
 			len++;
 	}
+	// ft_printf("parse25\n");
 	return (len);
 }
 
-	t_cmd*
-parse_input(char *input, char *env[])
+t_cmd	*parse_input(char *input, char *env[])
 {
 	t_cmd	*cmd = NULL;
 	int		len;
 	
+	// ft_printf("parse_input env[i] = %s\n", env[0]);//outil debug a supprimer
+	// ft_printf("parse1\n");
 	if (!(cmd = init_cmd()))
 		return (NULL);
+		// ft_printf("parse10\n");
 	if ((len = cmd_len(cmd, input, env)) == -1)
 		return (free_cmd(cmd));
-	if (input && input[len] && input[len + 1] && CMD_SEP(input[len + 1]))
+		// ft_printf("parse11\n");
+	if (input && input[len] && input[len + 1] && is_cmd_sep(input[len + 1]))
 		parsing_error(&input[len], UNEXPECTED_TOKEN);
+		// ft_printf("parse13\n");
 	cmd->argv = (char **)malloc(sizeof(char *) * (cmd->argc + 1));
 	cmd->argv[cmd->argc] = NULL;
+	// ft_printf("parse15\n");
 	get_cmd_argv(cmd, input, env, len);
 	if (input && input[len] && (input[len] == ';' || input[len] == '|'))
 	{

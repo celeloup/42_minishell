@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/08/08 15:26:27 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/24 11:05:07 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,6 @@
 # define SINGLE_QUOTE	39
 # define DOUBLE_QUOTE	34
 # define DOLLAR			36
-
-/* ASCII values combo */ /*norme ? */
-# define IFS(x)			(x == SPACE || x == TAB || x == NEWLINE)
-# define QUOTE(x)		(x == SINGLE_QUOTE || x == DOUBLE_QUOTE)
-# define ESCAPE_CHAR(x)	(x == 'a' || x == 'b' || x == 'e' || x == 'f' || x == 'n' || x == 'r' || x == 't' || x == 'v' || x == BACKSLASH || x == 'x' || x == 'c')
-# define RDIR(x)		(x == '>' || x == '<')
-# define CMD_SEP(x)		(x == '|' || x == ';')
-# define ARG_SEP(x)		(IFS(x) || RDIR(x) || CMD_SEP(x))
 
 /* arg types or options for some functions */
 # define RDIR_IN		1
@@ -98,6 +90,13 @@ typedef	struct		s_cmd{
 /* minishell.c */
 void	prompt(int error);
 
+/* parsing_utils.c */
+int     is_ifs(char c);
+int     is_quote(char c);
+int     is_rdir(char c);
+int     is_cmd_sep(char c);
+int     is_arg_sep(char c);
+
 /* parsing.c */
 char*
 get_env_var(char *var, char *env[]);
@@ -126,6 +125,7 @@ t_cmd	*free_cmd(t_cmd *cmd_list);
 void	free_rdir(t_rdir **rdir);
 
 /* init.c */
+char	**init_env(char *env[]);
 t_cmd	*init_cmd();
 t_rdir	*init_rdir();
 
@@ -145,7 +145,6 @@ int		ft_unset(t_cmd *cmd, char **env[]);
 int		ft_env(t_cmd *cmd, char **env[]);
 
 /* environment.c */
-char	**init_env(char *env[]);
 char	**env_dup(char *env[]);
 void	free_env(char *env[]);
 int		remove_var(char **env[], char *cmd, char *var, int value_expected);

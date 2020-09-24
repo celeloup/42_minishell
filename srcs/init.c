@@ -3,17 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/06/09 20:53:18 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/24 11:03:09 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-    t_rdir*
-init_rdir(void)
+char	**init_env(char *env[])
+{
+	int	i;
+	char	**new_env;
+
+	i = 0;
+	while (env[i])
+		i++;
+	if ((new_env = malloc((i + 1) * sizeof(char*))) == NULL)
+		return (NULL);
+	i = 0;
+	while (env[i])
+	{
+		new_env[i] = ft_strdup(env[i]);
+		i++;
+	}
+	new_env[i] = NULL;
+	return (new_env);
+}
+t_rdir  *init_rdir(void)
 {
     t_rdir  *rdir;
 
@@ -27,8 +45,7 @@ init_rdir(void)
     return (rdir);
 }
 
-    t_cmd*
-init_cmd(void)
+t_cmd   *init_cmd(void)
 {
     t_cmd   *cmd;
 

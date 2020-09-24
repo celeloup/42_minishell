@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/08/05 17:30:40 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/24 09:08:35 by amenadier        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int		main(int argc, char *argv[], char *env[])
 	char	*input;
 	t_cmd	*cmd_list;
 	char	**environment;
-	int ret;
+	int	ret;
 	
 	(void)argc;
 	(void)argv;
@@ -65,9 +65,9 @@ int		main(int argc, char *argv[], char *env[])
 		}
 		else
 		{
-			cmd_list = parse_input(input, NULL);
+			cmd_list = parse_input(input, environment);
 			//print_cmd(cmd_list, 0);
-			if (cmd_list->argv[0])
+			if (cmd_list && cmd_list->argv && cmd_list->argv[0])
 				ret = exec_cmds(cmd_list, &environment);
 			//ft_printf("ret test = %d\n", test);
 			cmd_list = free_cmd(cmd_list);
