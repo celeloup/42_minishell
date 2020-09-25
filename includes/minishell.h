@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/25 15:05:34 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/25 16:32:09 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,19 +85,19 @@ typedef	struct		s_cmd{
 	struct s_cmd	*next;
 }					t_cmd;
 
-/* minishell.c */
+/*
+** minishell.c
+*/
 void	prompt(int error);
-
-/* parsing_utils.c */
-int     is_ifs(char c);
-int     is_quote(char c);
-int     is_rdir(char c);
-int     is_cmd_sep(char c);
-int     is_arg_sep(char c);
 
 /*
 ** parsing files
 */
+int		is_ifs(char c);
+int		is_quote(char c);
+int		is_rdir(char c);
+int		is_cmd_sep(char c);
+int		is_arg_sep(char c);
 int		single_quote_len(char *input, int expanded);
 int		double_quote_len(char *input, char *env[], int expanded);
 int		quote_len(char *input, char *env[], int expanded);
@@ -115,11 +115,6 @@ char	*get_token(char *input, char *env[]);
 int		get_rdir_type(t_rdir *rdir, char *input);
 int		get_cmd_rdir(t_rdir **rdir, char *input, char *env[]);
 t_cmd	*parse_input(char *input, char *env[]);
-
-/*
-** exit_status.c
-*/
-void	edit_exit_status(char **env[], int status);
 
 /* debug.c */
 void	print_args(int argc, char **argv);
@@ -151,6 +146,7 @@ void	signal_handler(int num);
 /*
 ** builtins files
 */
+void	edit_exit_status(char **env[], int status);
 int		print_env_error(char *input, char *cmd, int error_type);
 int		print_env(char *env[], int option);
 int		ft_env(t_cmd *cmd, char **env[]);
