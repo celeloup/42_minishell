@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/22 12:10:10 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/25 11:47:30 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int		(*builtin(char *cmd_name))(t_cmd*, char***)
 	else if (ft_strcmp("unset", cmd_name) == 0)
 		return (ft_unset);
 	else if (ft_strcmp("env", cmd_name) == 0)
-		return (ft_env);
+		return (print_env);
 	else
 		return (NULL);
 }

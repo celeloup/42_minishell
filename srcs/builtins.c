@@ -3,35 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/24 18:59:06 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/25 11:48:15 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-int		ft_exit(t_cmd *cmd, char **env[])
-{
-	(void)cmd;
-	(void)env;
-	//free_cmd(cmd);
-	//free_env(*env);
-	/*
-	if (cmd && cmd->argv && cmd->argv[1])
-		exit(atoi(cmd->argv[1]));
-	*/
-	/* ???? don't know what it does and have a weird behavior 
-	if (kill(0, SIGTERM))
-	{
-		print_env_error(NULL, cmd->argv[0], errno);
-		exit(EXIT_SUCCESS);
-	}*/
-	//else
-		//exit(EXIT_SUCCESS);
-	return (-1);
-}
 
 int		ft_echo(t_cmd *cmd, char **env[])
 {
@@ -39,7 +18,6 @@ int		ft_echo(t_cmd *cmd, char **env[])
 	int		n_option;
 
 	(void)env;
-	ret = EXIT_SUCCESS;
 	i = 1;
 	n_option = 0;
 	if (cmd && cmd->argv[1] && !(ft_strcmp("-n", cmd->argv[1])))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/24 18:02:53 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/25 11:47:18 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,20 +138,19 @@ void	control_c(int num);
 void	signal_handler(int num);
 
 /* builtins.c */
-int		ft_exit(t_cmd *cmd, char **env[]);
 int		ft_echo(t_cmd *cmd, char **env[]);
 int		ft_cd(t_cmd *cmd, char **env[]);
 int		ft_pwd(t_cmd *cmd, char **env[]);
 int		ft_export(t_cmd *cmd, char **env[]);
 int		ft_unset(t_cmd *cmd, char **env[]);
-int		ft_env(t_cmd *cmd, char **env[]);
+
 
 /* environment.c */
 char	**env_dup(char *env[]);
 void	free_env(char *env[]);
 int		remove_var(char **env[], char *cmd, char *var, int value_expected);
 int		add_var(char **env[], char *cmd, char *var);
-void	print_env(char *env[], int option);
+int		print_env(char *env[], int option);
 
 /* execution.c */
 int		is_builtin(t_cmd *cmd, char *env[]);

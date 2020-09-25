@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/10 21:28:53 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/24 18:43:20 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/25 11:45:46 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,7 @@ void	print_env_export(char *var)
 	ft_putchar_fd('\"', 1);
 }
 
-void	print_env(char *env[], int option)
+int		print_env(char *env[], int option)
 {
 	int i;
 
@@ -237,4 +237,5 @@ void	print_env(char *env[], int option)
 		ft_putchar_fd('\n', 1);
 		i++;
 	}
+	return (EXIT_SUCCESS);
 }
