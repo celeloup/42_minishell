@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/25 12:36:55 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/25 23:32:51 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,116 +128,67 @@ void	error_exit(char *actor, char *msg)
 }
 
 /*
-** Type 1 = in, type 2 = out, type 3 = both
+** direction 1 = in, direction 2 = out, direction 3 = both
 */
 
-int		redirections(t_rdir *rd, int type)
+int		redirect(t_rdir *rd, int direction, int fd, int flux)
 {
-	int fd;
-	int ret;
-
+	if (fd != -1 && flux != -1)
+	{
+		if (dup2(fd, flux) == -1)
+			return (-1);
+		if (close(fd) == -1)
+			return (-1);
+	}
 	while (rd)
 	{
-		if (rd->type == RDIR_IN && (type == 1 || type == 3))
+		if (rd->type == RDIR_IN && (direction == 1 || direction == 3))
 		{
 			fd = open(rd->value, O_RDONLY);
 			if (fd == -1)
 				error_exit(rd->value, strerror(errno));
-			if (dup2(fd, STDIN_FILENO) == -1)
-				return (-1);
-			if (close(fd) == -1)
-				return (-1);
-			ret = 1;
+			flux = STDIN_FILENO;
 		}
-		else if (rd->type == RDIR_OUT && (type == 2 || type == 3))
+		else if (rd->type == RDIR_OUT && (direction == 2 || direction == 3))
 		{
 			fd = open(rd->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
 				error_exit(rd->value, strerror(errno));
-			if (dup2(fd, STDOUT_FILENO) == -1)
-				return (-1);
-			if (close(fd) == -1)
-				return (-1);
-			ret = 1;
+			flux = STDOUT_FILENO;
 		}
-		else if (type == 1 || type == 3)
+		else if (direction == 1 || direction == 3)
 		{
 			fd = open(rd->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd == -1)
 				error_exit(rd->value, strerror(errno));
-			if (dup2(fd, STDOUT_FILENO) == -1)
-				return (-1);
-			if (close(fd) == -1)
-				return (-1);
-			ret = 1;
+			flux = STDOUT_FILENO;
 		}
+		if (dup2(fd, flux) == -1)
+			return (-1);
+		if (close(fd) == -1)
+			return (-1);
 		rd = rd->next;
 	}
-	return (ret);
-}
-
-int		get_fd_redir(t_rdir *rd, int type)
-{
-	int fd;
-
-	fd = -2;
-	while (rd)
-	{
-		if (rd->type == RDIR_IN && (type == 1 || type == 3))
-		{
-			fd = open(rd->value, O_RDONLY);
-			if (fd == -1)
-				error_exit(rd->value, strerror(errno));
-		}
-		else if (rd->type == RDIR_OUT && (type == 2 || type == 3))
-		{
-			fd = open(rd->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd == -1)
-				error_exit(rd->value, strerror(errno));
-		}
-		else if (type == 1 || type == 3)
-		{
-			fd = open(rd->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd == -1)
-				error_exit(rd->value, strerror(errno));
-		}
-		rd = rd->next;
-	}
-	return (fd);
-}
-
-int		apply_redir(int fd, int flux)
-{
-	if (fd == -2)
-		return (0);
-	if (dup2(fd, flux) == -1)
-		error_exit("dup", strerror(errno));
-	if (close(fd) == -1)
-		error_exit("dup", strerror(errno));
 	return (0);
 }
 
 int		exec_cmds(t_cmd *cmd, char **env[])
 {
-	int		status;
-	int		ret;
-	t_cmd	*prev_cmd;
-	int		fdin;
-	int		fdout;
-	int		tmpin;
-	int		tmpout;
-	int		pipe_length;
-	int		fdpipe[2];
+	int status;
+	int pid;
+	int fdpipe[2];
+	int pipe_length;
+	int tmpin;
+	int tmpout;
 
 	tmpin = dup(STDIN_FILENO);
 	tmpout = dup(STDOUT_FILENO);
 	status = 0;
-	prev_cmd = NULL;
 	while (cmd)
 	{
 		if (builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
 		{
-			if (redirections(cmd->rdir, 3) == -1)
+			if (redirect(cmd->rdir, 3, -1, -1) == -1)
 				error_exit("redirection", "failed.");
 			status = (*builtin(cmd->argv[0]))(cmd, env);
 		}
@@ -245,35 +196,25 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 		{
 			if (builtin(cmd->argv[0]) == NULL)
 				get_cmd_path(&cmd->argv[0], *env);
-			//PIPE
 			if (cmd->pipe == 1)
 			{
 				pipe_length = size_pipeline(cmd);
-				if ((fdin = get_fd_redir(cmd->rdir, 1)) == -2)
-					fdin = dup(tmpin);
+				fdpipe[0] = dup(tmpin);
 				while (pipe_length != 0)
 				{
-					apply_redir(fdin, 0);
-					if (cmd->pipe == 0)
-					{
-						if ((fdout = get_fd_redir(cmd->rdir, 2)) == -2)
-							fdout = dup(tmpout);
-					}
-					else
+					redirect(cmd->rdir, 1, fdpipe[0], STDIN_FILENO);
+					if (cmd->pipe != 0)
 					{
 						pipe(fdpipe);
-						fdout = fdpipe[1];
-						fdin = fdpipe[0];
+						redirect(cmd->rdir, 2, fdpipe[1], STDOUT_FILENO);
 					}
-					apply_redir(fdout, 1);
-					ret = fork();
-					if (ret == 0)
+					else
+						redirect(cmd->rdir, 2, tmpout, STDOUT_FILENO);
+					pid = fork();
+					if (pid == 0)
 					{
 						if (builtin(cmd->argv[0]) != NULL)
-						{
-							status = (*builtin(cmd->argv[0]))(cmd, env);
-							return (-1);
-						}
+							return ((*builtin(cmd->argv[0]))(cmd, env));
 						else
 						{
 							get_cmd_path(&cmd->argv[0], *env);
@@ -284,36 +225,26 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 					if (cmd->pipe == 1)
 						cmd = cmd->next;
 					pipe_length--;
-					waitpid(ret, &status, 0);
+					waitpid(pid, &status, 0);
 				}
 			}
-			//NO PIPE
 			else
 			{
-				ret = fork();
-				if (ret == 0)
+				pid = fork();
+				if (pid == 0)
 				{
-					if (redirections(cmd->rdir, 3) == -1)
+					if (redirect(cmd->rdir, 3, -1, -1) == -1)
 						error_exit("redirection", "failed.");
-					if (builtin(cmd->argv[0]) != NULL)
-					{
-						status = (*builtin(cmd->argv[0]))(cmd, env);
-						return (-1);
-					}
-					else
-					{
-						get_cmd_path(&cmd->argv[0], *env);
-						execve(cmd->argv[0], cmd->argv, *env);
-						error_exit(cmd->argv[0], "command not found.");
-					}
+					execve(cmd->argv[0], cmd->argv, *env);
+					error_exit(cmd->argv[0], "command not found.");
 				}
 				else
-					waitpid(ret, &status, 0);
+					waitpid(pid, &status, 0);
 			}
 		}
 		cmd = cmd->next;
 	}
-	apply_redir(tmpin, STDIN_FILENO);
-	apply_redir(tmpout, STDOUT_FILENO);
-	return (status);
+	redirect(NULL, 0, tmpin, STDIN_FILENO);
+	redirect(NULL, 0, tmpout, STDOUT_FILENO);
+	return (WEXITSTATUS(status));
 }

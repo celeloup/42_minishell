@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenadier <amenadier@student.42.fr>        +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/24 18:03:04 by amenadier        ###   ########.fr       */
+/*   Updated: 2020/09/25 23:39:29 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int		main(int argc, char *argv[], char *env[])
 	environment = init_env(env);
 	cmd_list = NULL;
 	status = 0;
-	while (status != -1)
+	while (status != -1 && status != 255)
 	{
 		prompt(0);
 		get_next_line(0, &input);
@@ -75,6 +75,9 @@ int		main(int argc, char *argv[], char *env[])
 			free(input);
 		}
 	}
+	input = get_var_value("$?", environment);
+	status = ft_atoi(input);
+	free(input);
 	free_env(environment);
-	return (0);
+	return (status);
 }
