@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing-var.c                                      :+:      :+:    :+:   */
+/*   parsing_var.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/09/25 14:34:33 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/28 11:40:34 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,13 @@ char	*get_var_value(char *input, char *env[])
 	return (ft_strdup(""));//vérifier s'il ne renvoie pas plutôt une chaine vide
 }
 
-int		var_len_not_exp(char *input, int expanded)
+int		var_len_not_exp(char *input)
 {
 	int		len;
 
 	len = 1;
-	if (input[len] && input[len] == '?' && !expanded)
-		len = 2;
+	if (input[len] && input[len] == '?')
+		return (2);
 	while (input[len] && ft_isalnum(input[len]))
 		len++;
 	return (len);
@@ -62,7 +62,7 @@ int		var_len(char *input, char *env[], int expanded)
 
 	var_name = NULL;
 	var_value = NULL;
-	len = var_len_not_exp(input, expanded);
+	len = var_len_not_exp(input);
 	if (!expanded)
 		return (len);
 	if (expanded && len == 1)
@@ -87,7 +87,7 @@ char	*get_var_name(char *input)
 	int		len;
 	char	*name;
 
-	len = var_len(input, NULL, NOT_EXP);//gérer le cas rien apres dollar ?
+	len = var_len(input, NULL, NOT_EXP);
 	if (len == 2 && input[1] == '?')
 		return (ft_strdup("$?"));
 	name = NULL;
