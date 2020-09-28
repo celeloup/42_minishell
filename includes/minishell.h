@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/25 16:32:09 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/28 17:25:29 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ int		ft_pwd(t_cmd *cmd, char **env[]);
 int		env_len(char *env[]);
 char	**env_dup(char *env[]);
 char	**env_ncpy(char *dest[], char *src[], int start, int n);
-int		var_is_valid(char *var, char *cmd, int value_expected);
+int		var_is_valid(char *env[], char *var, char *cmd, int value_expected);
 
 /*
 ** execution.c

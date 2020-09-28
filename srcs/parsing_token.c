@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/09/25 15:07:02 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/28 18:22:10 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ char	*get_token(char *input, char *env[])
 	str = NULL;
 	i = 0;
 	j = 0;
+	ft_printf("\nGETTOKENdebut\ninput = %s", token);//debug
 	token = (char *)malloc(sizeof(char) * (token_len(input, env, EXP) + 1));
 	token[token_len(input, env, EXP)] = '\0';
 	while (i < token_len(input, env, NOT_EXP) && j < token_len(input, env, EXP))
@@ -72,5 +73,6 @@ char	*get_token(char *input, char *env[])
 		j += len_after_char(&input[i], env, NO_QUOTE, EXP);
 		i += len_after_char(&input[i], env, NO_QUOTE, NOT_EXP);
 	}
+	ft_printf("\nGETTOKENfin\ntoken = %s", token);//debug
 	return (token);
 }

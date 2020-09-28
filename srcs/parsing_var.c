@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/09/28 11:40:34 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/28 18:10:22 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char	*get_var_value(char *input, char *env[])
 			return (ft_strdup(ft_strrchr(env[i], '=') + 1));
 		i++;
 	}
-	return (ft_strdup(""));//vérifier s'il ne renvoie pas plutôt une chaine vide
+	return (NULL);//vérifier s'il ne renvoie pas plutôt une chaine vide
 }
 
 int		var_len_not_exp(char *input)
@@ -86,11 +86,12 @@ char	*get_var_name(char *input)
 	int		i;
 	int		len;
 	char	*name;
-
+	
+	name = NULL;
+	ft_printf("\nGET_VAR_NAME\ninput is: %s / name is: %s", input, name);//debug
 	len = var_len(input, NULL, NOT_EXP);
 	if (len == 2 && input[1] == '?')
 		return (ft_strdup("$?"));
-	name = NULL;
 	name = (char *)malloc(sizeof(char) * (len + 1));
 	name[0] = DOLLAR;
 	name[len] = '\0';
@@ -100,5 +101,8 @@ char	*get_var_name(char *input)
 		name[i] = input[i];
 		i++;
 	}
+	if (name && name[0] && name[0] == DOLLAR)
+		
+	ft_printf("\ninput is: %s / name is: %s", input, name);//debug
 	return (name);
 }

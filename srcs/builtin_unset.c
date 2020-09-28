@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin-unset.c                                    :+:      :+:    :+:   */
+/*   builtin_unset.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:02:20 by user42            #+#    #+#             */
-/*   Updated: 2020/09/25 13:03:23 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/28 17:27:20 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int		remove_var(char **env[], char *cmd, char *var, int value_expected)
 	int		name_len;
 	int		i;
 
-	if ((name_len = var_is_valid(var, NULL, value_expected)) <= 0)
-		return (-var_is_valid(var, cmd, value_expected));
+	if ((name_len = var_is_valid(*env, var, NULL, value_expected)) <= 0)
+		return (-var_is_valid(*env, var, cmd, value_expected));
 	i = 0;
 	while ((*env)[i] && (ft_strncmp((*env)[i], var, name_len)
 		|| ((*env)[i])[name_len] != '='))

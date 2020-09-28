@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/25 15:14:26 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/28 14:36:47 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	**init_env(char *env[])
 		new_env[i] = ft_strdup(env[i]);
 		i++;
 	}
-	new_env[i] = ft_strdup("?=");
+	new_env[i] = ft_strdup("?=0");
 	new_env[i + 1] = NULL;
 	return (new_env);
 }

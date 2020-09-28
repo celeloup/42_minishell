@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin-export.c                                   :+:      :+:    :+:   */
+/*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/09/25 13:13:08 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/28 17:38:05 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ int		edit_var(char **env[], char *cmd, char *var)
 	int	name_len;
 	int	i;
 
-	if (var_is_valid(var, NULL, YES) > 0)
-		name_len = var_is_valid(var, NULL, YES);
+	if (var_is_valid(*env, var, NULL, YES) > 0)
+		name_len = var_is_valid(*env, var, NULL, YES);
 	else
-		return (-var_is_valid(var, cmd, YES));
+		return (-var_is_valid(*env, var, cmd, YES));
 	i = 0;
 	while ((*env)[i])
 	{
@@ -70,8 +70,11 @@ int		add_var(char **env[], char *cmd, char *var)
 	int		i;
 	char	**new_env;
 
-	if (var_is_valid(var, NULL, YES) <= 0)
-		return (-(var_is_valid(var, cmd, YES)));
+	if (var_is_valid(*env, var, NULL, YES) <= 0)
+{
+ft_printf("\naddvar pos 0 var = %s", var);//debug
+		return (-(var_is_valid(*env, var, cmd, YES)));
+}
 	if (var_is_set(env, var))
 		return (edit_var(env, cmd, var));
 	i = 0;
@@ -100,6 +103,7 @@ int		ft_export(t_cmd *cmd, char **env[])
 		print_env(*env, EXP);
 	while (cmd->argv[i])
 	{
+		ft_printf("\nft_export argv = %s", cmd->argv[1]);//debug
 		if (add_var(env, cmd->argv[0], cmd->argv[i]) > 0)
 			return (EXIT_FAILURE);
 		i++;

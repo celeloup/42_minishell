@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env-var.c                                          :+:      :+:    :+:   */
+/*   builtin_utils_var.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:12:12 by user42            #+#    #+#             */
-/*   Updated: 2020/09/25 13:45:02 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/28 17:49:02 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,12 +83,41 @@ int		is_name(char *input)
 ** The last else if returns 0 for case export 'VAR' with no '='
 */
 
-int		var_is_valid(char *var, char *cmd, int value_expected)
+void	expand_var(char *env[], char **var)
 {
+	char	*new_var;
+	char	*var_value;
+	char	*tmp;
+	int		i;
+
+	i = 1;
+	while (*var && *var[i] && *var[i] != '=')
+		i++;
+	var_value = ft_strdup(*var + i);
+	tmp = ft_substr(*var, 0, i);
+	new_var = get_var_value(tmp, env);
+	free(*var);
+	*var = ft_strjoin(new_var, var_value);
+	free(new_var);
+	new_var = NULL;
+	free(tmp);
+	tmp = NULL;
+	free(var_value);
+	var_value = NULL;
+}
+
+int		var_is_valid(char *env[], char *var, char *cmd, int value_expected)
+{
+	if (var && var[0] && var[0] == '$')
+		expand_var(env, &var);
 	if (is_not_name(var) < 0 || (is_not_name(var) && !value_expected))
+	{
 		return (print_env_error(var, cmd, INVALID_NAME));
+	}
 	else if (is_not_name(var) && value_expected && var[is_not_name(var)] != '=')
+	{
 		return (print_env_error(var, cmd, INVALID_NAME));
+	}
 	else if (is_not_name(var) && value_expected && var[is_not_name(var)] == '=')
 		return (is_not_name(var));
 	else if (is_name(var) && value_expected)

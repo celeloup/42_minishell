@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/25 23:32:51 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/09/28 14:52:11 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,5 +246,5 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	}
 	redirect(NULL, 0, tmpin, STDIN_FILENO);
 	redirect(NULL, 0, tmpout, STDOUT_FILENO);
-	return (WEXITSTATUS(status));
+	return (status);
 }
