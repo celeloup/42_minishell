@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 15:10:26 by user42            #+#    #+#             */
-/*   Updated: 2020/09/25 15:10:32 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/30 08:38:56 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,9 @@ void	print_args(int argc, char **argv)
 			ft_printf("argc > argv count...");
 		i++;
 	}
+	ft_putchar_fd('\n', 1);
 }
+
 void	print_cmd_rdir(t_rdir *rdir)
 {
 	char *type;

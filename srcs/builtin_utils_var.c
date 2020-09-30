@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:12:12 by user42            #+#    #+#             */
-/*   Updated: 2020/09/28 17:49:02 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/29 21:28:04 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ int		is_not_name(char *input)
 {
 	int i;
 
-	if (!input || (input[0] && !(ft_isalpha(input[0]) || input[0] == '_')))
+	if (!input || !input[0] || (input[0] && !(ft_isalpha(input[0])
+		|| input[0] == '_')))
 		return (-1);
 	i = 1;
 	while (input[i] && (ft_isalnum(input[i]) || input[i] == '_'))
@@ -111,13 +112,9 @@ int		var_is_valid(char *env[], char *var, char *cmd, int value_expected)
 	if (var && var[0] && var[0] == '$')
 		expand_var(env, &var);
 	if (is_not_name(var) < 0 || (is_not_name(var) && !value_expected))
-	{
 		return (print_env_error(var, cmd, INVALID_NAME));
-	}
 	else if (is_not_name(var) && value_expected && var[is_not_name(var)] != '=')
-	{
 		return (print_env_error(var, cmd, INVALID_NAME));
-	}
 	else if (is_not_name(var) && value_expected && var[is_not_name(var)] == '=')
 		return (is_not_name(var));
 	else if (is_name(var) && value_expected)

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/09/28 17:38:05 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/30 09:56:39 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,7 @@ int		add_var(char **env[], char *cmd, char *var)
 	char	**new_env;
 
 	if (var_is_valid(*env, var, NULL, YES) <= 0)
-{
-ft_printf("\naddvar pos 0 var = %s", var);//debug
 		return (-(var_is_valid(*env, var, cmd, YES)));
-}
 	if (var_is_set(env, var))
 		return (edit_var(env, cmd, var));
 	i = 0;
@@ -95,18 +92,30 @@ ft_printf("\naddvar pos 0 var = %s", var);//debug
 int		ft_export(t_cmd *cmd, char **env[])
 {
 	int		i;
+	char	**env_cpy;
+	char	*var;
+	int		ret;
 
 	i = 1;
-	if (!cmd->argv)
-		exit(EXIT_SUCCESS);
-	if (!cmd->argv[1])
+	while (cmd->argv[i] && !get_expanded_token(cmd->argv[i], *env))
+		i++;
+	if (!cmd->argv[i])
 		print_env(*env, EXP);
+	env_cpy = env_dup(*env);
+	var = NULL;
+	ret = 0;
 	while (cmd->argv[i])
 	{
-		ft_printf("\nft_export argv = %s", cmd->argv[1]);//debug
-		if (add_var(env, cmd->argv[0], cmd->argv[i]) > 0)
-			return (EXIT_FAILURE);
+		if (var)
+			free(var);
+		var = get_expanded_token(cmd->argv[i], env_cpy);
+		if (var && add_var(env, cmd->argv[0], var) > 0)
+			ret = 1;
 		i++;
 	}
-	return (EXIT_SUCCESS);
+	if (var)
+		free(var);
+	var = NULL;
+	free_env(env_cpy);
+	return (ret);
 }

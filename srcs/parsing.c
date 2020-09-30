@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/28 18:31:42 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/30 09:39:18 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ char	*expanded_str(char *input, char *env[], int quote)
 		return (get_escaped_char(input, quote));
 	else if (is_quote(input[0]) && !quote)
 		return (get_quote(input, env));
-	//else if (input[0] == DOLLAR)
-	//	return (get_var_value(get_var_name(input), env));
+	else if (input[0] == DOLLAR)
+		return (get_var_value(get_var_name(input), env));
 	else
 		return (ft_substr(input, 0, 1));
 }
@@ -35,7 +35,7 @@ void	get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 	j = 0;
 	if (!input)
 		return ;
-	ft_printf("\nGETCMDARGVdebut\ninput is: %s", input);//debug
+	//ft_printf("\nGETCMDARGVdebut\ninput is: %s", input);//debug
 	while (input[i] && i < cmd_len)
 	{
 		if (token_len(&input[i], env, NOT_EXP))
@@ -52,8 +52,8 @@ void	get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 		else
 			i++;
 	}
-	ft_printf("\nGETCMDARGVfin");//debug
-	print_args(cmd->argc, cmd->argv);//debug
+	//ft_printf("\nGETCMDARGVfin");//debug
+	//print_args(cmd->argc, cmd->argv);//debug
 }
 
 int		cmd_len(t_cmd *cmd, char *input, char *env[])
@@ -100,7 +100,7 @@ t_cmd	*parse_input(char *input, char *env[])
 	cmd->argv = (char **)malloc(sizeof(char *) * (cmd->argc + 1));
 	cmd->argv[cmd->argc] = NULL;
 	get_cmd_argv(cmd, input, env, len);
-	print_args(cmd->argc, cmd->argv);//debug
+	//print_args(cmd->argc, cmd->argv);//debug
 	if (input && input[len] && (input[len] == ';' || input[len] == '|'))
 	{
 		if (input[len] == '|')

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:02:20 by user42            #+#    #+#             */
-/*   Updated: 2020/09/28 17:27:20 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/30 10:08:35 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,20 +55,26 @@ int		remove_var(char **env[], char *cmd, char *var, int value_expected)
 int		ft_unset(t_cmd *cmd, char **env[])
 {
 	int		i;
+	char	**env_cpy;
+	char	*var;
+	int		ret;
 
 	i = 1;
-	if (!cmd->argv)
-		return (EXIT_FAILURE);
-	if (!cmd->argv[1])
-		return (EXIT_SUCCESS);
+	while (cmd->argv[i] && !get_expanded_token(cmd->argv[i], *env))
+		i++;
+	if (!cmd->argv[i])
+		return (0);
+	env_cpy = env_dup(*env);
+	var = NULL;
+	ret = 0;
 	while (cmd->argv[i])
 	{
-		if (remove_var(env, cmd->argv[0], cmd->argv[i], NO) > 0)
-		{
-			print_env_error(cmd->argv[i], cmd->argv[0], errno);
-			return (EXIT_FAILURE);
-		}
+		if (var)
+			free(var);
+		var = get_expanded_token(cmd->argv[i], env_cpy);
+		if (var && remove_var(env, cmd->argv[0], var, NO) > 0)
+			ret = 1;
 		i++;
 	}
-	return (EXIT_SUCCESS);
+	return (ret);
 }

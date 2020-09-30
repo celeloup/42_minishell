@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/28 17:25:29 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/29 21:07:51 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ int		backslash_len(char *input, int quote, int expanded);
 char	*get_escaped_char(char *input, int quote);
 int		unexpected_token_msg(char *input);
 int		token_len(char *input, char *env[], int expanded);
+char	*get_expanded_token(char *input, char *env[]);
 char	*get_token(char *input, char *env[]);
 int		get_rdir_type(t_rdir *rdir, char *input);
 int		get_cmd_rdir(t_rdir **rdir, char *input, char *env[]);

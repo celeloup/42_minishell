@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/28 15:08:57 by user42            #+#    #+#             */
-/*   Updated: 2020/09/28 15:55:26 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/29 20:21:42 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,22 +46,37 @@ int		ft_cd_arg_issue(t_cmd *cmd, char **env[])
 	return (0);
 }
 
-int		ft_cd_error_msg(char *arg)
+void	ft_cd_error_msg(char *arg)
 {
 	ft_putstr_fd("minishell: cd: ", 2);
 	ft_putstr_fd(arg, 2);
 	ft_putstr_fd(": ", 2);
 	ft_putstr_fd(strerror(errno), 2);
 	ft_putchar_fd('\n', 2);
-	return (1);
 }
 
 int		ft_cd(t_cmd *cmd, char **env[])
 {
+	char	*path;
+	int		ret;
+
+	path = NULL;
+	ret = 0;
 	if (!cmd->argv[1] || cmd->argc > 2)
 		return (ft_cd_arg_issue(cmd, env));
-	if (chdir(cmd->argv[1]))
-		return (ft_cd_error_msg(cmd->argv[1]));
-	else
-		return (0);
+	path = get_expanded_token(cmd->argv[1], *env);
+	if (!path || (path && !path[0]))
+	{
+		if (path)
+			free(path);
+		path = NULL;
+		return (ft_cd_no_arg(env));
+	}
+	ret = chdir(path);
+	if (ret && path)
+		ft_cd_error_msg(path);
+	if (path)
+		free(path);
+	path = NULL;
+	return (ret);
 }

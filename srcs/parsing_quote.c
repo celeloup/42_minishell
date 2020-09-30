@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing-quote.c                                    :+:      :+:    :+:   */
+/*   parsing_quote.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:20:14 by user42            #+#    #+#             */
-/*   Updated: 2020/09/25 14:31:01 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/30 11:22:44 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ char	*get_double_quote(char *input, char *env[])
 		j += len_after_char(&input[i], env, DOUBLE_QUOTE, EXP);
 		i += len_after_char(&input[i], env, DOUBLE_QUOTE, NOT_EXP);
 	}
+	//if (!ret)
+	//	ret = ft_strdup("");
 	return (ret);
 }
 

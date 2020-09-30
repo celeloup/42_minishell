@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/28 16:15:50 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/30 11:27:24 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,18 +73,26 @@ int		ft_echo(t_cmd *cmd, char **env[])
 {
 	int		i;
 	int		n_option;
+	char	*towrite;
 
-	(void)env;
 	n_option = 0;
 	i = ft_echo_first_arg(cmd, &n_option);
+	towrite = NULL;
 	while (cmd && cmd->argv[i])
 	{
-		if (ft_putstr_fd(cmd->argv[i], 1) < 0)
-			return (EXIT_FAILURE);
-		if (cmd->argv[i][0] && cmd->argv[i + 1] && ft_putchar_fd(SPACE, 1) < 0)
-			return (EXIT_FAILURE);
+		if (towrite)
+			free(towrite);
+		towrite = get_expanded_token(cmd->argv[i], *env);
+		//ft_printf("\nECHO, argv = %s; towrite = %s\n", cmd->argv[i], towrite);//debug
+		ft_putstr_fd(towrite, 1);
+		if (towrite && cmd->argv[i][0] && cmd->argv[i + 1]
+			&& get_expanded_token(cmd->argv[i + 1], *env))
+			ft_putchar_fd(SPACE, 1);
 		i++;
 	}
+	if (towrite)
+		free(towrite);
+	towrite = NULL;
 	if (!n_option && ft_putchar_fd('\n', 1) < 0)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
