@@ -1,4 +1,22 @@
 pwd
+echo $?
 echo hehehhe
+echo $?
 echo hahah ; echo hihi
-env
+echo $?
+""
+echo $?
+echo "\s" ; echo "\\s"
+echo $?
+echo "12\""
+echo $?
+echo "bip | bip ; coyotte > < \" "
+echo $?
+echo \>
+echo $?
+echo bonjour \; ls
+echo $?
+echo $
+echo $?
+$LESS$VAR
+echo $?

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/25 16:32:09 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/28 15:56:02 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ int		var_is_valid(char *var, char *cmd, int value_expected);
 */
 int		is_builtin(t_cmd *cmd, char *env[]);
 int		redirections(t_rdir *rd, int type);
-void	error_exit(char *actor, char *msg);
+void	error_exit(char *actor, char *msg, int status);
 int		exec_cmd(t_cmd *cmd, char *env[]);
 void	close_fd(int fd);
 void	redirect_pipe(int old_fd, int new_fd);

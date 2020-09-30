@@ -16,10 +16,13 @@ echo "
                                                                    "
 make -s -C ..
 echo "
-Testing ...
-"
+	Testing ...
+
+Errors (standard error output) here :"
 
 ../minishell < input_test > output_minishell
 /bin/bash < input_test > output_bash
 
+echo "
+"
 diff -s output_minishell output_bash
