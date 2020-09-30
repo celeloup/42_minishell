@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/10 20:05:55 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 12:25:56 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,7 @@ void	signal_handler(int num);
 */
 int		is_builtin(t_cmd *cmd, char *env[]);
 int		redirections(t_rdir *rd, int type);
-void	error_exit(char *actor, char *msg);
+void	error_exit(char *actor, char *msg, int status);
 int		exec_cmd(t_cmd *cmd, char *env[]);
 void	close_fd(int fd);
 void	redirect_pipe(int old_fd, int new_fd);

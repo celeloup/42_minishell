@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/09 17:03:58 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 12:29:38 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	get_cmd_path(char **cmd, char *env[])
 	char			*path;
 	char			**bin_tab;
 
-	if (ft_strchr(*cmd, '/') != NULL || !(ft_strncmp(*cmd, "./", 2)))
+	if (ft_strchr(*cmd, '/') != NULL || !(ft_strncmp(*cmd, ".", 1)))
 		return ;
 	if (!(path = get_var_value("$PATH", env)))
 		return ;//null si "UNSET PATH; ls" (cf derniers test)
@@ -118,14 +118,14 @@ int		size_pipeline(t_cmd *cmd)
 	return (i);
 }
 
-void	error_exit(char *actor, char *msg)
+void	error_exit(char *actor, char *msg, int status)
 {
 	//write(2, "minishell: ", 11);
 	write(2, actor, ft_strlen(actor));
 	write(2, ": ", 2);
 	write(2, msg, ft_strlen(msg));
 	write(2, "\n", 1);
-	exit(EXIT_FAILURE);
+	exit(status);
 }
 
 /*
@@ -137,9 +137,16 @@ int		redirect(t_rdir *rd, int direction, int fd, int flux)
 	if (fd != -1 && flux != -1)
 	{
 		if (dup2(fd, flux) == -1)
+		{
+			write(2, "error dup redirect\n", 20);
 			return (-1);
+		}
 		if (close(fd) == -1)
+		{
+			write(2, "error close\n", 13);
 			return (-1);
+		}
+			
 	}
 	while (rd)
 	{
@@ -147,21 +154,21 @@ int		redirect(t_rdir *rd, int direction, int fd, int flux)
 		{
 			fd = open(rd->value, O_RDONLY);
 			if (fd == -1)
-				error_exit(rd->value, strerror(errno));
+				error_exit(rd->value, strerror(errno), 1);
 			flux = STDIN_FILENO;
 		}
 		else if (rd->type == RDIR_OUT && (direction == 2 || direction == 3))
 		{
 			fd = open(rd->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 			if (fd == -1)
-				error_exit(rd->value, strerror(errno));
+				error_exit(rd->value, strerror(errno), 1);
 			flux = STDOUT_FILENO;
 		}
 		else if (direction == 1 || direction == 3)
 		{
 			fd = open(rd->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
 			if (fd == -1)
-				error_exit(rd->value, strerror(errno));
+				error_exit(rd->value, strerror(errno), 1);
 			flux = STDOUT_FILENO;
 		}
 		if (dup2(fd, flux) == -1)
@@ -184,6 +191,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	char	*tmp;
 //	t_cmd	*new;
 //	t_cmd	*tmp;
+	int i;
 
 	tmpin = dup(STDIN_FILENO);
 	tmpout = dup(STDOUT_FILENO);
@@ -195,57 +203,69 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 		make_cmd_an_adult(cmd, *env);//renvoie 1 si ambiguous redirect
 		if (!cmd || !cmd->argv || !cmd->argv[0])
 			return (0);//vérifier le cas du cmd->next
-		if (builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
+		//if (builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
+		if (cmd->argv && cmd->argv[0] && builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
 		{
 			if (redirect(cmd->rdir, 3, -1, -1) == -1)
-				error_exit("redirection", "failed.");
+				error_exit("redirection", "failed.", 1);
 			status = (*builtin(cmd->argv[0]))(cmd, env);
 		}
 		else
 		{
-			if (builtin(cmd->argv[0]) == NULL)
+			if (cmd->argv && cmd->argv[0] && builtin(cmd->argv[0]) == NULL)
 				get_cmd_path(&cmd->argv[0], *env);
 			if (cmd->pipe == 1)
 			{
 				pipe_length = size_pipeline(cmd);
 				fdpipe[0] = dup(tmpin);
-				while (pipe_length != 0)
+				i = 0;
+				while (i < pipe_length)
 				{
-					redirect(cmd->rdir, 1, fdpipe[0], STDIN_FILENO);
-					if (cmd->pipe != 0)
-					{
-						pipe(fdpipe);
-						redirect(cmd->rdir, 2, fdpipe[1], STDOUT_FILENO);
-					}
-					else
-						redirect(cmd->rdir, 2, tmpout, STDOUT_FILENO);
+					pipe(fdpipe);
 					pid = fork();
 					if (pid == 0)
 					{
+						close(fdpipe[0]);
+						if (cmd->pipe !=0)
+							redirect(cmd->rdir, 2, fdpipe[1], STDOUT_FILENO);
+						else
+						{
+							redirect(cmd->rdir, 2, tmpout, STDOUT_FILENO);
+							close(fdpipe[1]);
+						}
 						if (builtin(cmd->argv[0]) != NULL)
-							return ((*builtin(cmd->argv[0]))(cmd, env));
+							exit((*builtin(cmd->argv[0]))(cmd, env));
 						else
 						{
 							get_cmd_path(&cmd->argv[0], *env);
 							execve(cmd->argv[0], cmd->argv, *env);
-							error_exit(cmd->argv[0], "command not found.");
+							error_exit(cmd->argv[0], "command not found.", 127);
 						}
+					}
+					else
+					{
+						close(fdpipe[1]);
+						redirect(cmd->rdir, 1, fdpipe[0], STDIN_FILENO);
 					}
 					if (cmd->pipe == 1)
 						cmd = cmd->next;
-					pipe_length--;
-					waitpid(pid, &status, 0);
+					i++;
+				}
+				i = 0;
+				while (i < pipe_length)
+				{
+					waitpid(-1, &status, 0);
+					i++;
 				}
 			}
 			else
 			{
-				pid = fork();
-				if (pid == 0)
+				if (redirect(cmd->rdir, 3, -1, -1) == -1)
+					error_exit("redirection", "failed.", 1);
+				if (cmd->argv && cmd->argv[0] && (pid = fork()) == 0)
 				{
-					if (redirect(cmd->rdir, 3, -1, -1) == -1)
-						error_exit("redirection", "failed.");
-					execve(cmd->argv[0], cmd->argv, *env);
-					error_exit(cmd->argv[0], "command not found.");
+					execve(cmd->argv[0], cmd->argv, *env);		
+					error_exit(cmd->argv[0], "command not found.", 127);
 				}
 				else
 					waitpid(pid, &status, 0);

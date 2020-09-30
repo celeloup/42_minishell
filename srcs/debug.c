@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   debug.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 15:10:26 by user42            #+#    #+#             */
-/*   Updated: 2020/10/09 21:43:34 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 12:26:48 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,5 @@ void	print_cmd(t_cmd *cmd, int i)
 		print_cmd(cmd->next, i + 1);
 	}
 	else
-		ft_printf("\nlast command printed");
+		ft_printf("\nlast command printed\n");
 }
