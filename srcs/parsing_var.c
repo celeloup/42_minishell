@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/09/30 10:08:58 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/30 16:01:03 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int		var_len_not_exp(char *input)
 	len = 1;
 	if (input[len] && input[len] == '?')
 		return (2);
-	while (input[len] && ft_isalnum(input[len]))
+	while (input[len] && ft_isalnum(input[len]))//vérifier le cas du underscore
 		len++;
 	return (len);
 }

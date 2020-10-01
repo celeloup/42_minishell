@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/28 14:52:11 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/01 19:06:51 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	status = 0;
 	while (cmd)
 	{
+		get_var_in_cmd(cmd, *env);
 		if (builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
 		{
 			if (redirect(cmd->rdir, 3, -1, -1) == -1)

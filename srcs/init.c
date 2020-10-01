@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/28 14:36:47 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/01 20:51:16 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,22 @@ t_rdir	*init_rdir(void)
 	rdir->value = NULL;
 	rdir->next = NULL;
 	return (rdir);
+}
+
+char	**init_argv(int	argc)
+{
+	char	**argv;
+	int		i;
+
+	argv = (char**)malloc(sizeof(char*) * (argc + 1));
+	i = 0;
+	while (i < argc)
+	{
+		argv[i] = ft_strdup("");
+		i++;
+	}
+	argv[i] = NULL;
+	return (argv);
 }
 
 t_cmd	*init_cmd(void)

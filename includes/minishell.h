@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/29 21:07:51 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/01 20:25:45 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef struct		s_env{
 
 typedef	struct		s_rdir{
 	int				type;
+	char			padding[4];
 	char			*value;
 	struct s_rdir	*next;
 }					t_rdir;
@@ -80,8 +81,8 @@ typedef	struct		s_rdir{
 typedef	struct		s_cmd{
 	char			**argv;
 	int				argc;
-	t_rdir			*rdir;
 	int				pipe;
+	t_rdir			*rdir;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -104,6 +105,7 @@ int		quote_len(char *input, char *env[], int expanded);
 char	*get_quote(char *input, char *env[]);
 char	*get_var_value(char *input, char *env[]);
 char	*get_var_name(char *input);
+int		var_len_not_exp(char *input);
 int		var_len(char *input, char *env[], int expanded);
 int		len_after_char(char *input, char *env[], int quote, int expanded);
 char	*expanded_str(char *input, char *env[], int quote);
@@ -133,8 +135,14 @@ void	free_env(char *env[]);
 ** init.
 */
 char	**init_env(char *env[]);
+char	**init_argv(int argc);
 t_cmd	*init_cmd();
 t_rdir	*init_rdir();
+
+/*
+** get_var_in_cmd.c
+*/
+void	get_var_in_cmd(t_cmd *cmd, char *env[]);
 
 /*
 ** signal_handling.c

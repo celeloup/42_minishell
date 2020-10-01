@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 15:10:26 by user42            #+#    #+#             */
-/*   Updated: 2020/09/30 08:38:56 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/01 18:31:52 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 void	print_args(int argc, char **argv)
 {  
-	int i;
+	int		i;
 
 	ft_printf("\nARGV = ");
 	i = 0;
-	while (i < argc)
+	while (argv && i < argc)
 	{
 		if (argv[i])
 			ft_printf("%s,", argv[i]);

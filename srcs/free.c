@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/25 14:55:40 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/01 20:53:49 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ void	free_env(char *env[])
 	i = 0;
 	while (env && env[i])
 	{
-		free(env[i]);
+		if (env[i])
+			free(env[i]);
 		env[i] = NULL;
 		i++;
 	}
@@ -28,6 +29,7 @@ void	free_env(char *env[])
 	env = NULL;
 }
 
+/*
 void	free_rdir(t_rdir **rdir)
 {
 	if (!(*rdir))
@@ -56,7 +58,36 @@ void	free_cmd_argv(t_cmd *cmd)
 	free(cmd->argv);
 	cmd->argv = NULL;
 }
+*/
+t_cmd	*free_cmd(t_cmd *cmd)
+{
+	int i;
+	t_cmd *tmp;
+	t_rdir *tmp_rdir;
+	while (cmd)
+	{
+		i = 0;
+		while (cmd->argv && cmd->argv[i])
+		{
+			free(cmd->argv[i]);
+			i++;
+		}
+		free(cmd->argv);
+		while (cmd->rdir)
+		{
+			free(cmd->rdir->value);
+			tmp_rdir = cmd->rdir->next;
+			free(cmd->rdir);
+			cmd->rdir = tmp_rdir;
+		}
+		tmp = cmd->next;
+		free(cmd);
+		cmd = tmp;
+	}
+	return (NULL);
+}
 
+/*
 t_cmd	*free_cmd(t_cmd *cmd)
 {
 	if (!cmd)
@@ -73,3 +104,4 @@ t_cmd	*free_cmd(t_cmd *cmd)
 	cmd = NULL;
 	return (NULL);
 }
+*/

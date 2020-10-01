@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/28 14:52:27 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/01 20:48:20 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int		main(int argc, char *argv[], char *env[])
 	environment = init_env(env);
 	cmd_list = NULL;
 	status = 0;
+//	input = ft_strdup("echo qdqsdlol");
 	while (status != -1 && status != 255)
 	{
 		prompt(0);
@@ -73,7 +74,9 @@ int		main(int argc, char *argv[], char *env[])
 			//ft_printf("ret test = %d\n", test);
 			cmd_list = free_cmd(cmd_list);
 			free(input);
+			//input = NULL;
 		}
+//		input = ft_strdup("echo proutlol");
 	}
 	input = get_var_value("$?", environment);
 	status = ft_atoi(input);

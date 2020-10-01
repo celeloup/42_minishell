@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/09/30 09:56:39 by user42           ###   ########.fr       */
+/*   Updated: 2020/09/30 13:58:12 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ int		ft_export(t_cmd *cmd, char **env[])
 	i = 1;
 	while (cmd->argv[i] && !get_expanded_token(cmd->argv[i], *env))
 		i++;
-	if (!cmd->argv[i])
 		print_env(*env, EXP);
 	env_cpy = env_dup(*env);
 	var = NULL;
