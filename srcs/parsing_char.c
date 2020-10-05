@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/09/25 14:57:49 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 18:09:27 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int		len_after_char(char *input, char *env[], int quote, int expanded)
 	else if (input[0] == BKSLASH)
 		return (backslash_len(input, quote, expanded));
 	else if (input[0] == DOLLAR)
-		return (var_len(input, env, expanded));
+		return (var_len(input, env, quote, expanded));
 	else
 		return (1);
 }

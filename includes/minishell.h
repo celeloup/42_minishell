@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/01 20:25:45 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 18:20:54 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,10 +103,10 @@ int		single_quote_len(char *input, int expanded);
 int		double_quote_len(char *input, char *env[], int expanded);
 int		quote_len(char *input, char *env[], int expanded);
 char	*get_quote(char *input, char *env[]);
-char	*get_var_value(char *input, char *env[]);
+char	*get_var_value(char *input, int quote, char *env[]);
 char	*get_var_name(char *input);
 int		var_len_not_exp(char *input);
-int		var_len(char *input, char *env[], int expanded);
+int		var_len(char *input, char *env[], int quote, int expanded);
 int		len_after_char(char *input, char *env[], int quote, int expanded);
 char	*expanded_str(char *input, char *env[], int quote);
 int		backslash_len(char *input, int quote, int expanded);
@@ -129,7 +129,7 @@ void	print_cmd(t_cmd *cmd, int i);
 */
 t_cmd	*free_cmd(t_cmd *cmd_list);
 void	free_rdir(t_rdir **rdir);
-void	free_env(char *env[]);
+char	**free_env(char **env[]);
 
 /*
 ** init.
@@ -142,7 +142,7 @@ t_rdir	*init_rdir();
 /*
 ** get_var_in_cmd.c
 */
-void	get_var_in_cmd(t_cmd *cmd, char *env[]);
+t_cmd	*get_var_in_cmd(t_cmd *cmd, char *env[]);
 
 /*
 ** signal_handling.c

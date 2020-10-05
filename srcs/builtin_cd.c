@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/28 15:08:57 by user42            #+#    #+#             */
-/*   Updated: 2020/09/29 20:21:42 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 19:20:52 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int		ft_cd_no_arg(char **env[])
 	char	*path;
 
 	path = NULL;
-	path = get_var_value("$HOME", *env);
+	path = get_var_value("$HOME", NO, *env);
 	ret = 0;
 	if (path && path[0])
 		ret = chdir(path);

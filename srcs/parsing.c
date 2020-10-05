@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/01 19:02:55 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 19:59:00 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,25 @@
 
 char	*expanded_str(char *input, char *env[], int quote)
 {
+	char	*var_name;
+	char	*var_value;
+
+	var_name = NULL;
+	var_value = NULL;
 	if (!input)
 		return (NULL);//vérfier ?
 	else if (input[0] == BKSLASH)
 		return (get_escaped_char(input, quote));
 	else if (is_quote(input[0]) && !quote)
 		return (get_quote(input, env));
-	else if (input[0] == DOLLAR && quote)
-		return (get_var_value(get_var_name(input), env));
+	else if (input[0] == DOLLAR)
+	{
+		var_name = get_var_name(input);
+		var_value = get_var_value(var_name, quote, env);
+		if (var_name)
+			free(var_name);
+		return (var_value);
+	}
 	else
 		return (ft_substr(input, 0, 1));
 }
@@ -42,9 +53,7 @@ void	get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 	{
 		if ((len = token_len(&input[i], env, NOT_EXP)))
 		{
-			cmd->argv[j] = (char*)malloc(sizeof(char) * (len + 1));
-			cmd->argv[j] = ft_strncpy(&cmd->argv[j][0], &input[i], len);
-			cmd->argv[j][len] = '\0';
+			cmd->argv[j] = get_expanded_token(&input[i], env);
 			i += len;
 			j++;
 		}
@@ -103,7 +112,8 @@ t_cmd	*parse_input(char *input, char *env[])
 		unexpected_token_msg(&input[len]);
 	cmd->argv = init_argv(cmd->argc);
 	get_cmd_argv(cmd, input, env, len);
-	print_args(cmd->argc, cmd->argv);
+	ft_putstr_fd("\nARGS parse :", 1);
+	print_args(cmd->argc, cmd->argv);//debug
 	if (input && input[len] && (input[len] == ';' || input[len] == '|'))
 	{
 		if (input[len] == '|')

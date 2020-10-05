@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/01 18:30:26 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 19:43:04 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ char	*get_expanded_token(char *input, char *env[])
 {
 	char	*token;
 	char	*str;
+	int		len;
 	int		i;
 	int		j;
 
@@ -59,17 +60,19 @@ char	*get_expanded_token(char *input, char *env[])
 	str = NULL;
 	i = 0;
 	j = 0;
-	if (!input || (input && !input[0]))
-		return (NULL);
-	//ft_printf("\nGETEXPTOKEN input = %s", input);//debug
-	//ft_printf("\nGETEXPTOKEN tokenlen = %d", token_len(input, env, EXP));//debug
-	if (!token_len(input, env, EXP) && input[0] != DOUBLE_QUOTE)
-		return (NULL);
-	token = (char *)malloc(sizeof(char) * (token_len(input, env, EXP) + 1));
-	token[token_len(input, env, EXP)] = '\0';
-	while (i < token_len(input, env, NOT_EXP) && j < token_len(input, env, EXP))
+	len = 0;
+//	if (!input || (input && !input[0]))
+//		return (NULL);
+//	if (!(len = token_len(input, env, EXP)) && input[0] != DOUBLE_QUOTE)
+//		return (NULL);
+	//ft_printf("\ntoken_len is : %d", len);
+	len = token_len(input, env, EXP);
+	token = (char*)malloc(sizeof(char) * (len + 1));
+	token[len] = '\0';
+	while (i < token_len(input, env, NOT_EXP) && j < len)
 	{
 		str = expanded_str(&input[i], env, NO_QUOTE);
+		//ft_printf("\nexpanded str is : %s", str);
 		if (str)
 		{
 			ft_strcpy(&token[j], str);
@@ -79,7 +82,6 @@ char	*get_expanded_token(char *input, char *env[])
 		j += len_after_char(&input[i], env, NO_QUOTE, EXP);
 		i += len_after_char(&input[i], env, NO_QUOTE, NOT_EXP);
 	}
-	//ft_printf("\nGETEXPTOKENfin token = >%s<", token);//debug
 	return (token);
 }
 

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:02:20 by user42            #+#    #+#             */
-/*   Updated: 2020/09/30 10:08:35 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 15:51:36 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ int		remove_var(char **env[], char *cmd, char *var, int value_expected)
 	new_env = env_ncpy(new_env, *env, 0, i);
 	new_env = env_ncpy(new_env, &((*env)[i + 1]), i, env_len(*env) - i - 1);
 	new_env[env_len(*env) - 1] = NULL;
-	free_env(*env);
+	*env = free_env(env);
 	*env = env_dup(new_env);
-	free_env(new_env);
+	new_env = free_env(&new_env);
 	return (EXIT_SUCCESS);
 }
 
@@ -60,8 +60,11 @@ int		ft_unset(t_cmd *cmd, char **env[])
 	int		ret;
 
 	i = 1;
-	while (cmd->argv[i] && !get_expanded_token(cmd->argv[i], *env))
+	var = NULL;
+	while (cmd->argv[i] && !(var = get_expanded_token(cmd->argv[i], *env)))
 		i++;
+	if (var)
+		free(var);
 	if (!cmd->argv[i])
 		return (0);
 	env_cpy = env_dup(*env);
@@ -76,5 +79,8 @@ int		ft_unset(t_cmd *cmd, char **env[])
 			ret = 1;
 		i++;
 	}
+	if (var)
+		free(var);
+	env_cpy = free_env(&env_cpy);
 	return (ret);
 }

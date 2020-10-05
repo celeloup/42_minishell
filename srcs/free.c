@@ -6,27 +6,28 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/01 20:53:49 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 15:13:58 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	free_env(char *env[])
+char	**free_env(char **env[])
 {
 	int		i;
 
 	i = 0;
-	while (env && env[i])
+	while ((*env) && (*env)[i])
 	{
-		if (env[i])
-			free(env[i]);
-		env[i] = NULL;
+		if ((*env)[i])
+			free((*env)[i]);
+		(*env)[i] = NULL;
 		i++;
 	}
-	if (env)
-		free(env);
-	env = NULL;
+	if ((*env))
+		free((*env));
+	(*env) = NULL;
+	return (NULL);
 }
 
 /*
@@ -61,21 +62,30 @@ void	free_cmd_argv(t_cmd *cmd)
 */
 t_cmd	*free_cmd(t_cmd *cmd)
 {
-	int i;
-	t_cmd *tmp;
-	t_rdir *tmp_rdir;
+	int		i;
+	t_cmd	*tmp;
+	t_rdir	*tmp_rdir;
+
+	if (!cmd)
+		return (NULL);
+	tmp = NULL;
 	while (cmd)
 	{
 		i = 0;
 		while (cmd->argv && cmd->argv[i])
 		{
 			free(cmd->argv[i]);
+			cmd->argv[i] = NULL;
 			i++;
 		}
-		free(cmd->argv);
+		if (cmd->argv)
+			free(cmd->argv);
+		cmd->argv = NULL;
 		while (cmd->rdir)
 		{
-			free(cmd->rdir->value);
+			if (cmd->rdir->value)
+				free(cmd->rdir->value);
+			cmd->rdir->value = NULL;
 			tmp_rdir = cmd->rdir->next;
 			free(cmd->rdir);
 			cmd->rdir = tmp_rdir;

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/10 21:28:53 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/29 20:27:35 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 15:47:51 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ char	**env_dup(char *env[])
 	char	**new_env;
 
 	i = env_len(env);
-	if ((new_env = malloc((i + 1) * sizeof(char*))) == NULL)
+	if ((new_env = (char**)malloc((i + 1) * sizeof(char*))) == NULL)
 		return (NULL);
 	i = 0;
 	while (env[i])

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/01 20:51:16 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 14:36:54 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@ char	**init_env(char *env[])
 	char	**new_env;
 
 	i = 0;
+	new_env = NULL;
 	while (env[i])
 		i++;
-	if ((new_env = malloc((i + 2) * sizeof(char*))) == NULL)
+	if ((new_env = (char**)malloc((i + 2) * sizeof(char*))) == NULL)
 		return (NULL);
 	i = 0;
 	while (env[i])
@@ -56,11 +57,12 @@ char	**init_argv(int	argc)
 	char	**argv;
 	int		i;
 
-	argv = (char**)malloc(sizeof(char*) * (argc + 1));
+	if ((argv = (char**)malloc(sizeof(char*) * (argc + 1))) == NULL)
+		return (NULL);
 	i = 0;
 	while (i < argc)
 	{
-		argv[i] = ft_strdup("");
+		argv[i] = NULL;
 		i++;
 	}
 	argv[i] = NULL;
@@ -72,7 +74,7 @@ t_cmd	*init_cmd(void)
 	t_cmd	*cmd;
 
 	cmd = NULL;
-	cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	cmd = (t_cmd*)malloc(sizeof(t_cmd));
 	if (!cmd)
 		return (NULL);
 	cmd->argv = NULL;

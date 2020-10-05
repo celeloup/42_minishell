@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/01 19:06:51 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 19:22:26 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	get_cmd_path(char **cmd, char *env[])
 
 	if (ft_strchr(*cmd, '/') != NULL || !(ft_strncmp(*cmd, "./", 2)))
 		return ;
-	path = get_var_value("$PATH", env);
+	path = get_var_value("$PATH", NO, env);
 	bin_tab = ft_split(path, ':');
 	free(path);
 	search_path(bin_tab, cmd);
@@ -180,13 +180,14 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	int pipe_length;
 	int tmpin;
 	int tmpout;
+	//t_cmd	*new;
 
 	tmpin = dup(STDIN_FILENO);
 	tmpout = dup(STDOUT_FILENO);
 	status = 0;
 	while (cmd)
 	{
-		get_var_in_cmd(cmd, *env);
+		//new = get_var_in_cmd(cmd, *env);
 		if (builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
 		{
 			if (redirect(cmd->rdir, 3, -1, -1) == -1)
@@ -243,6 +244,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 					waitpid(pid, &status, 0);
 			}
 		}
+		//new = free_cmd(new);
 		cmd = cmd->next;
 	}
 	redirect(NULL, 0, tmpin, STDIN_FILENO);

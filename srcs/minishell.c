@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/01 20:48:20 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 19:18:36 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,14 @@ int		main(int argc, char *argv[], char *env[])
 	environment = init_env(env);
 	cmd_list = NULL;
 	status = 0;
-//	input = ft_strdup("echo qdqsdlol");
-	while (status != -1 && status != 255)
+//	input = ft_strdup("echo $PATH");
+	while (status != -1 && status != 255)//input à enlever
 	{
 		prompt(0);
 		get_next_line(0, &input);
 		if (!input)
 		{
-			free_env(environment);
+			environment = free_env(&environment);
 			control_d();
 		}
 		else
@@ -74,13 +74,17 @@ int		main(int argc, char *argv[], char *env[])
 			//ft_printf("ret test = %d\n", test);
 			cmd_list = free_cmd(cmd_list);
 			free(input);
-			//input = NULL;
+			input = NULL;
 		}
 //		input = ft_strdup("echo proutlol");
 	}
-	input = get_var_value("$?", environment);
+	if (input)
+		free(input);
+	input = get_var_value("$?", NO, environment);
 	status = ft_atoi(input);
-	free(input);
-	free_env(environment);
+	if (input)
+		free(input);
+	input = NULL;
+	environment = free_env(&environment);
 	return (status);
 }

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/09/30 13:58:12 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 20:17:02 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int		var_is_set(char **env[], char *var)
 	to_check = get_var_name(tmp);
 	if (tmp)
 		free(tmp);
-	tmp = get_var_value(to_check, *env);
+	tmp = get_var_value(to_check, NO, *env);
 	if (to_check)
 		free(to_check);
 	to_check = NULL;
@@ -83,38 +83,42 @@ int		add_var(char **env[], char *cmd, char *var)
 	new_env[i] = ft_strdup(var);
 	new_env[i + 1] = NULL;
 	if (*env)
-		free_env(*env);
+		*env = free_env(env);
 	*env = env_dup(new_env);
-	free_env(new_env);
+	new_env = free_env(&new_env);
 	return (EXIT_SUCCESS);
 }
 
 int		ft_export(t_cmd *cmd, char **env[])
 {
 	int		i;
-	char	**env_cpy;
-	char	*var;
+//	char	**env_cpy;
+//	char	*var;
 	int		ret;
 
 	i = 1;
-	while (cmd->argv[i] && !get_expanded_token(cmd->argv[i], *env))
-		i++;
-		print_env(*env, EXP);
-	env_cpy = env_dup(*env);
-	var = NULL;
+//	var = NULL;
+//	while (cmd->argv[i] && !(var = get_expanded_token(cmd->argv[i], *env)))
+//		i++;
+//	if (var)
+//		free(var);
+	if (!cmd->argv[i])
+		return (print_env(*env, EXP));
+//	env_cpy = env_dup(*env);
+//	var = NULL;
 	ret = 0;
 	while (cmd->argv[i])
 	{
-		if (var)
-			free(var);
-		var = get_expanded_token(cmd->argv[i], env_cpy);
-		if (var && add_var(env, cmd->argv[0], var) > 0)
+//		if (var)
+//			free(var);
+//		var = get_expanded_token(cmd->argv[i], env_cpy);
+		if (add_var(env, cmd->argv[0], cmd->argv[i]) > 0)
 			ret = 1;
 		i++;
 	}
-	if (var)
-		free(var);
-	var = NULL;
-	free_env(env_cpy);
+//	if (var)
+//		free(var);
+//	var = NULL;
+//	env_cpy = free_env(&env_cpy);
 	return (ret);
 }

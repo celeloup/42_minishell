@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:12:12 by user42            #+#    #+#             */
-/*   Updated: 2020/09/29 21:28:04 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/05 19:26:35 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int		is_name(char *input)
 ** The last else if returns 0 for case export 'VAR' with no '='
 */
 
-void	expand_var(char *env[], char **var)
+void	expand_var(char *env[], char **var)//a supprimer
 {
 	char	*new_var;
 	char	*var_value;
@@ -96,7 +96,7 @@ void	expand_var(char *env[], char **var)
 		i++;
 	var_value = ft_strdup(*var + i);
 	tmp = ft_substr(*var, 0, i);
-	new_var = get_var_value(tmp, env);
+	new_var = get_var_value(tmp, NO, env);
 	free(*var);
 	*var = ft_strjoin(new_var, var_value);
 	free(new_var);
@@ -109,8 +109,9 @@ void	expand_var(char *env[], char **var)
 
 int		var_is_valid(char *env[], char *var, char *cmd, int value_expected)
 {
-	if (var && var[0] && var[0] == '$')
-		expand_var(env, &var);
+//	if (var && var[0] && var[0] == '$')
+//		expand_var(env, &var);
+	(void)env;//a supprimer
 	if (is_not_name(var) < 0 || (is_not_name(var) && !value_expected))
 		return (print_env_error(var, cmd, INVALID_NAME));
 	else if (is_not_name(var) && value_expected && var[is_not_name(var)] != '=')
