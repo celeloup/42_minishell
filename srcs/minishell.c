@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/05 19:18:36 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/06 20:12:04 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int		main(int argc, char *argv[], char *env[])
 	(void)argv;
 	
 	signal(SIGINT, control_c);
+	input = NULL;
 	/*signal(SIGQUIT, control_slash);
 	signal(SIGTERM, signal_handler);
 	if (signal(SIGCHLD, SIG_IGN) == SIG_ERR)
@@ -80,7 +81,7 @@ int		main(int argc, char *argv[], char *env[])
 	}
 	if (input)
 		free(input);
-	input = get_var_value("$?", NO, environment);
+	input = get_var_value("$?", environment, NO, NO);
 	status = ft_atoi(input);
 	if (input)
 		free(input);

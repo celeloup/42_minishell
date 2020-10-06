@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/05 18:20:54 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/06 22:04:44 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@
 # define FT_UNSET		6
 # define INVALID_NAME	-1
 # define UNEXPECTED_TOKEN -2
+# define AFTER			1
+# define BEFORE			2
 
 typedef struct		s_env{
 	char			*var;
@@ -103,12 +105,13 @@ int		single_quote_len(char *input, int expanded);
 int		double_quote_len(char *input, char *env[], int expanded);
 int		quote_len(char *input, char *env[], int expanded);
 char	*get_quote(char *input, char *env[]);
-char	*get_var_value(char *input, int quote, char *env[]);
+char	*get_var_value(char *input, char *env[], int quote, int edges);
 char	*get_var_name(char *input);
 int		var_len_not_exp(char *input);
-int		var_len(char *input, char *env[], int quote, int expanded);
+int		var_len_exp(char *input, char *env[], int quote, int edges);
+int		len_after_exp_char(char *input, char *env[], int quote, int edges);
 int		len_after_char(char *input, char *env[], int quote, int expanded);
-char	*expanded_str(char *input, char *env[], int quote);
+char	*expanded_str(char *input, char *env[], int quote, int edges);
 int		backslash_len(char *input, int quote, int expanded);
 char	*get_escaped_char(char *input, int quote);
 int		unexpected_token_msg(char *input);
@@ -142,7 +145,8 @@ t_rdir	*init_rdir();
 /*
 ** get_var_in_cmd.c
 */
-t_cmd	*get_var_in_cmd(t_cmd *cmd, char *env[]);
+t_cmd	*copy_cmd(t_cmd *cmd);
+void	expand_args_in_cmd(t_cmd *cmd, char *env[]);
 
 /*
 ** signal_handling.c

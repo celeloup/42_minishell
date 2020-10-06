@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/05 18:09:27 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/06 22:03:53 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,30 @@ int		backslash_len(char *input, int quote, int expanded)
 		return (1);
 }
 
+int		len_after_exp_char(char *input, char *env[], int quote, int edges)
+{
+	if (is_quote(input[0]) && !quote)
+		return (quote_len(input, env, EXP));
+	else if (input[0] == BKSLASH)
+		return (backslash_len(input, quote, EXP));
+	else if (input[0] == DOLLAR)
+		return (var_len_exp(input, env, quote, edges));
+	else
+		return (1);
+}
+
 int		len_after_char(char *input, char *env[], int quote, int expanded)
 {
 	if (!input)
 		return (0);
+	if (expanded)
+		return (len_after_exp_char(input, env, quote, NO));
 	else if (is_quote(input[0]) && !quote)
-		return (quote_len(input, env, expanded));
+		return (quote_len(input, env, NOT_EXP));
 	else if (input[0] == BKSLASH)
-		return (backslash_len(input, quote, expanded));
+		return (backslash_len(input, quote, NOT_EXP));
 	else if (input[0] == DOLLAR)
-		return (var_len(input, env, quote, expanded));
+		return (var_len_not_exp(input));
 	else
 		return (1);
 }

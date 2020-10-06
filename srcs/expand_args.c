@@ -1,34 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_var_in_cmd.c                                   :+:      :+:    :+:   */
+/*   expand_args.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/05 17:51:20 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/06 19:34:19 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int		words_in_arg(char *arg)
+/*
+int		words_in_expanded_token(char *arg, char *env[])
 {
 	int		i;
 	int		wc;
-
+	
 	i = 0;
 	wc = 0;
-	if (!arg)
-		return (0);
-	while (arg[i])
+	if (!arg || (arg && !arg[0]))
+		return (1);
+	while (arg && arg[i])
 	{
-		while (arg[i] && is_ifs(arg[i]))
-			i++;
-		if (arg[i])
-			wc++;
-		while (arg[i] && !is_ifs(arg[i]))
-			i++;
+		wc++;
+		i += token_len(&arg[i], env, NOT_EXP);
 	}
 	return (wc);
 }
@@ -37,68 +34,26 @@ int		get_new_argc(t_cmd *cmd, char *env[])
 {
 	int		argc;
 	int		i;
-	char	*new_argv;
+	int		j;
+	char	*tmp;
 
 	argc = 0;
 	i = 0;
-	new_argv = NULL;
+	tmp = NULL;
 	while (cmd->argv[i])
 	{
-		if (new_argv)
-			free(new_argv);
-		new_argv = get_expanded_token(cmd->argv[i], env);
-		ft_printf("\nnew_argv is : >%s<", new_argv);//debug
-		argc += words_in_arg(new_argv);
-		ft_printf("\nnew argc is = %d", argc);//debug
+		j = 0;
+		while (cmd->argv[i][j])
+		{
+			tmp = free_and_null(&tmp);
+			tmp = get_expanded_token(&cmd->argv[i][j], env);
+			argc += words_in_expanded_token(tmp, env);
+			j += token_len(&cmd->argv[i][j], env, NOT_EXP);
+		}
 		i++;
 	}
-	if (new_argv)
-		free(new_argv);
-	new_argv = NULL;	
+	tmp = free_and_null(&tmp);
 	return (argc);
-}
-
-char	*get_arg_list(char **argv, char *env[])
-{
-	char	*output;
-	char	*expanded;
-	int		i;
-
-	output = NULL;
-	output = ft_strdup("");
-	i = 0;
-	expanded = NULL;
-	while (argv[i])
-	{
-		ft_printf("\nargv[i] is : %s", argv[i]);//debug
-		if (expanded)
-			free(expanded);
-		if ((expanded = get_expanded_token(argv[i], env)))
-			output = ft_strjoinfree(output, expanded);
-		ft_printf("\noutput is : %s", output);//debug
-		if (argv[i + 1])
-			output = ft_strjoinfree(output, " ");
-		i++;
-	}
-	if (expanded)
-		free(expanded);
-	return (output);
-}
-
-int		arg_list_len(char *arg_list, int go_to_next)
-{
-	int		len;
-
-	len = 0;
-	while (arg_list[len] && !is_ifs(arg_list[len]))
-		len++;
-	if (!len)
-		return (1);
-	if (!go_to_next)
-		return (len);
-	while (arg_list[len] && is_ifs(arg_list[len]))
-		len++;	
-	return (len);
 }
 
 char	*get_new_argv(char *arg_list)
@@ -116,32 +71,39 @@ char	*get_new_argv(char *arg_list)
 	return (new_argv);
 }
 
-void	get_new_cmd_argv(t_cmd *new, t_cmd *cmd, char *env[])
+void	pass_out_args(char **argv, char *tmp, )
 {
-	char	*arg_list;
+	
+}
+
+void	get_new_args(t_cmd *new, t_cmd *cmd, char *env[])
+{
 	int		i;
 	int		j;
-	int		argc;
+	int		k;
+	char	*tmp;
 
 	i = 0;
-	j = 0;
-	argc = 0;
-	arg_list = NULL;
-	arg_list = get_arg_list(cmd->argv, env);
-	ft_printf("\n arg list is : %s", arg_list);
-	while (arg_list[i])
+	k = 0;
+	tmp = NULL;
+	while (cmd->argv[i])
 	{
-		if (new->argv[j])
-			free(new->argv[j]);
-		ft_printf("\n &arg list is : >%s<", &arg_list[i]);
-		new->argv[j] = get_new_argv(&arg_list[i]);
-		i += arg_list_len(&arg_list[i], YES);
-		if (new->argv[j])
-			j++;
+		j = 0;
+		while (cmd->argv[i][j])
+		{
+			tmp = free_and_null(&tmp);
+			tmp = get_expanded_token(&cmd->argv[i][j], env);
+			pass_out_args(new->argv, tmp, &k);
+			while (tmp)
+			argc += words_in_expanded_token(tmp, env);
+			new->argv[k] = get_expanded_token(&cmd->argv[i][j], env);
+			k++;
+			j += token_len(&cmd->argv[i][j], env, NOT_EXP);
+		}
+		i++;
 	}
-	if (arg_list)
-		free(arg_list);
-	arg_list = NULL;
+	tmp = free_and_null(&tmp);
+	return (argc);
 }
 
 char	**argv_dup(char	**argv, int argc)
@@ -188,7 +150,8 @@ t_cmd	*copy_cmd(t_cmd *cmd)
 	return (cpy);
 }
 
-t_cmd	*get_var_in_cmd(t_cmd *cmd, char *env[])
+
+t_cmd	*expand_args_in_cmd(t_cmd *cmd, char *env[])
 {
 	t_cmd	*new;
 	int		i;
@@ -204,7 +167,7 @@ t_cmd	*get_var_in_cmd(t_cmd *cmd, char *env[])
 	new->argc = get_new_argc(cmd, env);
 	ft_printf("\nNEW ARGC IS : %d", new->argc);//debug
 	new->argv = init_argv(new->argc);
-	get_new_cmd_argv(new, cmd, env);
+	get_new_args(new, cmd, env);
 	new->next = copy_cmd(cmd->next);
 	new->pipe = (cmd->pipe);
 	new->rdir = copy_rdir(cmd->rdir);
@@ -212,4 +175,23 @@ t_cmd	*get_var_in_cmd(t_cmd *cmd, char *env[])
 	print_args(new->argc, new->argv);//degug
 	ft_printf("\n\n");//debug
 	return (new);
+}
+*/
+
+void	expand_args_in_cmd(t_cmd *cmd, char *env[])
+{
+	int		i;
+	char	*tmp;
+	
+	i = 0;
+	tmp = NULL;
+	while(cmd->argv && cmd->argv[i])
+	{
+		tmp = free_and_null(&tmp);
+		tmp = get_expanded_token(cmd->argv[i], env);
+		cmd->argv[i] = free_and_null(&cmd->argv[i]);
+		cmd->argv[i] = ft_strdup(tmp);
+		i++;
+	}
+	tmp = free_and_null(&tmp);
 }

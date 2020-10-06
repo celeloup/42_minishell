@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+         #
+#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/28 15:51:10 by celeloup          #+#    #+#              #
-#    Updated: 2020/07/26 21:28:47 by celeloup         ###   ########.fr        #
+#    Updated: 2020/10/06 18:13:00 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -72,7 +72,8 @@ SRC_NAME = ft_memset.c \
 	ft_printf/layout.c \
 	ft_printf/print_char.c \
 	ft_printf/print_xp.c \
-	ft_printf/print_du.c
+	ft_printf/print_du.c \
+	free_and_null.c
 
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/

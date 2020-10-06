@@ -6,22 +6,29 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/10/05 20:29:44 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/06 21:28:12 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*word_splitted_var_value(char *input)
+char	*word_split(char *input, int edges)
 {
 	char	*value;
 	char	*ret;
 	int		i;
 	int		len;
 
-	value = ft_strdup(input);
-	i = 0;
 	len = 0;
+	value = NULL;
+	if (edges >= BEFORE && input[0] && is_ifs(input[0]))
+	{
+		value = ft_strjoin(" ", input);
+		len++;
+	}
+	else
+		value = ft_strdup(input);
+	i = 0;
 	ret = NULL;
 	while (input[i])
 	{
@@ -36,8 +43,11 @@ char	*word_splitted_var_value(char *input)
 		else
 		{
 			value[len] = '\0';
-			ret = ft_strdup(value);
-			free(value);
+			if (edges == AFTER || edges == BEFORE + AFTER)
+				ret = ft_strjoin(value, " ");
+			else
+				ret = ft_strdup(value);
+			value = free_and_null(&value);
 		}
 	}
 	return (ret);
@@ -49,7 +59,7 @@ char	*word_splitted_var_value(char *input)
 ** input[0] == '$'
 */
 
-char	*get_var_value(char *input, int quote, char *env[])
+char	*get_var_value(char *input, char *env[], int quote, int edges)
 {
 	size_t	i;
 
@@ -64,11 +74,10 @@ char	*get_var_value(char *input, int quote, char *env[])
 			{
 				if (quote)
 					return (ft_strdup(ft_strchr(env[i], '=') + 1));
-				return (word_splitted_var_value(ft_strchr(env[i], '=') + 1));
+				return (word_split(ft_strchr(env[i], '=') + 1, edges));
 			}
 		i++;
 	}
-	
 	return (NULL);//vérifier s'il ne renvoie pas plutôt une chaine vide
 }
 
@@ -90,7 +99,7 @@ int		var_len_not_exp(char *input)
 ** if (expanded && len == 1) is for "$" with nothing afterward
 */
 
-int		var_len(char *input, char *env[], int quote, int expanded)
+int		var_len_exp(char *input, char *env[], int quote, int edges)
 {
 	int		len;
 	char	*var_name;
@@ -100,15 +109,13 @@ int		var_len(char *input, char *env[], int quote, int expanded)
 	var_value = NULL;
 	len = var_len_not_exp(input);
 	//ft_printf("\nVARLEN     len = %d", len);//debug
-	if (!expanded)
-		return (len);
-	if (expanded && len == 1)
+	if (len == 1)
 		return (1);
 	var_name = (char*)malloc(sizeof(char) * (len + 1));
 	ft_strncpy(var_name, input, len);
 	var_name[len] = '\0';
 	//ft_printf("\nVARLEN  varname = %s", var_name);//debug
-	var_value = get_var_value(var_name, quote, env);
+	var_value = get_var_value(var_name, env, quote, edges);
 	//ft_printf("\nVARLEN varvalue = %s", var_value);//debug
 	free(var_name);
 	var_name = NULL;
@@ -129,7 +136,7 @@ char	*get_var_name(char *input)
 	
 	name = NULL;
 	//ft_printf("\nGET_VAR_NAME\ninput is: %s / name is: %s", input, name);//debug
-	len = var_len(input, NULL, NO, NOT_EXP);
+	len = var_len_not_exp(input);
 	//ft_printf("\nGET_VAR_NAME\nlen is: %d", len);//debug
 	if (len == 2 && input[1] == '?')
 		return (ft_strdup("$?"));

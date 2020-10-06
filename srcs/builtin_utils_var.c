@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:12:12 by user42            #+#    #+#             */
-/*   Updated: 2020/10/05 19:26:35 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/06 21:28:44 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,6 @@ int		is_name(char *input)
 }
 
 /*
-** If the var format is valid (second else if), var_is_valid returns '=' index,
-** else 0 or -errno;
-** The last else if returns 0 for case export 'VAR' with no '='
-*/
-
 void	expand_var(char *env[], char **var)//a supprimer
 {
 	char	*new_var;
@@ -96,7 +91,7 @@ void	expand_var(char *env[], char **var)//a supprimer
 		i++;
 	var_value = ft_strdup(*var + i);
 	tmp = ft_substr(*var, 0, i);
-	new_var = get_var_value(tmp, NO, env);
+	new_var = get_var_value(tmp,  env, );
 	free(*var);
 	*var = ft_strjoin(new_var, var_value);
 	free(new_var);
@@ -106,6 +101,14 @@ void	expand_var(char *env[], char **var)//a supprimer
 	free(var_value);
 	var_value = NULL;
 }
+*/
+
+/*
+** If the var format is valid (second else if), var_is_valid returns '=' index,
+** else 0 or -errno;
+** The last else if returns 0 for case export 'VAR' with no '='
+*/
+
 
 int		var_is_valid(char *env[], char *var, char *cmd, int value_expected)
 {

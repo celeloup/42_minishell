@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/28 15:55:23 by celeloup          #+#    #+#             */
-/*   Updated: 2020/05/28 10:32:33 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/06 19:30:26 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int					ft_strcmp(char const *s1, char const *s2);
 void				free_tab(char **tab);
 int					len_tab(char **tab);
 int					strisalpha(char *str);
+char				*free_and_null(char **str);
 
 t_list				*ft_lstnew(void const *content);
 void				ft_lstadd_front(t_list **alst, t_list *new);

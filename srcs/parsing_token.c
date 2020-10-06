@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/05 19:43:04 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/06 22:04:14 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,29 @@ int		token_len(char *input, char *env[], int expanded)
 	return (len);
 }
 
+int		get_edges(char *input, char *env[], int i)
+{
+	int		edges;
+	char	*next_str;
+
+	next_str = NULL;
+	edges = NO;
+	if (i)
+		edges = BEFORE;
+	i += len_after_char(&input[i], env, NO_QUOTE, NOT_EXP);
+	if (input[i] && input[i] != '$' && !is_ifs(input[i]))
+		return (edges + AFTER);
+	if (!input[i] || is_ifs(input[i]))
+		return (edges);
+	next_str = expanded_str(&input[i], env, NO_QUOTE, BEFORE);
+	if (next_str[0] && !is_ifs(next_str[0]))
+		edges += AFTER;
+	next_str = free_and_null(&next_str);
+	return (edges);
+	
+	len_after_char(&input[i], env, NO_QUOTE, NOT_EXP);
+}
+
 char	*get_expanded_token(char *input, char *env[])
 {
 	char	*token;
@@ -55,33 +78,40 @@ char	*get_expanded_token(char *input, char *env[])
 	int		len;
 	int		i;
 	int		j;
+	int		edges;
 
 	token = NULL;
 	str = NULL;
 	i = 0;
 	j = 0;
 	len = 0;
+	edges = NO;
 //	if (!input || (input && !input[0]))
 //		return (NULL);
 //	if (!(len = token_len(input, env, EXP)) && input[0] != DOUBLE_QUOTE)
 //		return (NULL);
 	//ft_printf("\ntoken_len is : %d", len);
 	len = token_len(input, env, EXP);
+	ft_printf("\ntoken_len EXP is : %d\n", len);
 	token = (char*)malloc(sizeof(char) * (len + 1));
 	token[len] = '\0';
 	while (i < token_len(input, env, NOT_EXP) && j < len)
 	{
-		str = expanded_str(&input[i], env, NO_QUOTE);
-		//ft_printf("\nexpanded str is : %s", str);
+		edges = get_edges(input, env, i);	
+		str = expanded_str(&input[i], env, NO_QUOTE, edges);
+		ft_printf("\nexpanded str is : >%s<", str);
 		if (str)
 		{
+			ft_printf("\nJ index is : >%d<", j);
 			ft_strcpy(&token[j], str);
-			free(str);
+			ft_printf("\ntoken middle is : >%s<\n", token);
+			str = free_and_null(&str);
 		}
-		str = NULL;
-		j += len_after_char(&input[i], env, NO_QUOTE, EXP);
+		j += len_after_exp_char(&input[i], env, NO_QUOTE, edges);
 		i += len_after_char(&input[i], env, NO_QUOTE, NOT_EXP);
 	}
+	str = free_and_null(&str);
+	ft_printf("\ntoken end is : >%s<\n", token);
 	return (token);
 }
 

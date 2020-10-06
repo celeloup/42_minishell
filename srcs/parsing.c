@@ -6,13 +6,13 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/05 19:59:00 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/06 20:12:16 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*expanded_str(char *input, char *env[], int quote)
+char	*expanded_str(char *input, char *env[], int quote, int edges)
 {
 	char	*var_name;
 	char	*var_value;
@@ -28,7 +28,7 @@ char	*expanded_str(char *input, char *env[], int quote)
 	else if (input[0] == DOLLAR)
 	{
 		var_name = get_var_name(input);
-		var_value = get_var_value(var_name, quote, env);
+		var_value = get_var_value(var_name, env, quote, edges);
 		if (var_name)
 			free(var_name);
 		return (var_value);
@@ -53,7 +53,7 @@ void	get_cmd_argv(t_cmd *cmd, char *input, char *env[], int cmd_len)
 	{
 		if ((len = token_len(&input[i], env, NOT_EXP)))
 		{
-			cmd->argv[j] = get_expanded_token(&input[i], env);
+			cmd->argv[j] = get_token(&input[i], env);
 			i += len;
 			j++;
 		}
