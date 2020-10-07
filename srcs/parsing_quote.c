@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:20:14 by user42            #+#    #+#             */
-/*   Updated: 2020/10/06 21:30:51 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/07 13:22:25 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*get_double_quote(char *input, char *env[])
 			ft_strcpy(&ret[j], str);
 			str = free_and_null(&str);
 		}
-		j += len_after_char(&input[i], env, DOUBLE_QUOTE, EXP);
+		j += len_after_exp_char(&input[i], env, DOUBLE_QUOTE, NO);
 		i += len_after_char(&input[i], env, DOUBLE_QUOTE, NOT_EXP);
 	}
 	//if (!ret)

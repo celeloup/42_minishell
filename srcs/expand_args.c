@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/06 19:34:19 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/07 23:02:12 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,122 @@ t_cmd	*expand_args_in_cmd(t_cmd *cmd, char *env[])
 }
 */
 
+int		words_in_var_value(char *arg, char *before, char *env[])
+{
+	int		wc;
+	char	*var_name;
+	char	*var_value;
+	char	*tmp;
+
+	var_name = NULL;
+	var_value = NULL;
+	tmp = NULL;
+	var_name = get_var_name(arg);
+	var_value = get_var_value(var_name, env, DOUBLE_QUOTE, NO);
+	tmp = ft_strjoin(before, var_value);
+	
+	var_value = free_and_null(&var_value);
+	var_name = free_and_null(&var_name);
+	return (wc);
+}
+
+int		arg_with_expanded_var_len(char *arg, char *env[])
+{
+	int	len;
+	int	i;
+
+	len = 0;
+	i = 0;
+	while (arg[i])
+	{
+		if (arg[i] == DOLLAR)
+			len += var_len_exp(&arg[i], env, NO, NO);
+		else
+			len += len_after_char(&arg[i], env, NO, NOT_EXP);
+		i += len_after_char(&arg[i], env, NO, NOT_EXP);
+	}
+	return (len);
+}
+
+char	*arg_with_expanded_var(char *arg, char *env[])
+{
+	char	*expanded;
+	char	*tmp;
+	int		len;
+	int		i;
+
+	tmp = NULL;
+	len = arg_with_expanded_var_len(arg, env);
+	expanded = (char*)malloc(sizeof(char) * (len + 1));
+	expanded[len] = '\0';
+	i = 0;
+	len = 0;
+	while (arg[i])
+	{
+		if (arg[i] == DOLLAR)
+		{
+			tmp = free_and_null(&tmp);
+			tmp = expanded_str(&arg[i], env, NO, NO);
+			ft_strcpy(&expanded[len], tmp);
+			len += var_len_exp(&arg[i], env, NO, NO);
+		}
+		else
+		{
+			ft_strncpy(&expanded[len], &arg[i], len_after_char(&arg[i], env, NO, NO));
+			len += len_after_char(&arg[i], env, NO, NOT_EXP);
+		}
+		i += len_after_char(&arg[i], env, NO, NOT_EXP);
+	}
+	tmp = free_and_null(&tmp);
+	return (expanded);
+}
+
+int		words_in_arg(char *arg, char *env[])
+{
+	int		i;
+	int		wc;
+	char	*tmp;
+
+	tmp = NULL;
+	i = 0;
+	wc = 0;
+	if (!arg[0] || arg[ft_strlen(arg) - 1] == DOLLAR)
+		return (1);
+	tmp = arg_with_expanded_var(arg, env);
+	while (tmp[i] && is_ifs(tmp[i]))
+		i++;
+	while (tmp[i])
+	{
+		wc++;
+		while (tmp[i] && !is_ifs(tmp[i]))
+			i += len_after_char(&arg[i], env, NO, NOT_EXP);
+		while (tmp[i] && is_ifs(tmp[i]))
+			i++;
+	}
+	tmp = free_and_null(&tmp);
+	if (wc == 0)
+		wc = 1;
+	return (wc);
+}
+
+int		get_new_argc(char **argv, char *env[])
+{
+	int		argc;
+	int		i;
+	char	*tmp;
+
+	argc = 0;
+	i = 0;
+	while (argv[i])
+	{
+		argc += words_in_arg(argv[i], env);
+		i++;
+	}
+	
+	return (argc);
+}
+
+
 void	expand_args_in_cmd(t_cmd *cmd, char *env[])
 {
 	int		i;
@@ -185,6 +301,7 @@ void	expand_args_in_cmd(t_cmd *cmd, char *env[])
 	
 	i = 0;
 	tmp = NULL;
+	cmd->argc = get_new_argc(cmd->argv, env);
 	while(cmd->argv && cmd->argv[i])
 	{
 		tmp = free_and_null(&tmp);

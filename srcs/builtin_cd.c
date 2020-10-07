@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/28 15:08:57 by user42            #+#    #+#             */
-/*   Updated: 2020/10/06 20:15:10 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/07 20:51:53 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,14 @@ void	ft_cd_error_msg(char *arg)
 
 int		ft_cd(t_cmd *cmd, char **env[])
 {
-	char	*path;
+//	char	*path;
 	int		ret;
 
-	path = NULL;
+//	path = NULL;
 	ret = 0;
 	if (!cmd->argv[1] || cmd->argc > 2)
 		return (ft_cd_arg_issue(cmd, env));
-	path = get_expanded_token(cmd->argv[1], *env);
+/*	path = get_expanded_token(cmd->argv[1], *env);
 	if (!path || (path && !path[0]))
 	{
 		if (path)
@@ -72,11 +72,11 @@ int		ft_cd(t_cmd *cmd, char **env[])
 		path = NULL;
 		return (ft_cd_no_arg(env));
 	}
-	ret = chdir(path);
-	if (ret && path)
-		ft_cd_error_msg(path);
-	if (path)
-		free(path);
-	path = NULL;
+*/	ret = chdir(cmd->argv[1]);
+	if (ret && cmd->argv[1])
+		ft_cd_error_msg(cmd->argv[1]);
+//	if (path)
+//		free(path);
+//	path = NULL;
 	return (ret);
 }

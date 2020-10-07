@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing-quote-len.c                                :+:      :+:    :+:   */
+/*   parsing_quote_len.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:20:14 by user42            #+#    #+#             */
-/*   Updated: 2020/09/25 14:30:11 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/07 13:22:06 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int		double_quote_len(char *input, char *env[], int expanded)
 	while (input[len] && input[len] != DOUBLE_QUOTE)
 	{
 		exp_len -= len_after_char(&input[len], env, DOUBLE_QUOTE, NOT_EXP);
-		exp_len += len_after_char(&input[len], env, DOUBLE_QUOTE, EXP);
+		exp_len += len_after_exp_char(&input[len], env, DOUBLE_QUOTE, NO);
 		len += len_after_char(&input[len], env, DOUBLE_QUOTE, NOT_EXP);
 	}
 	if (input[len] && input[len] == DOUBLE_QUOTE)

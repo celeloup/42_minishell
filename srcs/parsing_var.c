@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/10/06 21:28:12 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/07 22:23:28 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,26 +59,26 @@ char	*word_split(char *input, int edges)
 ** input[0] == '$'
 */
 
-char	*get_var_value(char *input, char *env[], int quote, int edges)
+char	*get_var_value(char *name, char *env[], int quote, int edges)
 {
 	size_t	i;
 
+	(void)quote;
+	(void)edges;
 	i = 0;
-	if (input && !input[1])
+	if (name && !name[0])
+		return (ft_strdup(""));
+	if (name && !name[1])
 		return (ft_strdup("$"));
-	while (input && env[i])
+	while (name && env[i])
 	{
-		if (!strncmp(env[i], input + 1, ft_strlen(input + 1))
-			&& env[i][ft_strlen(input + 1)]
-			&& env[i][ft_strlen(input + 1)] == '=')
-			{
-				if (quote)
-					return (ft_strdup(ft_strchr(env[i], '=') + 1));
-				return (word_split(ft_strchr(env[i], '=') + 1, edges));
-			}
+		if (!strncmp(env[i], name + 1, ft_strlen(name + 1))
+			&& env[i][ft_strlen(name + 1)]
+			&& env[i][ft_strlen(name + 1)] == '=')
+			return (ft_strdup(ft_strchr(env[i], '=') + 1));
 		i++;
 	}
-	return (NULL);//vérifier s'il ne renvoie pas plutôt une chaine vide
+	return (ft_strdup(""));// cas ou la variable n'existe pas vérifier s'il ne renvoie pas plutôt une chaine null
 }
 
 int		var_len_not_exp(char *input)
@@ -96,7 +96,7 @@ int		var_len_not_exp(char *input)
 /*
 ** gets the len of a var (input) after =
 ** input[0] == '$'
-** if (expanded && len == 1) is for "$" with nothing afterward
+** if (len == 1) is for "$" with nothing afterward
 */
 
 int		var_len_exp(char *input, char *env[], int quote, int edges)
@@ -108,9 +108,13 @@ int		var_len_exp(char *input, char *env[], int quote, int edges)
 	var_name = NULL;
 	var_value = NULL;
 	len = var_len_not_exp(input);
+	if (input[len] && input[len] == DOLLAR)
+		quote = 1;
 	//ft_printf("\nVARLEN     len = %d", len);//debug
-	if (len == 1)
+	if (len == 1 && (!input[1] || is_ifs(input[1])))
 		return (1);
+	else if (len == 1)
+		return (0);
 	var_name = (char*)malloc(sizeof(char) * (len + 1));
 	ft_strncpy(var_name, input, len);
 	var_name[len] = '\0';
@@ -136,7 +140,8 @@ char	*get_var_name(char *input)
 	
 	name = NULL;
 	//ft_printf("\nGET_VAR_NAME\ninput is: %s / name is: %s", input, name);//debug
-	len = var_len_not_exp(input);
+	if ((len = var_len_not_exp(input)) == 0)
+		return (ft_strdup(""));
 	//ft_printf("\nGET_VAR_NAME\nlen is: %d", len);//debug
 	if (len == 2 && input[1] == '?')
 		return (ft_strdup("$?"));

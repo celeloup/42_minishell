@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/06 22:04:14 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/07 20:38:48 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,25 +29,6 @@ int		unexpected_token_msg(char *input)
 	return (-1);
 }
 
-int		token_len(char *input, char *env[], int expanded)
-{
-	int len;
-	int exp_len;
-
-	len = 0;
-	exp_len = 0;
-	//ft_printf("\nTOKENLEN\ninput = %s", input);//debug
-	while (input[len] && !(is_arg_sep(input[len])))
-	{
-		exp_len -= len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
-		exp_len += len_after_char(&input[len], env, NO_QUOTE, EXP);
-		len += len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
-	}
-	if (expanded)
-		return (len + exp_len);
-	return (len);
-}
-
 int		get_edges(char *input, char *env[], int i)
 {
 	int		edges;
@@ -55,21 +36,55 @@ int		get_edges(char *input, char *env[], int i)
 
 	next_str = NULL;
 	edges = NO;
+	if (!input || !input[0] || input[0] != DOLLAR)
+		return (NO);
 	if (i)
 		edges = BEFORE;
-	i += len_after_char(&input[i], env, NO_QUOTE, NOT_EXP);
+	ft_printf("\nIN EDGES i = >%d< &input[i] = >%s<", i, &input[i]);
+	i += len_after_char(&input[i], env, NO, NOT_EXP);
+	ft_printf("\nIN EDGES i = >%d<", i);
+	if (!input || !input[i] || is_ifs(input[i]))
+		return (edges);
 	if (input[i] && input[i] != '$' && !is_ifs(input[i]))
 		return (edges + AFTER);
-	if (!input[i] || is_ifs(input[i]))
-		return (edges);
 	next_str = expanded_str(&input[i], env, NO_QUOTE, BEFORE);
 	if (next_str[0] && !is_ifs(next_str[0]))
 		edges += AFTER;
+	next_str = free_and_null(&next_str);	
+	while (input[i] && (next_str = expanded_str(&input[i], env, NO_QUOTE, BEFORE)))
+	{
+		if ((input[i] && input[i] == '$') && (!input[i + 1] || is_ifs(input[i + 1])))
+			edges = DOLLAR;
+		next_str = free_and_null(&next_str);
+		i += len_after_char(&input[i], env, NO, NOT_EXP);
+	}
 	next_str = free_and_null(&next_str);
 	return (edges);
-	
-	len_after_char(&input[i], env, NO_QUOTE, NOT_EXP);
 }
+
+int		token_len(char *input, char *env[], int expanded)
+{
+	int len;
+	int exp_len;
+	int	edges;
+
+	len = 0;
+	exp_len = 0;
+	edges = NO;
+	if (expanded)
+		edges = get_edges(&input[len], env, len);
+	ft_printf("\nTOKENLEN input = >%s<", input);//debug
+	while (input[len] && !(is_arg_sep(input[len])))
+	{
+		exp_len -= len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
+		exp_len += len_after_exp_char(&input[len], env, NO_QUOTE, edges);
+		len += len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
+	}
+	if (expanded)
+		return (len + exp_len);
+	return (len);
+}
+
 
 char	*get_expanded_token(char *input, char *env[])
 {
@@ -97,7 +112,8 @@ char	*get_expanded_token(char *input, char *env[])
 	token[len] = '\0';
 	while (i < token_len(input, env, NOT_EXP) && j < len)
 	{
-		edges = get_edges(input, env, i);	
+		if (edges != DOLLAR)
+			edges = get_edges(input, env, i);
 		str = expanded_str(&input[i], env, NO_QUOTE, edges);
 		ft_printf("\nexpanded str is : >%s<", str);
 		if (str)
