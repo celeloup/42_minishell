@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/06 22:04:44 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/08 14:40:27 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@
 # define SPACE      	32
 # define TAB        	9
 # define NEWLINE    	10
-# define BKSLASH		92
+# define BACKSLASH		92
 # define NO_QUOTE		0
 # define SINGLE_QUOTE	39
 # define DOUBLE_QUOTE	34
@@ -105,22 +105,22 @@ int		single_quote_len(char *input, int expanded);
 int		double_quote_len(char *input, char *env[], int expanded);
 int		quote_len(char *input, char *env[], int expanded);
 char	*get_quote(char *input, char *env[]);
-char	*get_var_value(char *input, char *env[], int quote, int edges);
+char	*get_var_value(char *input, char *env[]);
 char	*get_var_name(char *input);
 int		var_len_not_exp(char *input);
-int		var_len_exp(char *input, char *env[], int quote, int edges);
-int		len_after_exp_char(char *input, char *env[], int quote, int edges);
+int		var_len_exp(char *input, char *env[]);
+int		len_after_exp_char(char *input, char *env[], int quote);
 int		len_after_char(char *input, char *env[], int quote, int expanded);
-char	*expanded_str(char *input, char *env[], int quote, int edges);
+char	*expanded_str(char *input, char *env[], int quote);
 int		backslash_len(char *input, int quote, int expanded);
 char	*get_escaped_char(char *input, int quote);
 int		unexpected_token_msg(char *input);
 int		token_len(char *input, char *env[], int expanded);
 char	*get_expanded_token(char *input, char *env[]);
-char	*get_token(char *input, char *env[]);
+char	*get_not_expanded_token(char *input);
 int		get_rdir_type(t_rdir *rdir, char *input);
 int		get_cmd_rdir(t_rdir **rdir, char *input, char *env[]);
-t_cmd	*parse_input(char *input, char *env[]);
+t_cmd	*parse_input(char *input);
 
 /* debug.c */
 void	print_args(int argc, char **argv);
@@ -130,9 +130,8 @@ void	print_cmd(t_cmd *cmd, int i);
 /*
 ** free.c
 */
-t_cmd	*free_cmd(t_cmd *cmd_list);
-void	free_rdir(t_rdir **rdir);
-char	**free_env(char **env[]);
+t_cmd	*free_and_null_cmd(t_cmd **cmd_list);
+t_rdir	*free_and_null_rdir(t_rdir **rdir);
 
 /*
 ** init.

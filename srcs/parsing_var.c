@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/10/07 22:23:28 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/08 18:35:54 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ char	*word_split(char *input, int edges)
 				ret = ft_strjoin(value, " ");
 			else
 				ret = ft_strdup(value);
-			value = free_and_null(&value);
+			value = free_and_null_str(&value);
 		}
 	}
 	return (ret);
@@ -59,12 +59,10 @@ char	*word_split(char *input, int edges)
 ** input[0] == '$'
 */
 
-char	*get_var_value(char *name, char *env[], int quote, int edges)
+char	*get_var_value(char *name, char *env[])
 {
 	size_t	i;
 
-	(void)quote;
-	(void)edges;
 	i = 0;
 	if (name && !name[0])
 		return (ft_strdup(""));
@@ -78,7 +76,7 @@ char	*get_var_value(char *name, char *env[], int quote, int edges)
 			return (ft_strdup(ft_strchr(env[i], '=') + 1));
 		i++;
 	}
-	return (ft_strdup(""));// cas ou la variable n'existe pas vérifier s'il ne renvoie pas plutôt une chaine null
+	return (NULL);// cas ou la variable n'existe pas vérifier s'il ne renvoie pas plutôt une chaine null
 }
 
 int		var_len_not_exp(char *input)
@@ -99,7 +97,7 @@ int		var_len_not_exp(char *input)
 ** if (len == 1) is for "$" with nothing afterward
 */
 
-int		var_len_exp(char *input, char *env[], int quote, int edges)
+int		var_len_exp(char *input, char *env[])
 {
 	int		len;
 	char	*var_name;
@@ -108,27 +106,21 @@ int		var_len_exp(char *input, char *env[], int quote, int edges)
 	var_name = NULL;
 	var_value = NULL;
 	len = var_len_not_exp(input);
-	if (input[len] && input[len] == DOLLAR)
-		quote = 1;
 	//ft_printf("\nVARLEN     len = %d", len);//debug
 	if (len == 1 && (!input[1] || is_ifs(input[1])))
 		return (1);
-	else if (len == 1)
+	else if (len == 1)//pas sûr 
 		return (0);
 	var_name = (char*)malloc(sizeof(char) * (len + 1));
 	ft_strncpy(var_name, input, len);
 	var_name[len] = '\0';
 	//ft_printf("\nVARLEN  varname = %s", var_name);//debug
-	var_value = get_var_value(var_name, env, quote, edges);
+	var_value = get_var_value(var_name, env);
 	//ft_printf("\nVARLEN varvalue = %s", var_value);//debug
-	free(var_name);
-	var_name = NULL;
-	if (!var_value)
-		return (0);
-	len = ft_strlen(var_value);
+	var_name = free_and_null_str(&var_name);
+	len = ft_strlen(var_value);// = -1 si var non set et égale à null
 	//ft_printf("\nVARLEN     len = %d", len);//debug
-	free(var_value);
-	var_value = NULL;
+	var_value = free_and_null_str(&var_value);
 	return (len);
 }
 

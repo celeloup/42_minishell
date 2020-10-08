@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/07 20:38:48 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/08 16:45:29 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int		unexpected_token_msg(char *input)
 	return (-1);
 }
 
+/*
 int		get_edges(char *input, char *env[], int i)
 {
 	int		edges;
@@ -61,23 +62,32 @@ int		get_edges(char *input, char *env[], int i)
 	next_str = free_and_null(&next_str);
 	return (edges);
 }
+*/
 
 int		token_len(char *input, char *env[], int expanded)
 {
 	int len;
 	int exp_len;
-	int	edges;
+//	int	edges;
 
 	len = 0;
 	exp_len = 0;
-	edges = NO;
-	if (expanded)
-		edges = get_edges(&input[len], env, len);
-	ft_printf("\nTOKENLEN input = >%s<", input);//debug
-	while (input[len] && !(is_arg_sep(input[len])))
+//	edges = NO;
+//	if (expanded)
+//		edges = get_edges(&input[len], env, len);
+//	ft_printf("\nTOKENLEN input = >%s<", input);//debug
+//	if (expanded && input && input[ft_strlen(input) - 1] == DOLLAR)
+//		return (ft_strdup(input));
+	while (!env && input[len] && !(is_arg_sep(input[len])))
 	{
 		exp_len -= len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
-		exp_len += len_after_exp_char(&input[len], env, NO_QUOTE, edges);
+		exp_len += len_after_exp_char(&input[len], env, NO_QUOTE);
+		len += len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
+	}
+	while (env && input[len] && !(is_ifs(input[len])))
+	{
+		exp_len -= len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
+		exp_len += len_after_exp_char(&input[len], env, NO_QUOTE);
 		len += len_after_char(&input[len], env, NO_QUOTE, NOT_EXP);
 	}
 	if (expanded)
@@ -93,51 +103,49 @@ char	*get_expanded_token(char *input, char *env[])
 	int		len;
 	int		i;
 	int		j;
-	int		edges;
 
 	token = NULL;
 	str = NULL;
 	i = 0;
 	j = 0;
 	len = 0;
-	edges = NO;
-//	if (!input || (input && !input[0]))
-//		return (NULL);
-//	if (!(len = token_len(input, env, EXP)) && input[0] != DOUBLE_QUOTE)
-//		return (NULL);
-	//ft_printf("\ntoken_len is : %d", len);
-	len = token_len(input, env, EXP);
-	ft_printf("\ntoken_len EXP is : %d\n", len);
+//	if (input && input[ft_strlen(input) - 1] == DOLLAR)
+//		return (ft_strdup(input));
+	while (input && input[i] && is_ifs(input[i]))
+		i++;
+	if (!input[i])
+		return (NULL);
+	ft_printf("\nGET_EXP_TOKEN &input[i] is : >%s<", &input[i]);
+	len = token_len(&input[i], env, EXP);
+	ft_printf("\nGET_EXP_TOKEN token_len EXP is : %d", len);
 	token = (char*)malloc(sizeof(char) * (len + 1));
 	token[len] = '\0';
-	while (i < token_len(input, env, NOT_EXP) && j < len)
+	while (input[i] && j < len)
 	{
-		if (edges != DOLLAR)
-			edges = get_edges(input, env, i);
-		str = expanded_str(&input[i], env, NO_QUOTE, edges);
-		ft_printf("\nexpanded str is : >%s<", str);
+		str = expanded_str(&input[i], env, NO_QUOTE);
+		ft_printf("\nGET_EXP_TOKEN expanded str is : >%s<", str);
 		if (str)
 		{
-			ft_printf("\nJ index is : >%d<", j);
+			ft_printf("\nGET_EXP_TOKEN J index is : >%d<", j);
 			ft_strcpy(&token[j], str);
-			ft_printf("\ntoken middle is : >%s<\n", token);
-			str = free_and_null(&str);
+			j += ft_strlen(str);
+			ft_printf("\nGET_EXP_TOKEN token middle is : >%s<\n", token);
+			str = free_and_null_str(&str);
 		}
-		j += len_after_exp_char(&input[i], env, NO_QUOTE, edges);
 		i += len_after_char(&input[i], env, NO_QUOTE, NOT_EXP);
 	}
-	str = free_and_null(&str);
-	ft_printf("\ntoken end is : >%s<\n", token);
+//	str = free_and_null(&str);
+	ft_printf("\nGET_EXP_TOKEN token end is : >%s<\n", token);
 	return (token);
 }
 
-char	*get_token(char *input, char *env[])
+char	*get_not_expanded_token(char *input)
 {
 	char	*token;
 	int		tkn_len;
 
 	token = NULL;
-	tkn_len = token_len(input, env, NOT_EXP);
+	tkn_len = token_len(input, NULL, NOT_EXP);
 	token = (char*)malloc(sizeof(char) * (tkn_len + 1));
 	token = ft_strncpy(token, input, tkn_len);
 	token[tkn_len] = '\0';

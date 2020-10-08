@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/09/25 15:04:51 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/08 11:54:43 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,14 @@ int		get_rdir_value(t_rdir *rdir, char *input, char *env[])
 	// cas d'erreur si token_len = 0 ?
 	if (!rdir)// a confirmer
 		return (0);// a confirmer
-	if (rdir)
-	{
-		rdir->value = get_token(input, env);
-	}
-	return (token_len(input, env, NOT_EXP));
+	if (rdir && !env)
+		rdir->value = get_not_expanded_token(input);
+	else if (rdir)
+		rdir->value = get_expanded_token(input, env);//achtung vérifier qu'on lui envoie bien un input avec les var expanded already
+	if (!env)
+		return (token_len(input, env, NOT_EXP));
+	else
+		return (token_len(input, env, EXP));
 }
 
 int		get_cmd_rdir(t_rdir **rdir, char *input, char *env[])

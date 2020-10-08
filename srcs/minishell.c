@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/06 20:12:04 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/08 19:35:10 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,32 +60,26 @@ int		main(int argc, char *argv[], char *env[])
 	{
 		prompt(0);
 		get_next_line(0, &input);
-		if (!input)
-		{
-			environment = free_env(&environment);
+		if (!input && !(environment = free_and_null_tab(&environment)))
 			control_d();
-		}
 		else
 		{
 			edit_exit_status(&environment, status);
-			cmd_list = parse_input(input, environment);
+			cmd_list = parse_input(input);
 			//print_cmd(cmd_list, 0);
 			if (cmd_list && cmd_list->argv && cmd_list->argv[0])
 				status = exec_cmds(cmd_list, &environment);
+			else if (!cmd_list)//cas de unexpected token...
+				status = 2;
 			//ft_printf("ret test = %d\n", test);
-			cmd_list = free_cmd(cmd_list);
-			free(input);
-			input = NULL;
 		}
-//		input = ft_strdup("echo proutlol");
+		cmd_list = free_and_null_cmd(&cmd_list);
+		input = free_and_null_str(&input);
 	}
-	if (input)
-		free(input);
-	input = get_var_value("$?", environment, NO, NO);
+	input = free_and_null_str(&input);
+	input = get_var_value("$?", environment);
 	status = ft_atoi(input);
-	if (input)
-		free(input);
-	input = NULL;
-	environment = free_env(&environment);
+	input = free_and_null_str(&input);
+	environment = free_and_null_tab(&environment);
 	return (status);
 }

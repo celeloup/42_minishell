@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/06 20:11:45 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/08 21:28:40 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	search_path(char **bin_tab, char **cmd)
 	struct dirent	*entry;
 
 	i = 0;
-	while (bin_tab[i])
+	while (bin_tab && bin_tab[i])
 	{
 		if ((dir = opendir(bin_tab[i])) != NULL)
 		{
@@ -59,7 +59,7 @@ void	search_path(char **bin_tab, char **cmd)
 				{
 					closedir(dir);
 					path_join(bin_tab[i], cmd);
-					free_tab(bin_tab);
+					bin_tab = free_and_null_tab(&bin_tab);
 					return ;
 				}
 			}
@@ -67,7 +67,7 @@ void	search_path(char **bin_tab, char **cmd)
 		}
 		i++;
 	}
-	free_tab(bin_tab);
+	bin_tab = free_and_null_tab(&bin_tab);
 }
 
 void	get_cmd_path(char **cmd, char *env[])
@@ -77,9 +77,9 @@ void	get_cmd_path(char **cmd, char *env[])
 
 	if (ft_strchr(*cmd, '/') != NULL || !(ft_strncmp(*cmd, "./", 2)))
 		return ;
-	path = get_var_value("$PATH", env, NO, NO);
+	path = get_var_value("$PATH", env);//null si "UNSET PATH; ls" (cf derniers test)
 	bin_tab = ft_split(path, ':');
-	free(path);
+	path = free_and_null_str(&path);
 	search_path(bin_tab, cmd);
 }
 
@@ -180,15 +180,20 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	int pipe_length;
 	int tmpin;
 	int tmpout;
+	char	*tmp;
 //	t_cmd	*new;
 //	t_cmd	*tmp;
 
 	tmpin = dup(STDIN_FILENO);
 	tmpout = dup(STDOUT_FILENO);
-	status = 0;
+	tmp = get_var_value("$?", *env);
+	status = atoi(tmp);
+	tmp = free_and_null_str(&tmp);
 	while (cmd)
 	{
 		expand_args_in_cmd(cmd, *env);
+		if (!cmd || !cmd->argv || !cmd->argv[0])
+			return (0);
 		if (builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
 		{
 			if (redirect(cmd->rdir, 3, -1, -1) == -1)
@@ -246,6 +251,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 			}
 		}
 		cmd = cmd->next;
+		edit_exit_status(env, status);
 	}
 	redirect(NULL, 0, tmpin, STDIN_FILENO);
 	redirect(NULL, 0, tmpout, STDOUT_FILENO);

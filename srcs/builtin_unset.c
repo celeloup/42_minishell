@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:02:20 by user42            #+#    #+#             */
-/*   Updated: 2020/10/07 20:49:37 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/08 18:29:21 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int		remove_var(char **env[], char *cmd, char *var, int value_expected)
 	int		name_len;
 	int		i;
 
-	if (!var || (var && !var[0]))
+	if (!var)
 		return (0);
 	if ((name_len = var_is_valid(*env, var, NULL, value_expected)) <= 0)
 		return (-var_is_valid(*env, var, cmd, value_expected));
@@ -38,9 +38,9 @@ int		remove_var(char **env[], char *cmd, char *var, int value_expected)
 	new_env = env_ncpy(new_env, *env, 0, i);
 	new_env = env_ncpy(new_env, &((*env)[i + 1]), i, env_len(*env) - i - 1);
 	new_env[env_len(*env) - 1] = NULL;
-	*env = free_env(env);
+	*env = free_and_null_tab(env);
 	*env = env_dup(new_env);
-	new_env = free_env(&new_env);
+	new_env = free_and_null_tab(&new_env);
 	return (EXIT_SUCCESS);
 }
 
@@ -63,8 +63,6 @@ int		ft_unset(t_cmd *cmd, char **env[])
 
 	i = 1;
 //	var = NULL;
-	while (cmd->argv[i] && !cmd->argv[i][0])
-		i++;
 //	if (var)
 //		free(var);
 	if (!cmd->argv[i])
@@ -81,6 +79,6 @@ int		ft_unset(t_cmd *cmd, char **env[])
 		i++;
 	}
 //	var = free_and_null(&var);
-	env_cpy = free_env(&env_cpy);
+	env_cpy = free_and_null_tab(&env_cpy);
 	return (ret);
 }

@@ -6,13 +6,13 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/05 15:13:58 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/08 14:41:20 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-char	**free_env(char **env[])
+/*
+char	**free_env_or_argv(char **env[]) // remplacé par free_and_null_tab
 {
 	int		i;
 
@@ -30,70 +30,33 @@ char	**free_env(char **env[])
 	return (NULL);
 }
 
-/*
-void	free_rdir(t_rdir **rdir)
+*/
+t_rdir	*free_and_null_rdir(t_rdir **rdir)
 {
 	if (!(*rdir))
-		return ;
+		return (NULL);
 	if ((*rdir)->next)
-		free_rdir(&((*rdir)->next));
+		(*rdir)->next = free_and_null_rdir(&((*rdir)->next));
 	if ((*rdir)->value)
-		free((*rdir)->value);
-	(*rdir)->value = NULL;
+		(*rdir)->value = free_and_null_str(&((*rdir)->value));
 	(*rdir)->type = 0;
 	free(*rdir);
-	(*rdir) = NULL;
+	return (NULL);
 }
 
-void	free_cmd_argv(t_cmd *cmd)
+t_cmd	*free_and_null_cmd(t_cmd **cmd)
 {
-	int i;
-
-	i = 0;
-	while (cmd->argv[i])
-	{
-		free(cmd->argv[i]);
-		cmd->argv[i] = NULL;
-		i++;
-	}
-	free(cmd->argv);
-	cmd->argv = NULL;
-}
-*/
-t_cmd	*free_cmd(t_cmd *cmd)
-{
-	int		i;
-	t_cmd	*tmp;
-	t_rdir	*tmp_rdir;
-
-	if (!cmd)
+	if (!cmd || !(*cmd))
 		return (NULL);
-	tmp = NULL;
-	while (cmd)
-	{
-		i = 0;
-		while (cmd->argv && cmd->argv[i])
-		{
-			free(cmd->argv[i]);
-			cmd->argv[i] = NULL;
-			i++;
-		}
-		if (cmd->argv)
-			free(cmd->argv);
-		cmd->argv = NULL;
-		while (cmd->rdir)
-		{
-			if (cmd->rdir->value)
-				free(cmd->rdir->value);
-			cmd->rdir->value = NULL;
-			tmp_rdir = cmd->rdir->next;
-			free(cmd->rdir);
-			cmd->rdir = tmp_rdir;
-		}
-		tmp = cmd->next;
-		free(cmd);
-		cmd = tmp;
-	}
+	if ((*cmd)->next)
+		(*cmd)->next = free_and_null_cmd(&(*cmd)->next);
+	(*cmd)->argc = 0;
+	if ((*cmd)->argv)
+		(*cmd)->argv = free_and_null_tab(&(*cmd)->argv);
+	(*cmd)->pipe = 0;
+	if ((*cmd)->rdir)
+		(*cmd)->rdir = free_and_null_rdir(&(*cmd)->rdir);
+	free((*cmd));
 	return (NULL);
 }
 

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/10/06 20:14:29 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/08 14:38:05 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int		var_is_set(char **env[], char *var)
 	to_check = get_var_name(tmp);
 	if (tmp)
 		free(tmp);
-	tmp = get_var_value(to_check, *env, NO, NO);
+	tmp = get_var_value(to_check, *env);
 	if (to_check)
 		free(to_check);
 	to_check = NULL;
@@ -83,9 +83,9 @@ int		add_var(char **env[], char *cmd, char *var)
 	new_env[i] = ft_strdup(var);
 	new_env[i + 1] = NULL;
 	if (*env)
-		*env = free_env(env);
+		*env = free_and_null_tab(env);
 	*env = env_dup(new_env);
-	new_env = free_env(&new_env);
+	new_env = free_and_null_tab(&new_env);
 	return (EXIT_SUCCESS);
 }
 
