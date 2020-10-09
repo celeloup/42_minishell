@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_baby_teen.c                                :+:      :+:    :+:   */
+/*   parsing_adult_teen.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/09 21:21:14 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 21:59:06 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,11 @@ int		teen_len(char *baby, char *env[])
 	{
 		if (baby[i] == DOLLAR && baby[ft_strlen(baby) - 1] == DOLLAR
 			&& i != (int)(ft_strlen(baby) - 1))
-			len += var_len_not_exp(&baby[i]) + 2;
-		else if (baby[i] == DOLLAR && var_len_exp(&baby[i], env) == -1)
+			len += var_len(&baby[i], NULL) + 2;
+		else if (baby[i] == DOLLAR && var_len(&baby[i], env) == -1)
 			null_found = YES;
 		else if (baby[i] == DOLLAR)
-			len += var_len_exp(&baby[i], env);
+			len += var_len(&baby[i], env);
 		else
 			len += go_to_next_char(&baby[i], NO);
 		i += go_to_next_char(&baby[i], NO);
@@ -63,8 +63,8 @@ int		get_teen_part(char *teen, char *baby, char *env[])
 		&& baby[1])
 	{
 		teen[0] = '\"';
-		ft_strncpy(&teen[1], baby, var_len_not_exp(baby));
-		len = var_len_not_exp(baby) + 2;
+		ft_strncpy(&teen[1], baby, var_len(baby, NULL));
+		len = var_len(baby, NULL) + 2;
 		teen[len - 1] = '\"';
 	}
 	else if (baby[0] == DOLLAR)

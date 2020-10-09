@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/09 21:31:17 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 22:27:57 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,14 +125,11 @@ int		words_in_baby(char *baby, char *env[]);
 char	*make_baby_a_teen(char *baby, char *env[]);
 char	**get_adult_argv(char **baby, int adult_argc, char *env[]);
 int		get_adult_rdir(t_rdir **adult, t_rdir *baby, char *env[]);
-int		single_quote_len(char *input, int expanded);
-int		double_quote_len(char *input, char *env[]);
-int		quote_len(char *input);
+int		baby_quote_len(char *input);
 char	*get_quote(char *input, char *env[]);
 char	*get_var_value(char *input, char *env[]);
 char	*get_var_name(char *input);
-int		var_len_not_exp(char *input);
-int		var_len_exp(char *input, char *env[]);
+int		var_len(char *input, char *env[]);
 int		go_to_next_char(char *input, int quote);
 int		get_adult_part(char *adult, char *teen, char *env[], int quote);
 int		backslash_len(char *input, int quote, int expanded);
