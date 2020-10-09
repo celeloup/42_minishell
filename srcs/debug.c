@@ -6,14 +6,14 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 15:10:26 by user42            #+#    #+#             */
-/*   Updated: 2020/10/01 18:31:52 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 21:43:34 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 void	print_args(int argc, char **argv)
-{  
+{
 	int		i;
 
 	ft_printf("\nARGV = ");
@@ -54,27 +54,24 @@ void	print_cmd_rdir(t_rdir *rdir)
 
 void	print_cmd(t_cmd *cmd, int i)
 {
-	if (!cmd)
-	{
-		ft_printf("\nNO CMD LIST TO PRINT");
-		return ;
-	}
 	ft_printf("\n----CMD%d----", i);
-	if (cmd->argc)
+	if (!cmd)
+		ft_printf("\nNO CMD LIST TO PRINT");
+	if (cmd && cmd->argc)
 		ft_printf("\nARGC = %d", cmd->argc);
-	if (cmd->argc && cmd->argv)
+	if (cmd && cmd->argc && cmd->argv)
 		print_args(cmd->argc, cmd->argv);
-	else
+	else if (cmd)
 		ft_printf("\nARGV = no arg found");
-	if (cmd->rdir)
+	if (cmd && cmd->rdir)
 	{
 		ft_printf("\nRDIR = ");
 		print_cmd_rdir(cmd->rdir);
 	}
-	else
+	else if (cmd)
 		ft_printf("\nRDIR = no rdir found");
 	ft_printf("\nPIPE = %d", cmd->pipe);
-	if (cmd->next)
+	if (cmd && cmd->next)
 	{
 		ft_printf("\nNext command...");
 		print_cmd(cmd->next, i + 1);

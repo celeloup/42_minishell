@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 12:44:54 by user42            #+#    #+#             */
-/*   Updated: 2020/09/28 16:28:13 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 20:49:21 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int		print_env(char *env[], int option)
 			print_env_export(env[i]);
 		else if (ft_strncmp(env[i], "?=", 2))
 			ft_putstr_fd(env[i], 1);
-		if (ft_strncmp(env[i], "?=", 2))	
+		if (ft_strncmp(env[i], "?=", 2))
 			ft_putchar_fd('\n', 1);
 		i++;
 	}

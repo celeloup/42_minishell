@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/08 14:40:27 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 21:31:17 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,6 @@
 # define AFTER			1
 # define BEFORE			2
 
-typedef struct		s_env{
-	char			*var;
-	struct s_env	*env;
-}					t_env;
-
 typedef	struct		s_rdir{
 	int				type;
 	char			padding[4];
@@ -94,6 +89,31 @@ typedef	struct		s_cmd{
 void	prompt(int error);
 
 /*
+** builtins files
+*/
+void	edit_exit_status(char **env[], int status);
+int		print_env_error(char *input, char *cmd, int error_type);
+int		print_env(char *env[], int option);
+int		ft_env(t_cmd *cmd, char **env[]);
+int		ft_export(t_cmd *cmd, char **env[]);
+int		ft_unset(t_cmd *cmd, char **env[]);
+int		ft_exit(t_cmd *cmd, char **env[]);
+int		ft_echo(t_cmd *cmd, char **env[]);
+int		ft_cd(t_cmd *cmd, char **env[]);
+int		ft_pwd(t_cmd *cmd, char **env[]);
+int		env_len(char *env[]);
+char	**env_dup(char *env[]);
+char	**env_ncpy(char *dest[], char *src[], int start, int n);
+int		var_is_valid(char *var, char *cmd, int value_expected);
+
+/*
+** copy.c
+*/
+char	**copy_argv(char **argv, int argc);
+t_rdir	*copy_rdir(t_rdir *rdir);
+t_cmd	*copy_cmd(t_cmd *cmd);
+
+/*
 ** parsing files
 */
 int		is_ifs(char c);
@@ -101,26 +121,28 @@ int		is_quote(char c);
 int		is_rdir(char c);
 int		is_cmd_sep(char c);
 int		is_arg_sep(char c);
+int		words_in_baby(char *baby, char *env[]);
+char	*make_baby_a_teen(char *baby, char *env[]);
+char	**get_adult_argv(char **baby, int adult_argc, char *env[]);
+int		get_adult_rdir(t_rdir **adult, t_rdir *baby, char *env[]);
 int		single_quote_len(char *input, int expanded);
-int		double_quote_len(char *input, char *env[], int expanded);
-int		quote_len(char *input, char *env[], int expanded);
+int		double_quote_len(char *input, char *env[]);
+int		quote_len(char *input);
 char	*get_quote(char *input, char *env[]);
 char	*get_var_value(char *input, char *env[]);
 char	*get_var_name(char *input);
 int		var_len_not_exp(char *input);
 int		var_len_exp(char *input, char *env[]);
-int		len_after_exp_char(char *input, char *env[], int quote);
-int		len_after_char(char *input, char *env[], int quote, int expanded);
-char	*expanded_str(char *input, char *env[], int quote);
+int		go_to_next_char(char *input, int quote);
+int		get_adult_part(char *adult, char *teen, char *env[], int quote);
 int		backslash_len(char *input, int quote, int expanded);
 char	*get_escaped_char(char *input, int quote);
 int		unexpected_token_msg(char *input);
-int		token_len(char *input, char *env[], int expanded);
-char	*get_expanded_token(char *input, char *env[]);
-char	*get_not_expanded_token(char *input);
+char	*get_one_adult_arg(char *teen, char *env[]);
+int		child_len(char *input);
 int		get_rdir_type(t_rdir *rdir, char *input);
-int		get_cmd_rdir(t_rdir **rdir, char *input, char *env[]);
-t_cmd	*parse_input(char *input);
+int		get_baby_rdir(t_rdir **rdir, char *input);
+t_cmd	*give_cmd_birth(char *input);
 
 /* debug.c */
 void	print_args(int argc, char **argv);
@@ -142,10 +164,10 @@ t_cmd	*init_cmd();
 t_rdir	*init_rdir();
 
 /*
-** get_var_in_cmd.c
+** expand_args.c
 */
 t_cmd	*copy_cmd(t_cmd *cmd);
-void	expand_args_in_cmd(t_cmd *cmd, char *env[]);
+int		make_cmd_an_adult(t_cmd *cmd, char *env[]);
 
 /*
 ** signal_handling.c
@@ -155,23 +177,6 @@ void	control_d();
 void	control_c(int num);
 void	signal_handler(int num);
 
-/*
-** builtins files
-*/
-void	edit_exit_status(char **env[], int status);
-int		print_env_error(char *input, char *cmd, int error_type);
-int		print_env(char *env[], int option);
-int		ft_env(t_cmd *cmd, char **env[]);
-int		ft_export(t_cmd *cmd, char **env[]);
-int		ft_unset(t_cmd *cmd, char **env[]);
-int		ft_exit(t_cmd *cmd, char **env[]);
-int		ft_echo(t_cmd *cmd, char **env[]);
-int		ft_cd(t_cmd *cmd, char **env[]);
-int		ft_pwd(t_cmd *cmd, char **env[]);
-int		env_len(char *env[]);
-char	**env_dup(char *env[]);
-char	**env_ncpy(char *dest[], char *src[], int start, int n);
-int		var_is_valid(char *env[], char *var, char *cmd, int value_expected);
 
 /*
 ** execution.c

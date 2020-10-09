@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/08 18:53:27 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 20:35:27 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,39 +52,15 @@ int		backslash_len(char *input, int quote, int expanded)
 		return (1);
 }
 
-int		len_after_exp_char(char *input, char *env[], int quote)
-{
-	int	i;
-
-	i = 0;
-	if (is_quote(input[0]) && !quote)
-		return (quote_len(input, env, EXP));
-	else if (input[0] == BACKSLASH)
-		return (backslash_len(input, quote, EXP));
-	else if (input[0] == DOLLAR && env && quote && var_len_exp(input, env) >= 0)
-		return (var_len_exp(input, env));
-	else if (input[0] == DOLLAR && env && quote)
-		return (0);
-	while (input[i] && !is_quote(input[i]) && (!(is_arg_sep(input[i])) || quote)
-		&& input[i] != BACKSLASH && (input[i] != DOLLAR || !quote))
-		i++;
-	if (i == 0)
-		return (1);
-	else
-		return (i);
-}
-
-int		len_after_char(char *input, char *env[], int quote, int expanded)
+int		go_to_next_char(char *input, int quote)
 {
 	int	i;
 
 	i = 0;
 	if (!input)
 		return (0);
-	if (expanded)
-		return (len_after_exp_char(input, env, quote));
 	else if (is_quote(input[0]) && !quote)
-		return (quote_len(input, NULL, NOT_EXP));
+		return (quote_len(input));
 	else if (input[0] == BACKSLASH)
 		return (backslash_len(input, quote, NOT_EXP));
 	else if (input[0] == DOLLAR)
@@ -92,8 +68,6 @@ int		len_after_char(char *input, char *env[], int quote, int expanded)
 	while (input[i] && !is_quote(input[i]) && (!(is_arg_sep(input[i])) || quote)
 		&& input[i] != BACKSLASH && input[i] != DOLLAR)
 		i++;
-//	if (input[i] && quote && input[i] == quote)
-//		i++;
 	if (i)
 		return (i);
 	else

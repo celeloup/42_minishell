@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:20:14 by user42            #+#    #+#             */
-/*   Updated: 2020/10/08 15:26:13 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 20:35:27 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,39 +22,32 @@ char	*get_single_quote(char *input)
 	return (ret);
 }
 
-char	*get_double_quote(char *input, char *env[])
+char	*get_double_quote(char *teen, char *env[])
 {
-	char	*ret;
-	char	*str;
+	char	*quote;
 	int		len;
 	int		i;
-	int		j;
 
-	len = double_quote_len(input, env, EXP);
-	ret = (char *)malloc(sizeof(char) * (len + 1));
-	ret[len] = '\0';
+	len = double_quote_len(teen, env);
+	ft_printf("\ndoublequote len = %d", len);
+	quote = (char*)malloc(sizeof(char) * (len + 1));
+	quote[len] = '\0';
 	i = 1;
-	j = 0;
-	str = NULL;
-	while (input[i] && i < double_quote_len(input, env, NOT_EXP) && j < len)
+	len = 0;
+	while (teen[i] && quote[len])
 	{
-		if ((str = expanded_str(&input[i], env, DOUBLE_QUOTE)))
-		{
-			ft_strcpy(&ret[j], str);
-			str = free_and_null_str(&str);
-		}
-		j += len_after_exp_char(&input[i], env, DOUBLE_QUOTE);
-		i += len_after_char(&input[i], env, DOUBLE_QUOTE, NOT_EXP);
+		len += get_adult_part(&quote[len], &teen[i], env, DOUBLE_QUOTE);
+		ft_printf("\ndoublequote len inside = %d", len);
+		i += go_to_next_char(&teen[i], DOUBLE_QUOTE);
+		ft_printf("\ndoublequote i inside = %d", i);
 	}
-	//if (!ret)
-	//	ret = ft_strdup("");
-	return (ret);
+	return (quote);
 }
 
-char	*get_quote(char *input, char *env[])
+char	*get_quote(char *teen, char *env[])
 {
-	if (input[0] == SINGLE_QUOTE)
-		return (get_single_quote(input));
+	if (teen[0] == SINGLE_QUOTE)
+		return (get_single_quote(teen));
 	else
-		return (get_double_quote(input, env));
+		return (get_double_quote(teen, env));
 }

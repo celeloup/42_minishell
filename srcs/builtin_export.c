@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/10/08 14:38:05 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 20:57:20 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,14 @@ int		var_is_set(char **env[], char *var)
 
 	tmp = ft_strjoin("$", var);
 	to_check = get_var_name(tmp);
-	if (tmp)
-		free(tmp);
+	tmp = free_and_null_str(&tmp);
 	tmp = get_var_value(to_check, *env);
-	if (to_check)
-		free(to_check);
-	to_check = NULL;
-	if (!tmp)
-		return (0);
-	else if (!ft_strcmp(tmp, ""))
+	to_check = free_and_null_str(&to_check);
+	if (!tmp || !tmp[0])
 		ret = 0;
 	else
 		ret = 1;
-	free(tmp);
-	tmp = NULL;
+	tmp = free_and_null_str(&tmp);
 	return (ret);
 }
 
@@ -42,10 +36,10 @@ int		edit_var(char **env[], char *cmd, char *var)
 	int	name_len;
 	int	i;
 
-	if (var_is_valid(*env, var, NULL, YES) > 0)
-		name_len = var_is_valid(*env, var, NULL, YES);
+	if (var_is_valid(var, NULL, YES) > 0)
+		name_len = var_is_valid(var, NULL, YES);
 	else
-		return (-var_is_valid(*env, var, cmd, YES));
+		return (-var_is_valid(var, cmd, YES));
 	i = 0;
 	while ((*env)[i])
 	{
@@ -70,8 +64,8 @@ int		add_var(char **env[], char *cmd, char *var)
 	int		i;
 	char	**new_env;
 
-	if (var_is_valid(*env, var, NULL, YES) <= 0)
-		return (-(var_is_valid(*env, var, cmd, YES)));
+	if (var_is_valid(var, NULL, YES) <= 0)
+		return (-(var_is_valid(var, cmd, YES)));
 	if (var_is_set(env, var))
 		return (edit_var(env, cmd, var));
 	i = 0;
@@ -92,33 +86,17 @@ int		add_var(char **env[], char *cmd, char *var)
 int		ft_export(t_cmd *cmd, char **env[])
 {
 	int		i;
-//	char	**env_cpy;
-//	char	*var;
 	int		ret;
 
 	i = 1;
-//	var = NULL;
-//	while (cmd->argv[i] && !(var = get_expanded_token(cmd->argv[i], *env)))
-//		i++;
-//	if (var)
-//		free(var);
 	if (!cmd->argv[i])
 		return (print_env(*env, EXP));
-//	env_cpy = env_dup(*env);
-//	var = NULL;
 	ret = 0;
 	while (cmd->argv[i])
 	{
-//		if (var)
-//			free(var);
-//		var = get_expanded_token(cmd->argv[i], env_cpy);
 		if (add_var(env, cmd->argv[0], cmd->argv[i]) > 0)
 			ret = 1;
 		i++;
 	}
-//	if (var)
-//		free(var);
-//	var = NULL;
-//	env_cpy = free_env(&env_cpy);
 	return (ret);
 }

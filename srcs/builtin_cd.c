@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/28 15:08:57 by user42            #+#    #+#             */
-/*   Updated: 2020/10/08 21:08:40 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 20:48:40 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,10 +58,8 @@ int		ft_cd_error_msg(char *arg)
 
 int		ft_cd(t_cmd *cmd, char **env[])
 {
-//	char	*path;
 	int		ret;
 
-//	path = NULL;
 	ret = 0;
 	if (!cmd->argv[1] || cmd->argc > 2)
 		return (ft_cd_arg_issue(cmd, env));
@@ -69,21 +67,10 @@ int		ft_cd(t_cmd *cmd, char **env[])
 	{
 		cmd->argv[1] = free_and_null_str(&cmd->argv[1]);
 		cmd->argv[1] = get_var_value("$OLDPWD", *env);
-		ft_printf("%s\n", cmd->argv[1]);
+		ft_printf("%s\n", cmd->argv[1]);// ! Pas du debug ! Comportement normal de shell
 	}
-/*	path = get_expanded_token(cmd->argv[1], *env);
-	if (!path || (path && !path[0]))
-	{
-		if (path)
-			free(path);
-		path = NULL;
-		return (ft_cd_no_arg(env));
-	}
-*/	ret = chdir(cmd->argv[1]);
+	ret = chdir(cmd->argv[1]);
 	if (ret && cmd->argv[1])
 		return (ft_cd_error_msg(cmd->argv[1]));
-//	if (path)
-//		free(path);
-//	path = NULL;
 	return (ret);
 }

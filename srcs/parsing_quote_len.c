@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:20:14 by user42            #+#    #+#             */
-/*   Updated: 2020/10/08 15:45:17 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 20:35:27 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,38 +31,30 @@ int		single_quote_len(char *input, int expanded)
 	return (len);
 }
 
-int		double_quote_len(char *input, char *env[], int expanded)
+int		double_quote_len(char *input, char *env[])
 {
-	int len;
-	int	exp_len;
+	int i;
+	int	len;
 
-	exp_len = 0;
-	len = 1;
-	ft_printf("\nDOUBLE_QUOTE_LEN_EXP input debut = >%s<", input);
-	while (input[len] && input[len] != DOUBLE_QUOTE)
+	len = 0;
+	i = 1;
+	while (input[i] && input[i] != DOUBLE_QUOTE)
 	{
-		ft_printf("\nDOUBLE_QUOTE_LEN_EXP input middl = >%s<", &input[len]);
-		exp_len -= len_after_char(&input[len], env, DOUBLE_QUOTE, NOT_EXP);
-		exp_len += len_after_exp_char(&input[len], env, DOUBLE_QUOTE);
-		len += len_after_char(&input[len], env, DOUBLE_QUOTE, NOT_EXP);
-		ft_printf("\nDOUBLE_QUOTE_LEN middl = >%d<", len);
+		if (env)
+			len += get_adult_part(NULL, &input[i], env, DOUBLE_QUOTE);
+		i += go_to_next_char(&input[i], DOUBLE_QUOTE);
 	}
-	if (input[len] && input[len] == DOUBLE_QUOTE)
-	{
-		exp_len -= 2;
-		len++;
-	}
-	ft_printf("\nDOUBLE_QUOTE_LEN_NOT_EXP = %d", len);
-	ft_printf("\nDOUBLE_QUOTE_LEN_EXP = %d", exp_len + len);
-	if (expanded)
-		return (exp_len + len);
-	return (len);
+	if (input[i] && input[i] == DOUBLE_QUOTE)
+		i++;
+	if (env)
+		return (len);
+	return (i);
 }
 
-int		quote_len(char *input, char *env[], int expanded)
+int		quote_len(char *input)
 {
 	if (input[0] == DOUBLE_QUOTE)
-		return (double_quote_len(input, env, expanded));
+		return (double_quote_len(input, NULL));
 	else
-		return (single_quote_len(input, expanded));
+		return (single_quote_len(input, NO));
 }

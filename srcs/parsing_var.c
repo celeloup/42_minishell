@@ -6,52 +6,11 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/10/08 18:35:54 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 21:38:14 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-char	*word_split(char *input, int edges)
-{
-	char	*value;
-	char	*ret;
-	int		i;
-	int		len;
-
-	len = 0;
-	value = NULL;
-	if (edges >= BEFORE && input[0] && is_ifs(input[0]))
-	{
-		value = ft_strjoin(" ", input);
-		len++;
-	}
-	else
-		value = ft_strdup(input);
-	i = 0;
-	ret = NULL;
-	while (input[i])
-	{
-		while (input[i] && is_ifs(input[i]))
-			i++;
-		while (input[i] && !is_ifs(input[i]))
-			value[len++] = input[i++];
-		while (input[i] && is_ifs(input[i]))
-			i++;	
-		if (input[i])
-			value[len++] = ' ';
-		else
-		{
-			value[len] = '\0';
-			if (edges == AFTER || edges == BEFORE + AFTER)
-				ret = ft_strjoin(value, " ");
-			else
-				ret = ft_strdup(value);
-			value = free_and_null_str(&value);
-		}
-	}
-	return (ret);
-}
 
 /*
 ** returns the value of a var (input) in env
@@ -76,7 +35,7 @@ char	*get_var_value(char *name, char *env[])
 			return (ft_strdup(ft_strchr(env[i], '=') + 1));
 		i++;
 	}
-	return (NULL);// cas ou la variable n'existe pas vérifier s'il ne renvoie pas plutôt une chaine null
+	return (NULL);
 }
 
 int		var_len_not_exp(char *input)
@@ -86,7 +45,7 @@ int		var_len_not_exp(char *input)
 	len = 1;
 	if (input[len] && input[len] == '?')
 		return (2);
-	while (input[len] && ft_isalnum(input[len]))//vérifier le cas du underscore
+	while (input[len] && (ft_isalnum(input[len]) || input[len] == '_'))
 		len++;
 	return (len);
 }
@@ -106,47 +65,38 @@ int		var_len_exp(char *input, char *env[])
 	var_name = NULL;
 	var_value = NULL;
 	len = var_len_not_exp(input);
-	//ft_printf("\nVARLEN     len = %d", len);//debug
 	if (len == 1 && (!input[1] || is_ifs(input[1])))
 		return (1);
-	else if (len == 1)//pas sûr 
+	else if (len == 1)
 		return (0);
 	var_name = (char*)malloc(sizeof(char) * (len + 1));
 	ft_strncpy(var_name, input, len);
 	var_name[len] = '\0';
-	//ft_printf("\nVARLEN  varname = %s", var_name);//debug
 	var_value = get_var_value(var_name, env);
-	//ft_printf("\nVARLEN varvalue = %s", var_value);//debug
 	var_name = free_and_null_str(&var_name);
-	len = ft_strlen(var_value);// = -1 si var non set et égale à null
-	//ft_printf("\nVARLEN     len = %d", len);//debug
+	len = ft_strlen(var_value);
 	var_value = free_and_null_str(&var_value);
 	return (len);
 }
 
 char	*get_var_name(char *input)
 {
-	int		i;
 	int		len;
 	char	*name;
-	
+
 	name = NULL;
-	//ft_printf("\nGET_VAR_NAME\ninput is: %s / name is: %s", input, name);//debug
 	if ((len = var_len_not_exp(input)) == 0)
 		return (ft_strdup(""));
-	//ft_printf("\nGET_VAR_NAME\nlen is: %d", len);//debug
 	if (len == 2 && input[1] == '?')
 		return (ft_strdup("$?"));
 	name = (char *)malloc(sizeof(char) * (len + 1));
 	name[0] = DOLLAR;
 	name[len] = '\0';
-	i = 1;
-	while (input[i] && ft_isalnum(input[i]))
+	len = 1;
+	while (input[len] && ft_isalnum(input[len]))
 	{
-		name[i] = input[i];
-		i++;
+		name[len] = input[len];
+		len++;
 	}
-	//if (name && name[0] && name[0] == DOLLAR)
-	//ft_printf("\ninput is: %s / name is: %s", input, name);//debug
 	return (name);
 }

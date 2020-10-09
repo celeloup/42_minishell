@@ -6,13 +6,13 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-#    Updated: 2020/10/06 19:18:30 by user42           ###   ########.fr        #
+#    Updated: 2020/10/09 21:28:00 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			= minishell
 
-SRCS_FILE		= minishell.c parsing.c parsing_binaries.c parsing_char.c parsing_quote.c parsing_quote_len.c parsing_token.c parsing_var.c parsing_rdir.c debug.c init.c free.c signal_handling.c builtin_cd.c builtin_others.c execution.c builtin_env.c builtin_export.c builtin_unset.c builtin_utils_env.c builtin_utils_var.c expand_args.c
+SRCS_FILE		= minishell.c parsing_baby.c parsing_utils.c parsing_char.c parsing_quote.c parsing_quote_len.c parsing_var.c parsing_rdir.c debug.c init.c free.c signal_handling.c builtin_cd.c builtin_others.c execution.c builtin_env.c builtin_export.c builtin_unset.c builtin_utils_env.c builtin_utils_var.c copy.c parsing_adult_argv.c parsing_adult_teen.c parsing_adult.c
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS			= $(addprefix $(OBJS_DIR), $(SRCS_FILE:.c=.o))

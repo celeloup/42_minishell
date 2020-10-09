@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:02:20 by user42            #+#    #+#             */
-/*   Updated: 2020/10/08 18:29:21 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 20:56:50 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ int		remove_var(char **env[], char *cmd, char *var, int value_expected)
 
 	if (!var)
 		return (0);
-	if ((name_len = var_is_valid(*env, var, NULL, value_expected)) <= 0)
-		return (-var_is_valid(*env, var, cmd, value_expected));
+	if ((name_len = var_is_valid(var, NULL, value_expected)) <= 0)
+		return (-var_is_valid(var, cmd, value_expected));
 	i = 0;
 	while ((*env)[i] && (ft_strncmp((*env)[i], var, name_len)
 		|| ((*env)[i])[name_len] != '='))
@@ -57,28 +57,17 @@ int		remove_var(char **env[], char *cmd, char *var, int value_expected)
 int		ft_unset(t_cmd *cmd, char **env[])
 {
 	int		i;
-	char	**env_cpy;
-//	char	*var;
 	int		ret;
 
 	i = 1;
-//	var = NULL;
-//	if (var)
-//		free(var);
 	if (!cmd->argv[i])
 		return (0);
-	env_cpy = env_dup(*env);
-//	var = NULL;
 	ret = 0;
 	while (cmd->argv[i])
 	{
-//		var = free_and_null(&var);
-//		var = get_expanded_token(cmd->argv[i], env_cpy);
 		if (remove_var(env, "unset", cmd->argv[i], NO) > 0)
 			ret = 1;
 		i++;
 	}
-//	var = free_and_null(&var);
-	env_cpy = free_and_null_tab(&env_cpy);
 	return (ret);
 }

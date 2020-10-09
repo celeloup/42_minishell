@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/08 14:12:25 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/09 21:39:52 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ t_rdir	*init_rdir(void)
 	return (rdir);
 }
 
-char	**init_argv(int	argc)
+char	**init_argv(int argc)
 {
 	char	**argv;
 	int		i;
