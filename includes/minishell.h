@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/09 22:27:57 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/10 20:05:55 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ void	edit_exit_status(char **env[], int status);
 int		print_env_error(char *input, char *cmd, int error_type);
 int		print_env(char *env[], int option);
 int		ft_env(t_cmd *cmd, char **env[]);
+int		var_is_set(char **env[], char *var);
 int		ft_export(t_cmd *cmd, char **env[]);
 int		ft_unset(t_cmd *cmd, char **env[]);
 int		ft_exit(t_cmd *cmd, char **env[]);

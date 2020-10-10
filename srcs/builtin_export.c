@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/10/09 20:57:20 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/10 20:02:12 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int		var_is_set(char **env[], char *var)
 	tmp = free_and_null_str(&tmp);
 	tmp = get_var_value(to_check, *env);
 	to_check = free_and_null_str(&to_check);
-	if (!tmp || !tmp[0])
+	if (!tmp)
 		ret = 0;
 	else
 		ret = 1;
