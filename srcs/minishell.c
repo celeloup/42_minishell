@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/28 18:08:16 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/09 16:18:10 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ int		main(int argc, char *argv[], char *env[])
 	
 	(void)argc;
 	(void)argv;
-	
 	signal(SIGINT, control_c);
 	/*signal(SIGQUIT, control_slash);
 	signal(SIGTERM, signal_handler);
@@ -68,10 +67,10 @@ int		main(int argc, char *argv[], char *env[])
 			edit_exit_status(&environment, status);
 			cmd_list = parse_input(input, environment);
 			//print_cmd(cmd_list, 0);
+			free(input);
 			if (cmd_list && cmd_list->argv )//&& cmd_list->argv[0])
 				status = exec_cmds(cmd_list, &environment);
 			cmd_list = free_cmd(cmd_list);
-			free(input);
 		}
 		//ft_printf("status = %d\n", status);
 	}

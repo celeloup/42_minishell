@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/25 14:55:40 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/01 17:48:39 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	free_cmd_argv(t_cmd *cmd)
 	free(cmd->argv);
 	cmd->argv = NULL;
 }
-
+/*
 t_cmd	*free_cmd(t_cmd *cmd)
 {
 	if (!cmd)
@@ -71,5 +71,34 @@ t_cmd	*free_cmd(t_cmd *cmd)
 	cmd->pipe = 0;
 	free(cmd);
 	cmd = NULL;
+	return (NULL);
+}
+*/
+t_cmd *free_cmd(t_cmd *cmd)
+{
+	int i;
+	t_cmd *tmp;
+	t_rdir *tmp_rdir;
+
+	while (cmd)
+	{
+		i = 0;
+		while (cmd->argv && cmd->argv[i])
+		{
+			free(cmd->argv[i]);
+			i++;
+		}
+		free(cmd->argv);
+		while (cmd->rdir)
+		{
+			free(cmd->rdir->value);
+			tmp_rdir = cmd->rdir->next;
+			free(cmd->rdir);
+			cmd->rdir = tmp_rdir;
+		}
+		tmp = cmd->next;
+		free(cmd);
+		cmd = tmp;
+	}
 	return (NULL);
 }

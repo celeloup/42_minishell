@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
+#    By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-#    Updated: 2020/09/25 15:57:26 by user42           ###   ########.fr        #
+#    Updated: 2020/10/09 15:16:10 by celeloup         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ LIBFT_DIR		= ./libft/
 LIBFT			= $(LIBFT_DIR)libft.a
 HEADER			= $(INCLUDES_DIR)minishell.h
 
-CFLAGS			= -Wall -Wextra -Werror# -fsanitize=address,undefined -Wpadded
+CFLAGS			= -Wall -Wextra -Werror -g #-fsanitize=address,undefined -Wpadded
 CC				= clang
 
 INCLUDES	= $(addprefix -I, $(INCLUDES_DIR) $(LIBFT_DIR))

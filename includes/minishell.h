@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/09/28 15:56:02 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/09 16:32:01 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef struct		s_env{
 
 typedef	struct		s_rdir{
 	int				type;
+	char			pad[4];
 	char			*value;
 	struct s_rdir	*next;
 }					t_rdir;
@@ -80,8 +81,8 @@ typedef	struct		s_rdir{
 typedef	struct		s_cmd{
 	char			**argv;
 	int				argc;
-	t_rdir			*rdir;
 	int				pipe;
+	t_rdir			*rdir;
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -160,13 +161,13 @@ int		env_len(char *env[]);
 char	**env_dup(char *env[]);
 char	**env_ncpy(char *dest[], char *src[], int start, int n);
 int		var_is_valid(char *var, char *cmd, int value_expected);
-
+void	sort_env(char *env[]);
 /*
 ** execution.c
 */
 int		is_builtin(t_cmd *cmd, char *env[]);
 int		redirections(t_rdir *rd, int type);
-void	error_exit(char *actor, char *msg, int status);
+void	error_exit(int status, t_cmd *cmd, char *env[]);
 int		exec_cmd(t_cmd *cmd, char *env[]);
 void	close_fd(int fd);
 void	redirect_pipe(int old_fd, int new_fd);
