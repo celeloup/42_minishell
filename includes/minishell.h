@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/12 12:25:56 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/12 12:34:37 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,11 +177,29 @@ void	signal_handler(int num);
 
 
 /*
+** builtins files
+*/
+void	edit_exit_status(char **env[], int status);
+int		print_env_error(char *input, char *cmd, int error_type);
+int		print_env(char *env[], int option);
+int		ft_env(t_cmd *cmd, char **env[]);
+int		ft_export(t_cmd *cmd, char **env[]);
+int		ft_unset(t_cmd *cmd, char **env[]);
+int		ft_exit(t_cmd *cmd, char **env[]);
+int		ft_echo(t_cmd *cmd, char **env[]);
+int		ft_cd(t_cmd *cmd, char **env[]);
+int		ft_pwd(t_cmd *cmd, char **env[]);
+int		env_len(char *env[]);
+char	**env_dup(char *env[]);
+char	**env_ncpy(char *dest[], char *src[], int start, int n);
+int		var_is_valid(char *var, char *cmd, int value_expected);
+void	sort_env(char *env[]);
+/*
 ** execution.c
 */
 int		is_builtin(t_cmd *cmd, char *env[]);
 int		redirections(t_rdir *rd, int type);
-void	error_exit(char *actor, char *msg, int status);
+void	error_exit(int status, t_cmd *cmd, char *env[]);
 int		exec_cmd(t_cmd *cmd, char *env[]);
 void	close_fd(int fd);
 void	redirect_pipe(int old_fd, int new_fd);

@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_var.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2020/10/10 20:00:46 by user42           ###   ########.fr       */
+=======
+/*   Updated: 2020/10/01 16:37:34 by celeloup         ###   ########.fr       */
+>>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
 /*                                                                            */
 /* ************************************************************************** */
 

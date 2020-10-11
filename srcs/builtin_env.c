@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 12:44:54 by user42            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2020/10/09 20:49:21 by user42           ###   ########.fr       */
+=======
+/*   Updated: 2020/10/09 12:43:56 by celeloup         ###   ########.fr       */
+>>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +37,48 @@ void	print_env_export(char *var)
 	ft_putchar_fd('\"', 1);
 }
 
+void	sort_env(char *env[])
+{
+	char **tmp_env;
+	int i;
+	int j;
+	int len ;
+	char *tmp_str;
+
+	len = 0;
+	while (env[len])
+		len++;
+	if ((tmp_env = malloc((len + 1) * sizeof(char*))) == NULL)
+		return ;
+	i = 0;
+	while (i < len)
+	{
+		tmp_env[i] = ft_strdup(env[i]);
+		i++;
+	}
+	tmp_env[i] = NULL;
+	i = 0;
+	while (i < len)
+	{
+		j = 0;
+		while (j < len)
+		{
+			if (ft_strcmp(tmp_env[i], tmp_env[j]) < 0)
+			{
+				tmp_str = ft_strdup(tmp_env[i]);
+				free(tmp_env[i]);
+				tmp_env[i] = ft_strdup(tmp_env[j]);
+				free(tmp_env[j]);
+				tmp_env[j] = tmp_str;
+			}
+			j++;
+		}
+		i++;
+	}
+	print_env(tmp_env, EXP);
+	free_env(tmp_env);
+}
+
 int		print_env(char *env[], int option)
 {
 	int i;
@@ -40,12 +86,23 @@ int		print_env(char *env[], int option)
 	i = 0;
 	while (env[i])
 	{
+<<<<<<< HEAD
 		if (ft_strncmp(env[i], "?=", 2) && option == EXP)
 			print_env_export(env[i]);
 		else if (ft_strncmp(env[i], "?=", 2))
 			ft_putstr_fd(env[i], 1);
 		if (ft_strncmp(env[i], "?=", 2))
 			ft_putchar_fd('\n', 1);
+=======
+		if (ft_strncmp(env[i], "?=", 2))
+		{
+			if (option == EXP)
+				print_env_export(env[i]);
+			else
+				ft_putstr_fd(env[i], 1);
+			ft_putchar_fd('\n', 1);
+		}
+>>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
 		i++;
 	}
 	return (EXIT_SUCCESS);
