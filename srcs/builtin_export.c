@@ -7,10 +7,14 @@
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
 <<<<<<< HEAD
+<<<<<<< HEAD
 /*   Updated: 2020/10/10 20:02:12 by user42           ###   ########.fr       */
 =======
 /*   Updated: 2020/10/09 12:40:24 by celeloup         ###   ########.fr       */
 >>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
+=======
+/*   Updated: 2020/10/09 12:40:24 by celeloup         ###   ########.fr       */
+>>>>>>> 6537e7e4636cbc8063e240b71447b2d12ffd8034
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +107,10 @@ int		ft_export(t_cmd *cmd, char **env[])
 	if (!cmd->argv[1])
 		sort_env(*env);
 		//print_env(*env, EXP);
+<<<<<<< HEAD
 >>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
+=======
+>>>>>>> 6537e7e4636cbc8063e240b71447b2d12ffd8034
 	while (cmd->argv[i])
 	{
 		if (add_var(env, cmd->argv[0], cmd->argv[i]) > 0)
