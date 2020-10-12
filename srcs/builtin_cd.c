@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/28 15:08:57 by user42            #+#    #+#             */
-/*   Updated: 2020/10/10 21:57:30 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 08:22:37 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void	get_curpath_with_cd_path(char **curpath, char *env[])
 	char		*tmp;
 	struct stat	*buf;
 
+	buf = NULL;
 	if (!(cd_path_value = get_var_value("$CDPATH", env)))
 		return ;
 	cd_path_tab = ft_split(cd_path_value, ':');
@@ -102,34 +103,94 @@ void	get_curpath_with_cd_path(char **curpath, char *env[])
 	}
 	cd_path_tab = free_and_null_tab(&cd_path_tab);
 }
-  
+
+void	join_pwd_and_curpath(char **curpath, char *env[])
+{
+	char	*pwd;
+	char	*tmp;
+
+	if (!(tmp = get_var_value("$PWD", env)))
+		return ;
+	if (tmp[ft_strlen(tmp) - 1] != '/')
+		pwd = ft_strjoin(tmp, "/");
+	else
+		pwd = ft_strdup(tmp);
+	tmp = free_and_null_str(&tmp);
+	tmp = ft_strdup(*curpath);
+	*curpath = free_and_null_str(curpath);
+	*curpath = ft_strjoin(pwd, tmp);
+	tmp = free_and_null_str(&tmp);
+	pwd = free_and_null_str(&pwd);
+}
+/*
+int		clean_curpath(char **path)
+{
+	int		i;
+	int		j;
+	int		len;
+	char	*component;
+	char	*tmp;
+
+	i = 0;
+	len = 0;
+	component = NULL;
+	tmp = NULL;
+	while ((*path)[i])
+	{
+		if ((*path)[i] == '.' && ft_strncmp(&((*path)[i]), "..", 2))
+		{
+			len--;
+			while ((*path)[++i] && (*path)[i] == '/')
+				len --;
+		}
+		if (!ft_strncmp(&((*path)[i]), "..", 2) && i > 0)
+		{
+			while ((*path[--i]) && (*path)[i] != )
+		}		{
+			len -= 2;
+			i += 2;
+			
+		}
+		while ((*path)[i] != '.')
+			i++;
+			
+	}
+}
+*/
+
+// traiter cd ~ ?
 int		ft_cd(t_cmd *cmd, char **env[])
 {
+	(void)cmd;
+	(void)env;
+
+return 1;
+}
+
+/*
+	
 	int		ret;
 	char	*curpath;
 
 	curpath = NULL;
-	if (!cmd->argv[1] && !(curpath = get_var_value("$HOME", *env)))
-	{
-		ft_putstr_fd("minishell: cd: HOME not set\n", 2);
+	if (!cmd->argv[1] && !(curpath = get_var_value("$HOME", *env))
+		&& ft_putstr_fd("minishell: cd: HOME not set\n", 2))
 		return (1);
-	}
 	else if (cmd->argv[1])
 		curpath = ft_strdup(cmd->argv[1]);
 	if (curpath && curpath[0] && !(curpath[0] == '/' || curpath[0] == '.')
 		&& var_is_set(env, "CDPATH"))
 		get_curpath_with_cd_path(&curpath, *env);
-	
+	if (curpath && curpath[0] && curpath[0] != '/')
+		join_pwd_and_curpath(&curpath, *env);
+	if (curpath && (ret = clean_curpath(&curpath)))
+		return (ret);
+		
 	{
 	
 	}
 	
 
-        7.  If curpath
-           does not begin with a <slash> character, set curpath to the
-           string formed by the concatenation of the value of PWD, a <slash>
-           character if the value of PWD did not end with a <slash>
-           character, and curpath.
 
         8. The curpath value shall then be converted to canonical form as
            follows, considering each component from beginning to end, in
@@ -227,3 +288,4 @@ int		ft_cd0(t_cmd *cmd, char **env[])
 		return (ft_cd_error_msg(cmd->argv[1]));
 	return (ret);
 }
+*/
