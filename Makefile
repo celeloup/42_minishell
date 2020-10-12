@@ -6,13 +6,38 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-#    Updated: 2020/10/10 13:07:21 by user42           ###   ########.fr        #
+#    Updated: 2020/10/12 21:48:16 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME			= minishell
 
-SRCS_FILE		= minishell.c parsing_give_cmd_birth.c parsing_utils.c parsing_char.c parsing_quote.c parsing_var.c parsing_rdir.c debug.c init.c free.c signal_handling.c builtin_cd.c builtin_others.c execution.c builtin_env.c builtin_export.c builtin_unset.c builtin_utils_env.c builtin_utils_var.c copy.c parsing_adult_argv.c parsing_make_baby_a_teen.c parsing_make_cmd_an_adult.c
+SRCS_FILE		= builtin_cd.c \
+builtin_cd_utils.c \
+builtin_echo.c \
+builtin_env.c \
+builtin_env_utils.c \
+builtin_exit.c \
+builtin_export.c \
+builtin_pwd.c \
+builtin_unset.c \
+builtin_var_utils.c \
+copy.c \
+debug.c \
+execution.c \
+free.c \
+init.c \
+minishell.c \
+parsing_adult_argv.c \
+parsing_char.c \
+parsing_give_cmd_birth.c \
+parsing_make_baby_a_teen.c \
+parsing_make_cmd_an_adult.c \
+parsing_quote.c \
+parsing_rdir.c \
+parsing_utils.c \
+parsing_var.c \
+signal_handling.c \
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS			= $(addprefix $(OBJS_DIR), $(SRCS_FILE:.c=.o))

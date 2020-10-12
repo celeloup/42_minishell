@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/10/10 20:00:46 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 21:50:27 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@ char	*get_var_value(char *name, char *env[])
 		if (!strncmp(env[i], name + 1, ft_strlen(name + 1))
 			&& env[i][ft_strlen(name + 1)]
 			&& env[i][ft_strlen(name + 1)] == '=')
-			{
-				if (env[i][ft_strlen(name + 2)])
-					return (ft_strdup(ft_strchr(env[i], '=') + 1));
-				else
-					return (ft_strdup(""));
-			}
+		{
+			if (env[i][ft_strlen(name + 2)])
+				return (ft_strdup(ft_strchr(env[i], '=') + 1));
+			else
+				return (ft_strdup(""));
+		}
 		i++;
 	}
 	return (NULL);

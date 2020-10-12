@@ -6,286 +6,129 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/28 15:08:57 by user42            #+#    #+#             */
-/*   Updated: 2020/10/12 08:22:37 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 21:14:28 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int		ft_cd_no_arg(char **env[])
+int		go_to_next_component(char **new, char *path, int i, struct stat **buf)
 {
-	int		ret;
-	char	*path;
+	char	*tmp;
+	char	*tmp2;
 
-	path = NULL;
-	path = get_var_value("$HOME", *env);
-	ret = 0;
-	if (!path)
+	if (path[0] == '.' && ft_strncmp(path, "..", 2))
+		return (go_to_next_component_index(path + 1) + 1);
+	else if (!ft_strncmp(path, "..", 2) && stat(*new, *buf))
+		return (-i - 1);
+	else if (!ft_strncmp(path, "..", 2) && !go_to_parent_directory(new))
+		return (go_to_next_component_index(path + 2) + 2);
+	else if (!ft_strncmp(path, "..", 2))
+		*buf = NULL;
+	else if (path[0] != '/')
 	{
-		ft_putstr_fd("minishell: cd: HOME not set\n", 2);
-		return (1);
+		i = 0;
+		while (path[i] && path[i] != '/')
+			i++;
+		tmp = ft_strjoin(*new, "/");
+		tmp2 = ft_substr(path, 0, i);
+		*new = free_and_null_str(new);
+		*new = ft_strjoin(tmp, tmp2);
+		tmp = free_and_null_str(&tmp);
+		tmp2 = free_and_null_str(&tmp2);
+		return (i);
 	}
-	else if (path && path[0])
-		ret = chdir(path);
-	path = free_and_null_str(&path);
-	return (ret);
+	return (go_to_next_component_index(path));
 }
 
-int		ft_cd_arg_issue(t_cmd *cmd, char **env[])
+int		change_relative_to_absolute_path(char **path)
 {
-	if (!cmd->argv[1])
-		return (ft_cd_no_arg(env));
-	else if (cmd->argc > 2)
+	int			i;
+	char		*new_path;
+	struct stat	*buf;
+
+	i = 0;
+	new_path = ft_strdup("");
+	buf = (struct stat *)malloc(sizeof(struct stat));
+	while (i >= 0 && (*path)[i] && buf)
+		i += go_to_next_component(&new_path, &(*path)[i], i, &buf);
+	free(buf);
+	if (i > 0)
 	{
-		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-		return (1);
+		*path = free_and_null_str(path);
+		*path = ft_strdup(new_path);
+		new_path = free_and_null_str(&new_path);
+		return (0);
 	}
+	new_path = free_and_null_str(&new_path);
+	*path = free_and_null_str(path);
+	return (-i);
+}
+
+int		deal_special_cd_args(char **curpath, t_cmd *cmd, char **env[])
+{
+	char	*tmp;
+
+	if (cmd->argc > 2)
+		return (ft_putstr_fd("minishell: cd: too many arguments\n", 2) + 1);
+	if (!cmd->argv[1] && !(*curpath = get_var_value("$HOME", *env)))
+		return (ft_putstr_fd("minishell: cd: HOME not set\n", 2) + 1);
+	else if (cmd->argv[1] && !(ft_strcmp(cmd->argv[1], "-")))
+		ft_printf("%s\n", (*curpath = get_var_value("$OLDPWD", *env)));
+	else if (cmd->argv[1] && !(ft_strncmp(cmd->argv[1], "~", 1)))
+	{
+		tmp = get_var_value("$HOME", *env);
+		*curpath = ft_strjoin(tmp, &cmd->argv[1][1]);
+		tmp = free_and_null_str(&tmp);
+	}
+	else if (cmd->argv[1])
+		*curpath = ft_strdup(cmd->argv[1]);
 	return (0);
 }
 
 int		ft_cd_error_msg(char *arg)
 {
-	ft_putstr_fd("minishell: cd: ", 2);
-	ft_putstr_fd(arg, 2);
-	ft_putstr_fd(": ", 2);
+	if (ft_strcmp("parent", arg))
+	{
+		ft_putstr_fd("minishell: cd: ", 2);
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": ", 2);
+	}
+	else
+	{
+		ft_putstr_fd("cd: error retrieving current directory: getcwd: ", 2);
+		ft_putstr_fd("cannot access parent directories: ", 2);
+	}
 	ft_putstr_fd(strerror(errno), 2);
 	ft_putchar_fd('\n', 2);
 	return (1);
 }
 
-char	*search_cd_path(char **cd_path, char *curpath, struct stat *buf)
-{
-	char		*valid_path_found;
-	int			i;
-	char		*tmp;
-
-	tmp = NULL;
-	valid_path_found = NULL;
-	i = 0;
-	while (cd_path[i] && !valid_path_found)
-	{
-		if (cd_path[i][ft_strlen(cd_path[i]) - 1] != '/')
-			tmp = ft_strjoin(cd_path[i], "/");
-		else
-			tmp = ft_strdup(cd_path[i]);
-		cd_path[i] = free_and_null_str(&cd_path[i]);
-		cd_path[i] = ft_strjoin(tmp, curpath);
-		tmp = free_and_null_str(&tmp);
-		if (!(stat(cd_path[i], buf)))
-			valid_path_found = ft_strdup(cd_path[i]);
-		else if ((tmp = ft_strjoin("./", cd_path[i]))
-			&& !(stat(tmp, buf)))
-			valid_path_found = ft_strdup(tmp);
-		tmp = free_and_null_str(&tmp);
-		i++;
-	}
-	return (valid_path_found);
-}
-
-void	get_curpath_with_cd_path(char **curpath, char *env[])
-{
-	char		*cd_path_value;
-	char		**cd_path_tab;
-	char		*tmp;
-	struct stat	*buf;
-
-	buf = NULL;
-	if (!(cd_path_value = get_var_value("$CDPATH", env)))
-		return ;
-	cd_path_tab = ft_split(cd_path_value, ':');
-	cd_path_value = free_and_null_str(&cd_path_value);
-	if (cd_path_tab && search_cd_path(cd_path_tab, *curpath, buf))
-	{
-		tmp = ft_strdup(*curpath);
-		*curpath = free_and_null_str(curpath);
-		*curpath = search_cd_path(cd_path_tab, tmp, buf);
-		tmp = free_and_null_str(&tmp);
-	}
-	cd_path_tab = free_and_null_tab(&cd_path_tab);
-}
-
-void	join_pwd_and_curpath(char **curpath, char *env[])
-{
-	char	*pwd;
-	char	*tmp;
-
-	if (!(tmp = get_var_value("$PWD", env)))
-		return ;
-	if (tmp[ft_strlen(tmp) - 1] != '/')
-		pwd = ft_strjoin(tmp, "/");
-	else
-		pwd = ft_strdup(tmp);
-	tmp = free_and_null_str(&tmp);
-	tmp = ft_strdup(*curpath);
-	*curpath = free_and_null_str(curpath);
-	*curpath = ft_strjoin(pwd, tmp);
-	tmp = free_and_null_str(&tmp);
-	pwd = free_and_null_str(&pwd);
-}
-/*
-int		clean_curpath(char **path)
-{
-	int		i;
-	int		j;
-	int		len;
-	char	*component;
-	char	*tmp;
-
-	i = 0;
-	len = 0;
-	component = NULL;
-	tmp = NULL;
-	while ((*path)[i])
-	{
-		if ((*path)[i] == '.' && ft_strncmp(&((*path)[i]), "..", 2))
-		{
-			len--;
-			while ((*path)[++i] && (*path)[i] == '/')
-				len --;
-		}
-		if (!ft_strncmp(&((*path)[i]), "..", 2) && i > 0)
-		{
-			while ((*path[--i]) && (*path)[i] != )
-		}		{
-			len -= 2;
-			i += 2;
-			
-		}
-		while ((*path)[i] != '.')
-			i++;
-			
-	}
-}
-*/
-
-// traiter cd ~ ?
 int		ft_cd(t_cmd *cmd, char **env[])
 {
-	(void)cmd;
-	(void)env;
-
-return 1;
-}
-
-/*
-	
-	int		ret;
-	char	*curpath;
+	char		*curpath;
+	int			print;
 
 	curpath = NULL;
-	if (!cmd->argv[1] && !(curpath = get_var_value("$HOME", *env))
-		&& ft_putstr_fd("minishell: cd: HOME not set\n", 2))
+	print = 0;
+	if (deal_special_cd_args(&curpath, cmd, env))
 		return (1);
-	else if (cmd->argv[1])
-		curpath = ft_strdup(cmd->argv[1]);
 	if (curpath && curpath[0] && !(curpath[0] == '/' || curpath[0] == '.')
-		&& var_is_set(env, "CDPATH"))
-		get_curpath_with_cd_path(&curpath, *env);
-	if (curpath && curpath[0] && curpath[0] != '/')
-		join_pwd_and_curpath(&curpath, *env);
-	if (curpath && (ret = clean_curpath(&curpath)))
-		return (ret);
-		
-	{
-	
-	}
-	
-
-
-        8. The curpath value shall then be converted to canonical form as
-           follows, considering each component from beginning to end, in
-           sequence:
-
-            a. Dot components and any <slash> characters that separate them
-               from the next component shall be deleted.
-
-            b. For each dot-dot component, if there is a preceding component
-               and it is neither root nor dot-dot, then:
-
-                i.  If the preceding component does not refer (in the
-                    context of pathname resolution with symbolic links
-                    followed) to a directory, then the cd utility shall
-                    display an appropriate error message and no further
-                    steps shall be taken.
-
-               ii.  The preceding component, all <slash> characters
-                    separating the preceding component from dot-dot, dot-
-                    dot, and all <slash> characters separating dot-dot from
-                    the following component (if any) shall be deleted.
-
-            c. An implementation may further simplify curpath by removing
-               any trailing <slash> characters that are not also leading
-               <slash> characters, replacing multiple non-leading
-               consecutive <slash> characters with a single <slash>, and
-               replacing three or more leading <slash> characters with a
-               single <slash>.  If, as a result of this canonicalization,
-               the curpath variable is null, no further steps shall be
-               taken.
-
-        9. If curpath is longer than {PATH_MAX} bytes (including the
-           terminating null) and the directory operand was not longer than
-           {PATH_MAX} bytes (including the terminating null), then curpath
-           shall be converted from an absolute pathname to an equivalent
-           relative pathname if possible. This conversion shall always be
-           considered possible if the value of PWD, with a trailing <slash>
-           added if it does not already have one, is an initial substring of
-           curpath.  Whether or not it is considered possible under other
-           circumstances is unspecified. Implementations may also apply this
-           conversion if curpath is not longer than {PATH_MAX} bytes or the
-           directory operand was longer than {PATH_MAX} bytes.
-
-       10. The cd utility shall then perform actions equivalent to the
-           chdir() function called with curpath as the path argument. If
-           these actions fail for any reason, the cd utility shall display
-           an appropriate error message and the remainder of this step shall
-           not be executed. If the −P option is not in effect, the PWD
-           environment variable shall be set to the value that curpath had
-           on entry to step 9 (i.e., before conversion to a relative
-           pathname). If the −P option is in effect, the PWD environment
-           variable shall be set to the string that would be output by pwd
-           −P.  If there is insufficient permission on the new directory, or
-           on any parent of that directory, to determine the current working
-           directory, the value of the PWD environment variable is
-           unspecified.
-
-       If, during the execution of the above steps, the PWD environment
-       variable is set, the OLDPWD environment variable shall also be set to
-       the value of the old working directory (that is the current working
-       directory immediately prior to the call to cd).
-
-
-	ret = 0;
-	if (!cmd->argv[1] || cmd->argc > 2)
-		return (ft_cd_arg_issue(cmd, env));
-	if (!(ft_strcmp(cmd->argv[1], "-")))
-	{
-		cmd->argv[1] = free_and_null_str(&cmd->argv[1]);
-		cmd->argv[1] = get_var_value("$OLDPWD", *env);
-		ft_printf("%s\n", cmd->argv[1]);// ! Pas du debug ! Comportement normal de shell
-	}
-	ret = chdir(cmd->argv[1]);
-	if (ret && cmd->argv[1])
-		return (ft_cd_error_msg(cmd->argv[1]));
-	return (ret);
+		&& (get_curpath_with_cd_path(&curpath, *env)))
+		print = 1;
+	if ((!curpath || !curpath[0] || curpath[0] != '/')
+		&& join_pwd_and_curpath(&curpath, *env))
+		ft_cd_error_msg("parent");
+	else if (curpath && (change_relative_to_absolute_path(&curpath))
+		&& ft_cd_error_msg(cmd->argv[1])
+		&& !(curpath = free_and_null_str(&curpath)))
+		return (1);
+	else if ((chdir(curpath)) && ft_cd_error_msg(cmd->argv[1])
+		&& !(curpath = free_and_null_str(&curpath)))
+		return (1);
+	edit_pwd_and_oldpwd(curpath, "cd", env);
+	if (print)
+		ft_printf("%s\n", curpath);
+	curpath = free_and_null_str(&curpath);
+	return (0);
 }
-
-
-int		ft_cd0(t_cmd *cmd, char **env[])
-{
-	int		ret;
-
-	ret = 0;
-	if (!cmd->argv[1] || cmd->argc > 2)
-		return (ft_cd_arg_issue(cmd, env));
-	if (!(ft_strcmp(cmd->argv[1], "-")))
-	{
-		cmd->argv[1] = free_and_null_str(&cmd->argv[1]);
-		cmd->argv[1] = get_var_value("$OLDPWD", *env);
-		ft_printf("%s\n", cmd->argv[1]);// ! Pas du debug ! Comportement normal de shell
-	}
-	ret = chdir(cmd->argv[1]);
-	if (ret && cmd->argv[1])
-		return (ft_cd_error_msg(cmd->argv[1]));
-	return (ret);
-}
-*/

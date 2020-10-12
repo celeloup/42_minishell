@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/10 20:05:55 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 21:06:19 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,18 @@ void	prompt(int error);
 /*
 ** builtins files
 */
+char	*search_cd_path(char **cd_path, char *curpath, struct stat *buf);
+int		get_curpath_with_cd_path(char **curpath, char *env[]);
+int		join_pwd_and_curpath(char **curpath, char *env[]);
+int		go_to_parent_directory(char **path);
+int		go_to_next_component_index(char *path);
+void	edit_pwd_and_oldpwd(char *curpath, char *cmd, char **env[]);
 void	edit_exit_status(char **env[], int status);
 int		print_env_error(char *input, char *cmd, int error_type);
 int		print_env(char *env[], int option);
 int		ft_env(t_cmd *cmd, char **env[]);
 int		var_is_set(char **env[], char *var);
+int		edit_var(char **env[], char *cmd, char *var);
 int		ft_export(t_cmd *cmd, char **env[]);
 int		ft_unset(t_cmd *cmd, char **env[]);
 int		ft_exit(t_cmd *cmd, char **env[]);
