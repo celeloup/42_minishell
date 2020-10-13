@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 17:44:23 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 22:48:28 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,13 +66,18 @@ int		main(int argc, char *argv[], char *env[])
 		else
 		{
 			edit_exit_status(&environment, status);
-			cmd_list = give_cmd_birth(input);
-			//print_cmd(cmd_list, 0);
-			//free(input);
-			if (cmd_list && cmd_list->argv )//&& cmd_list->argv[0])
+	//		ft_printf("\nstatus is :%d, input is :%s", status, input);
+			if (!give_cmd_birth(&cmd_list, input, &environment))
 				status = exec_cmds(cmd_list, &environment);
-			else if (!cmd_list)//cas de unexpected token...
-				status = 2;
+			else
+			{
+				input = free_and_null_str(&input);
+				input = get_var_value("$?", environment);
+				status = ft_atoi(input);
+			}
+				
+//			else if (!cmd_list)//cas de unexpected token...
+//				status = 2;
 			//ft_printf("ret test = %d\n", test);
 			cmd_list = free_and_null_cmd(&cmd_list);
 		}

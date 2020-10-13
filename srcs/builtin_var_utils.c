@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_utils_var.c                                :+:      :+:    :+:   */
+/*   builtin_var_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:12:12 by user42            #+#    #+#             */
-/*   Updated: 2020/10/09 20:57:56 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 20:52:01 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int		is_not_name(char *input)
 	int i;
 
 	if (!input || !input[0] || (input[0] && !(ft_isalpha(input[0])
-		|| input[0] == '_')))
+		|| (input[0] == '_'))))
 		return (-1);
 	i = 1;
 	while (input[i] && (ft_isalnum(input[i]) || input[i] == '_'))
@@ -37,7 +37,7 @@ int		is_name(char *input)
 {
 	int i;
 
-	if (!input || (input[0] && !(ft_isalpha(input[0]) || input[0] == '_')))
+	if (!input || !input[0] || (input[0] && !(ft_isalpha(input[0]) || (input[0] == '_'))))
 		return (0);
 	i = 1;
 	while (input[i] && (ft_isalnum(input[i]) || input[i] == '_'))

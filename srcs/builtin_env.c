@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 12:44:54 by user42            #+#    #+#             */
-/*   Updated: 2020/10/12 15:34:55 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/13 20:12:14 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@ void	print_env_export(char *var)
 		}
 		i++;
 	}
-	ft_putchar_fd('\"', 1);
+	if (in_quote)
+		ft_putchar_fd('\"', 1);
+	ft_putchar_fd('\n', 1);
 }
 
 void	sort_env(char *env[])
@@ -84,11 +86,10 @@ int		print_env(char *env[], int option)
 	{
 		if (ft_strncmp(env[i], "?=", 2))
 		{
-			if (option == EXP)
+			if (option == EXP && ft_strncmp(env[i], "_=", 2))
 				print_env_export(env[i]);
-			else
-				ft_putstr_fd(env[i], 1);
-			ft_putchar_fd('\n', 1);
+			else if (!option && ft_strchr(env[i], '='))
+				ft_printf("%s\n", env[i]);
 		}
 		i++;
 	}

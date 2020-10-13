@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 17:27:21 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 22:48:53 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int		unexpected_token_msg(char *input)
 {
 	if (input && input[1] && input[0] == input[1] && input[1] == '|')
-		return (-1);
+		return (-2);
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 	if (!input)
 		ft_putstr_fd("newline'\n", 2);
@@ -26,7 +26,7 @@ int		unexpected_token_msg(char *input)
 			ft_putchar_fd(input[1], 2);
 		ft_putstr_fd("'\n", 2);
 	}
-	return (-1);
+	return (-2);
 }
 
 void	get_baby_argv(t_cmd *cmd, char *input, int cmd_len)
@@ -85,26 +85,35 @@ int		cmd_len(t_cmd *cmd, char *input)
 	return (len);
 }
 
-t_cmd	*give_cmd_birth(char *input)
+int		give_cmd_birth(t_cmd **cmd, char *input, char **env[])
 {
-	t_cmd	*cmd;
 	int		len;
+	int		ret;
 
-	cmd = NULL;
+	*cmd = NULL;
 //	ft_printf("\ninput dans parsing is= >%s<", input);//debug
-	if (!(cmd = init_cmd()) || !input)
-		return (NULL);
-	if ((len = cmd_len(cmd, input)) == -1)
-		return ((cmd = free_and_null_cmd(&cmd)));
-	cmd->argv = init_argv(cmd->argc);
-	get_baby_argv(cmd, input, len);
-//	print_args(cmd->argc, cmd->argv);//debug
+	if (!input || !(*cmd = init_cmd()))
+		return (0);
+	if ((len = cmd_len(*cmd, input)) < 0)
+	{
+		*cmd = free_and_null_cmd(cmd);
+		return (-len);
+	}
+	(*cmd)->argv = init_argv((*cmd)->argc);
+	get_baby_argv(*cmd, input, len);
+//	print_args(*cmd->argc, *cmd->argv);//debug
 	if (input[len] && (input[len] == ';' || input[len] == '|'))
 	{
 		if (input[len] == '|')
-			cmd->pipe++;
-		if (input[len + 1])
-			cmd->next = give_cmd_birth(&input[len + 1]);
+			(*cmd)->pipe++;
+		if (input[len + 1]
+			&& (ret = give_cmd_birth(&((*cmd)->next), &input[len + 1], env)))
+		{
+//			ft_printf("\nstatus modified in parsing:%d", ret);
+			edit_exit_status(env, ret);
+			*cmd = free_and_null_cmd(cmd);
+			return (ret);
+		}
 	}
-	return (cmd);
+	return (0);
 }

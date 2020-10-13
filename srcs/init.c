@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 17:31:53 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 20:06:56 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,10 @@ char	**init_env(char *env[])
 	i = 0;
 	while (env && env[i])
 	{
-		new_env[i] = ft_strdup(env[i]);
+		if (!ft_strncmp(env[i], "_=", 2))
+			new_env[i] = ft_strdup("_=/bin/bash");
+		else
+			new_env[i] = ft_strdup(env[i]);
 		i++;
 	}
 	i += edit_shell_level(&new_env, env, shlvl);

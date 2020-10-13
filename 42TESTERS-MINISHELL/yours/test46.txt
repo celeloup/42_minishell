@@ -43,6 +43,6 @@ echo
 echo
  		echo -ne "
  		echo -ne "
-255
+-1
       0       0       0
-255
+-1

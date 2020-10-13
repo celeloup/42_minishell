@@ -20,3 +20,100 @@ echo $
 echo $?
 $LESS$VAR
 echo $?
+echo bonjour ; |	; echo $?
+echo bonjour | |	; echo $?
+|	; echo $?
+echo bonjour |;	; echo $?
+echo bonjour ; ls	; echo $?
+echo bonjour > test\ 1	; echo $?
+cd $HOME/Documents	; echo $?
+echo "\s" & echo "\s"	; echo $?
+echo >	; echo $?
+echo -n -n -nnnn -nnnnm	; echo $?
+cat /dev/random | head -n 1 | cat -e	; echo $?
+unset var1 # with undefined var1	; echo $?
+export "" ; unset ""	; echo $?
+echo test > file test1	; echo $?
+$	; echo $?
+not_cmd bonjour > salut	; echo $?
+env ; export ; env ; echo $?
+cat Makefile | grep pr | head -n 5 | cd test (mybin) # check status code	; echo $?
+cat Makefile | grep pr | head -n 5 | cat test (bin) # check status code	; echo $?
+cat Makefile | grep pr | head -n 5 | hello (NA) # check status code	; echo $?
+echo bonjour >>> test	; echo $?
+echo bonjour > > out	; echo $?
+echo 2 >> out1 > out2	; echo $?
+echo 2 > out1 >> out2	; echo $?
+cat < test # with non-existent test	; echo $?
+export var; export var=test	; echo $?
+echo bonjour > $test # with test not defined	; echo $?
+file_name_in_current_dir	; echo $?
+cd ../../../../../.. ; pwd	; echo $?
+ctrl-C . 130 sur bin(ex : sleep 10)&line vide	; echo $?
+ctrl-\ .131 sur bin	; echo $?
+echo "bip | bip ; coyotte > < " "	; echo $?
+cat | cat | cat | ls # check outputs order	; echo $?
+$bla # with bla not defined	; echo $?
+export var ="cat Makefile | grep >"	; echo $?
+export "test=ici"=coucou	; echo $?
+c$var Makefile # with var=at	; echo $?
+$LESS$VAR	; echo $?
+/bin/echo bonjour	; echo $?
+not_cmd	; echo $?
+sleep 5 | exit	; echo $?
+echo bonjour > $test w/ t	; echo $?
+"exit retour a la ligne"	; echo $?
+minishell # binary not in path without "./" before	; echo $?
+cat diufosgid # check exit code	; echo $?
+exit # should return the last exit code value	; echo $?
+exit -10	; echo $?
+exit +10	; echo $?
+;	; echo $?
+echo coucou | ;	; echo $?
+echo "$HOME"	; echo $?
+echo '$HOME'	; echo $?
+export ; env # display is different for both commands	; echo $?
+echo $HOME	; echo $?
+> log echo coucou	; echo $?
+echo hudifg d | | hugdfihd	; echo $?
+echo	; echo $?
+echo simple	; echo $?
+echo -n simple	; echo $?
+echo ''	; echo $?
+echo ""	; echo $?
+echo "\"	; echo $?
+echo "\n \n \n"	; echo $?
+echo "\n \n \\n"	; echo $?
+echo ;;	; echo $?
+echo hi";" hihi	; echo $?
+echo hi " ; " hihi	; echo $?
+cd	; echo $?
+cd .	; echo $?
+cd ~	; echo $?
+cd /	; echo $?
+cd no_file	; echo $?
+cd a b c d	; echo $?
+pwd a	; echo $?
+pwd a b c d	; echo $?
+export LOL=lala ROR=rara	; echo $?
+unset LOL ROR	; echo $?
+export "HI= hi"	; echo $?
+export "HI =hi"	; echo $?
+/bin/ls	; echo $?
+# write something the press ctrl+c	; echo $?
+# write something then press ctrl+d	; echo $?
+# write something then press ctrl+\	; echo $?
+echo $?	; echo $?
+l^Ds	; echo $?
+echo |	; echo $?
+| echo	; echo $?
+sort | ls # check output order	; echo $?
+cat < >	; echo $?
+cat < <	; echo $?
+cat > >	; echo $?
+> a ls > b < Makefile	; echo $?
+echo > a Hello World!	; echo $?
+> a echo Hello World!	; echo $?
+cat < Makefile | grep gcc > output	; echo $?
+exit 0 | exit 1	; echo $?
+exit 1 | exit 0	; echo $?	

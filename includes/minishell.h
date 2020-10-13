@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 14:37:50 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/13 21:43:10 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ void	prompt(int error);
 /*
 ** builtins files
 */
+int		is_not_name(char *input);
 char	*search_cd_path(char **cd_path, char *curpath, struct stat *buf);
 int		get_curpath_with_cd_path(char **curpath, char *env[]);
 int		join_pwd_and_curpath(char **curpath, char *env[]);
@@ -149,7 +150,7 @@ char	*get_one_adult_arg(char *teen, char *env[]);
 int		child_len(char *input);
 int		get_rdir_type(t_rdir *rdir, char *input);
 int		get_baby_rdir(t_rdir **rdir, char *input);
-t_cmd	*give_cmd_birth(char *input);
+int		give_cmd_birth(t_cmd **cmd, char *input, char **env[]);
 
 /* debug.c */
 void	print_args(int argc, char **argv);

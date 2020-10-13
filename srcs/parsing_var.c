@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/10/13 17:00:12 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 20:00:30 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ char	*get_var_value(char *name, char *env[])
 		return (ft_strdup("$"));
 	while (name && env[i])
 	{
-		if (!strncmp(env[i], name + 1, ft_strlen(name + 1))
-			&& env[i][ft_strlen(name + 1)]
-			&& env[i][ft_strlen(name + 1)] == '=')
+		if (!strncmp(env[i], name + 1, ft_strlen(name + 1)))
 		{
-			if (env[i][ft_strlen(name + 2)])
+			if (env[i][ft_strlen(name + 1)]
+				&& env[i][ft_strlen(name + 1)] == '='
+				&& env[i][ft_strlen(name + 2)])
 				return (ft_strdup(ft_strchr(env[i], '=') + 1));
 			else
 				return (ft_strdup(""));
@@ -58,7 +58,7 @@ int		var_len(char *input, char *env[])
 	var_name = NULL;
 	var_value = NULL;
 	len = 1;
-	while (input[len] && (ft_isalnum(input[len]) || input[len] == '_'))
+	while (input[len] && !ft_isdigit(input[1]) && (ft_isalnum(input[len]) || input[len] == '_'))
 		len++;
 	if (len == 1 && input[len] && input[len] == '?')
 		len++;
@@ -76,12 +76,17 @@ int		var_len(char *input, char *env[])
 
 char	*get_var_name(char *input)
 {
-	int		len;
+//	int		len;
 	char	*name;
 
 	name = NULL;
+	if (!(name = ft_substr(input, 0, var_len(input, NULL))))
+		name = ft_strdup("");
+	
+/*
 	if ((len = var_len(input, NULL)) == 0)
-		return (ft_strdup(""));
+		return (ft_strdup(""));	
+
 	if (len == 2 && input[1] == '?')
 		return (ft_strdup("$?"));
 	name = (char *)malloc(sizeof(char) * (len + 1));
@@ -93,5 +98,6 @@ char	*get_var_name(char *input)
 		name[len] = input[len];
 		len++;
 	}
+*/
 	return (name);
 }

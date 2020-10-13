@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 13:54:02 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/13 22:14:12 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,6 +272,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 				status = (*builtin(cmd->argv[0]))(cmd, env);
 			else
 				status = 1;
+//			ft_printf("\ninside exec cmd status is %d", status);
 		}
 		else
 		{
@@ -347,7 +348,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 					waitpid(pid, &status, 0);
 			}
 		}
-		status = ((status != 1 || status != 2) ? WEXITSTATUS(status) : status);
+//		status = ((status != 1 || status != 2) ? WEXITSTATUS(status) : status);
 		cmd = cmd->next;
 		if (status != 255)
 			edit_exit_status(env, status);

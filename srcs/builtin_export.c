@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/10/12 15:26:55 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/13 22:08:07 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int		var_is_set(char **env[], char *var)
 
 	tmp = ft_strjoin("$", var);
 	to_check = get_var_name(tmp);
+//	ft_printf("\ntocheck =%s", to_check);
 	tmp = free_and_null_str(&tmp);
 	tmp = get_var_value(to_check, *env);
 	to_check = free_and_null_str(&to_check);
@@ -64,8 +65,11 @@ int		add_var(char **env[], char *cmd, char *var)
 	int		i;
 	char	**new_env;
 
-	if (var_is_valid(var, NULL, YES) <= 0)
+	if (var && (!ft_strcmp(var, "_") || !ft_strncmp(var, "_=", 2)))
+		return (0);
+	if (var_is_valid(var, NULL, YES) <= 0 && is_not_name(var))
 		return (-(var_is_valid(var, cmd, YES)));
+//	ft_printf("\nadd_var inside");//debug
 	if (var_is_set(env, var))
 		return (edit_var(env, cmd, var));
 	i = 0;
@@ -94,9 +98,10 @@ int		ft_export(t_cmd *cmd, char **env[])
 	ret = 0;
 	while (cmd->argv[i])
 	{
-		if (add_var(env, cmd->argv[0], cmd->argv[i]) > 0)
+		if (add_var(env, cmd->argv[0], cmd->argv[i]) != 0)
 			ret = 1;
 		i++;
 	}
+//	ft_printf("\nexport ret =%d", ret);//debug
 	return (ret);
 }
