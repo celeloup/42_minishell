@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/09 17:04:55 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 15:36:51 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ int		main(int argc, char *argv[], char *env[])
 	
 	(void)argc;
 	(void)argv;
-	
 	signal(SIGINT, control_c);
 	input = NULL;
 	/*signal(SIGQUIT, control_slash);
@@ -67,11 +66,13 @@ int		main(int argc, char *argv[], char *env[])
 			edit_exit_status(&environment, status);
 			cmd_list = give_cmd_birth(input);
 			//print_cmd(cmd_list, 0);
-			if (cmd_list && cmd_list->argv && cmd_list->argv[0])
+			//free(input);
+			if (cmd_list && cmd_list->argv )//&& cmd_list->argv[0])
 				status = exec_cmds(cmd_list, &environment);
 			else if (!cmd_list)//cas de unexpected token...
 				status = 2;
 			//ft_printf("ret test = %d\n", test);
+			cmd_list = free_and_null_cmd(&cmd_list);
 		}
 		cmd_list = free_and_null_cmd(&cmd_list);
 		input = free_and_null_str(&input);

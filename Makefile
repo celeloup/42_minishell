@@ -6,7 +6,7 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-#    Updated: 2020/10/12 21:48:16 by user42           ###   ########.fr        #
+#    Updated: 2020/10/13 12:08:30 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,12 +49,10 @@ LIBFT_DIR		= ./libft/
 
 LIBFT			= $(LIBFT_DIR)libft.a
 HEADER			= $(INCLUDES_DIR)minishell.h
-
 CFLAGS			= -Wall -Wextra -Werror -g3 -fsanitize=address,undefined -Wpadded
 CC				= clang
 
 INCLUDES	= $(addprefix -I, $(INCLUDES_DIR) $(LIBFT_DIR))
-
 
 # COLORS
 _BLACK		= "\033[30m"

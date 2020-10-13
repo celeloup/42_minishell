@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/09 15:08:11 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 14:58:58 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,3 +40,61 @@ t_cmd	*free_and_null_cmd(t_cmd **cmd)
 	free((*cmd));
 	return (NULL);
 }
+
+t_cmd *free_cmd(t_cmd *cmd)
+{
+	int i;
+	t_cmd *tmp;
+	t_rdir *tmp_rdir;
+
+	while (cmd)
+	{
+		i = 0;
+		while (cmd->argv && cmd->argv[i])
+		{
+			free(cmd->argv[i]);
+			i++;
+		}
+		free(cmd->argv);
+		while (cmd->rdir)
+		{
+			free(cmd->rdir->value);
+			tmp_rdir = cmd->rdir->next;
+			free(cmd->rdir);
+			cmd->rdir = tmp_rdir;
+		}
+		tmp = cmd->next;
+		free(cmd);
+		cmd = tmp;
+	}
+	return (NULL);
+}
+/*
+t_cmd *free_cmd(t_cmd *cmd)
+{
+	int i;
+	t_cmd *tmp;
+	t_rdir *tmp_rdir;
+
+	while (cmd)
+	{
+		i = 0;
+		while (cmd->argv && cmd->argv[i])
+		{
+			free(cmd->argv[i]);
+			i++;
+		}
+		free(cmd->argv);
+		while (cmd->rdir)
+		{
+			free(cmd->rdir->value);
+			tmp_rdir = cmd->rdir->next;
+			free(cmd->rdir);
+			cmd->rdir = tmp_rdir;
+		}
+		tmp = cmd->next;
+		free(cmd);
+		cmd = tmp;
+	}
+	return (NULL);
+}*/

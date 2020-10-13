@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_export.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/10/10 20:02:12 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/12 15:26:55 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,8 @@ int		ft_export(t_cmd *cmd, char **env[])
 	int		ret;
 
 	i = 1;
-	if (!cmd->argv[i])
-		return (print_env(*env, EXP));
+	if (!cmd->argv[1])
+		sort_env(*env);
 	ret = 0;
 	while (cmd->argv[i])
 	{
