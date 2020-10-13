@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/12 14:54:38 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/13 11:44:25 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,8 +136,8 @@ void	error_msg(char *actor, char *msg)
 
 void	error_exit(int status, t_cmd *cmd, char *env[])
 {
-	free_cmd(cmd);
-	free_env(env);
+	free_and_null_cmd(&cmd);
+	free_and_null_tab(&env);
 	exit(status);
 }
 
@@ -207,10 +207,42 @@ int		redirect(t_rdir *rd, int direction, int fd, int flux)
 	return (0);
 }
 
+void 	init_stuff(t_cmd *cmd)
+{
+	while(cmd)
+	{
+		cmd->status = -1;
+		cmd->pid = -1;
+		cmd = cmd->next;
+	}
+}
+
+void	wait_for_stuff(t_cmd *cmd)
+{
+	while (cmd)
+	{
+		waitpid(cmd->pid, &cmd->status, 0);
+		cmd = cmd->next;
+	}
+}
+
+int		get_last_status(t_cmd *cmd)
+{
+	int status;
+
+	while (cmd)
+	{
+		status = cmd->status;
+		cmd = cmd->next;
+	}
+	return (status);
+}
+
+
 int		exec_cmds(t_cmd *cmd, char **env[])
 {
 	int status;
-	int pid;
+	pid_t pid;
 	int fdpipe[2];
 	int pipe_length;
 	int tmpin;
@@ -227,6 +259,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	tmpin = dup(STDIN_FILENO); //a proteger
 	tmpout = dup(STDOUT_FILENO); // a proteger
 	first = cmd;
+	init_stuff(cmd);
 	while (cmd)
 	{
 		make_cmd_an_adult(cmd, *env);//renvoie 1 si ambiguous redirect
@@ -245,15 +278,17 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 			if (cmd->pipe == 1)
 			{
 				pipe_length = size_pipeline(cmd);
-				fdpipe[0] = dup(tmpin); // a proteger
+				//fdpipe[0] = dup(tmpin); // a proteger
 				i = 0;
 				while (i < pipe_length)
 				{
 					pipe(fdpipe); // a proteger
 					pid = fork(); //a proteger
+					cmd->pid = pid;
 					if (pid == 0)
 					{
-						close(fdpipe[0]); //a proteger
+						if (close(fdpipe[0]) == -1)
+							ft_printf("error close fdpipe0");//a proteger
 						if (cmd->pipe != 0)
 						{
 							if (redirect(cmd->rdir, 2, fdpipe[1], STDOUT_FILENO) == -1)
@@ -283,14 +318,9 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 					if (cmd->pipe == 1)
 						cmd = cmd->next;
 					i++;
-					
 				}
-				i = 0;
-				while (i < pipe_length)
-				{
-					waitpid(-1, &status, 0);
-					i++;
-				}
+				wait_for_stuff(first);
+				status = get_last_status(first);
 			}
 			else
 			{

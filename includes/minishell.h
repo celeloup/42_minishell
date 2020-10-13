@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/12 14:55:19 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/13 08:42:05 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ typedef	struct		s_cmd{
 	char			**argv;
 	int				argc;
 	int				pipe;
+	int				status;
+	pid_t			pid;
 	t_rdir			*rdir;
 	struct s_cmd	*next;
 }					t_cmd;

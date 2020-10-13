@@ -6,15 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 12:44:54 by user42            #+#    #+#             */
-<<<<<<< HEAD
-<<<<<<< HEAD
-/*   Updated: 2020/10/09 20:49:21 by user42           ###   ########.fr       */
-=======
-/*   Updated: 2020/10/09 12:43:56 by celeloup         ###   ########.fr       */
->>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
-=======
-/*   Updated: 2020/10/09 12:43:56 by celeloup         ###   ########.fr       */
->>>>>>> 6537e7e4636cbc8063e240b71447b2d12ffd8034
+/*   Updated: 2020/10/12 15:34:55 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +72,7 @@ void	sort_env(char *env[])
 		i++;
 	}
 	print_env(tmp_env, EXP);
-	free_env(tmp_env);
+	free_and_null_tab(&tmp_env);
 }
 
 int		print_env(char *env[], int option)
@@ -90,17 +82,6 @@ int		print_env(char *env[], int option)
 	i = 0;
 	while (env[i])
 	{
-<<<<<<< HEAD
-<<<<<<< HEAD
-		if (ft_strncmp(env[i], "?=", 2) && option == EXP)
-			print_env_export(env[i]);
-		else if (ft_strncmp(env[i], "?=", 2))
-			ft_putstr_fd(env[i], 1);
-		if (ft_strncmp(env[i], "?=", 2))
-			ft_putchar_fd('\n', 1);
-=======
-=======
->>>>>>> 6537e7e4636cbc8063e240b71447b2d12ffd8034
 		if (ft_strncmp(env[i], "?=", 2))
 		{
 			if (option == EXP)
@@ -109,10 +90,6 @@ int		print_env(char *env[], int option)
 				ft_putstr_fd(env[i], 1);
 			ft_putchar_fd('\n', 1);
 		}
-<<<<<<< HEAD
->>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
-=======
->>>>>>> 6537e7e4636cbc8063e240b71447b2d12ffd8034
 		i++;
 	}
 	return (EXIT_SUCCESS);

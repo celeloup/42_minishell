@@ -6,15 +6,7 @@
 #    By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-<<<<<<< HEAD
-<<<<<<< HEAD
-#    Updated: 2020/10/10 13:07:21 by user42           ###   ########.fr        #
-=======
-#    Updated: 2020/10/09 15:16:10 by celeloup         ###   ########.fr        #
->>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
-=======
-#    Updated: 2020/10/09 15:16:10 by celeloup         ###   ########.fr        #
->>>>>>> 6537e7e4636cbc8063e240b71447b2d12ffd8034
+#    Updated: 2020/10/12 15:01:49 by celeloup         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,16 +24,7 @@ LIBFT_DIR		= ./libft/
 
 LIBFT			= $(LIBFT_DIR)libft.a
 HEADER			= $(INCLUDES_DIR)minishell.h
-
-<<<<<<< HEAD
-<<<<<<< HEAD
 CFLAGS			= -Wall -Wextra -Werror -g3 -fsanitize=address,undefined -Wpadded
-=======
-CFLAGS			= -Wall -Wextra -Werror -g #-fsanitize=address,undefined -Wpadded
->>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
-=======
-CFLAGS			= -Wall -Wextra -Werror -g #-fsanitize=address,undefined -Wpadded
->>>>>>> 6537e7e4636cbc8063e240b71447b2d12ffd8034
 CC				= clang
 
 INCLUDES	= $(addprefix -I, $(INCLUDES_DIR) $(LIBFT_DIR))

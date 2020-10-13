@@ -6,15 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-<<<<<<< HEAD
-<<<<<<< HEAD
-/*   Updated: 2020/10/10 20:00:46 by user42           ###   ########.fr       */
-=======
-/*   Updated: 2020/10/01 16:37:34 by celeloup         ###   ########.fr       */
->>>>>>> better execution ?? maybe, i don't know ... some things work and some don't
-=======
-/*   Updated: 2020/10/01 16:37:34 by celeloup         ###   ########.fr       */
->>>>>>> 6537e7e4636cbc8063e240b71447b2d12ffd8034
+/*   Updated: 2020/10/12 15:28:49 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
