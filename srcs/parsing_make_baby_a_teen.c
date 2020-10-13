@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/12 21:49:31 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 17:27:43 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,10 @@ int		child_len(char *input)
 
 	len = 0;
 	while (input[len] && !(is_arg_sep(input[len])))
+	{
+//		ft_printf("\n&input[len] =>%s<", &input[len]);//debug
 		len += go_to_next_char(&input[len], NO);
+	}
 	return (len);
 }
 
@@ -61,6 +64,8 @@ int		var_value_len(char *teen, char *baby, char *env[])
 	char	*var_value;
 
 	i = 0;
+	if (!var_len(baby, env))
+		return (0);
 	var_name = get_var_name(baby);
 	var_value = get_var_value(var_name, env);
 	if (((len = ft_strlen(var_value)) >= 0))
@@ -88,6 +93,8 @@ int		get_teen_part(char *teen, char *baby, char *env[])
 		len = var_len(baby, NULL) + 2;
 		teen[len - 1] = '\"';
 	}
+//	else if (baby[0] == DOLLAR && var_len(baby, env) == -1)
+//		len = 0;
 	else if (baby[0] == DOLLAR)
 		len = var_value_len(teen, baby, env);
 	else
@@ -112,8 +119,11 @@ char	*make_baby_a_teen(char *baby, char *env[])
 	len = 0;
 	while (teen[len] && baby[i])
 	{
+//		ft_printf("\nteen = >%s<", teen);//debug
+//		ft_printf("\n&baby[i] = >%s<", &baby[i]);//debug
 		len += get_teen_part(&teen[len], &baby[i], env);
 		i += go_to_next_char(&baby[i], NO);
 	}
+//	ft_printf("\nteen = >%s<", teen);//debug
 	return (teen);
 }

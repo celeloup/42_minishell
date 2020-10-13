@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/10/13 11:59:26 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 17:00:12 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int		var_len(char *input, char *env[])
 		len++;
 	if (len == 1 && input[len] && input[len] == '?')
 		len++;
-	if (!env || (len == 1 && (!input[1] || is_ifs(input[1]))))
+	if (!env || (len == 1 && (!input[1] || !is_quote(input[1]))))
 		return (len);
 	else if (len == 1)
 		return (0);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsing_baby.c                                     :+:      :+:    :+:   */
+/*   parsing_give_cmd_birth.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/09 21:32:46 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 17:27:21 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,12 +91,14 @@ t_cmd	*give_cmd_birth(char *input)
 	int		len;
 
 	cmd = NULL;
+//	ft_printf("\ninput dans parsing is= >%s<", input);//debug
 	if (!(cmd = init_cmd()) || !input)
 		return (NULL);
 	if ((len = cmd_len(cmd, input)) == -1)
 		return ((cmd = free_and_null_cmd(&cmd)));
 	cmd->argv = init_argv(cmd->argc);
 	get_baby_argv(cmd, input, len);
+//	print_args(cmd->argc, cmd->argv);//debug
 	if (input[len] && (input[len] == ';' || input[len] == '|'))
 	{
 		if (input[len] == '|')

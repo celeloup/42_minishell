@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   debug.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 15:10:26 by user42            #+#    #+#             */
-/*   Updated: 2020/10/12 14:55:27 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/13 16:13:19 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	print_args(int argc, char **argv)
 {
 	int		i;
 
-	ft_printf("\nARGV = ");
+	ft_printf("\n%d ARGC/ARGV = ", argc);
 	i = 0;
 	while (argv && i < argc)
 	{

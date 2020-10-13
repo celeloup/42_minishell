@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:20:14 by user42            #+#    #+#             */
-/*   Updated: 2020/10/12 18:17:35 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 17:25:50 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,10 @@ char	*get_double_quote(char *teen, char *env[])
 
 char	*get_quote(char *teen, char *env[])
 {
-	if (teen[0] == SINGLE_QUOTE)
+	if (teen[0] == SINGLE_QUOTE && single_quote_len(teen, EXP))
 		return (ft_substr(teen, 1, single_quote_len(teen, EXP)));
+	else if (teen[0] == SINGLE_QUOTE)
+		return (ft_strdup(""));
 	else
 		return (get_double_quote(teen, env));
 }

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/09 22:28:46 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 17:13:48 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,13 @@ int		go_to_next_char(char *input, int quote)
 	i = 0;
 	if (!input)
 		return (0);
+	else if (input[0] == BACKSLASH)
+		return (backslash_len(input, quote, NOT_EXP));	
 	else if (is_quote(input[0]) && !quote)
 		return (baby_quote_len(input));
-	else if (input[0] == BACKSLASH)
-		return (backslash_len(input, quote, NOT_EXP));
 	else if (input[0] == DOLLAR)
 		return (var_len(input, NULL));
-	while (input[i] && !is_quote(input[i]) && (!(is_arg_sep(input[i])) || quote)
+	while (input[i] && !is_quote(input[i]) && (!is_arg_sep(input[i]) || quote)
 		&& input[i] != BACKSLASH && input[i] != DOLLAR)
 		i++;
 	if (i)

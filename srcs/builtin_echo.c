@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 11:59:02 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 16:15:45 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int		ft_echo_first_arg(t_cmd *cmd, int *n_option)
 	int		j;
 
 	i = 1;
-	if (cmd && cmd->argv[1] && !(ft_strncmp("-n", cmd->argv[1], 2)))
+	if (cmd && cmd->argv[1] && !(ft_strcmp("-n", cmd->argv[1])))
 		*n_option = i++;
 	while (cmd && cmd->argv[i] && cmd->argv[i][0] && cmd->argv[i][0] == '-'
 		&& cmd->argv[i][1] && cmd->argv[i][1] == 'n')

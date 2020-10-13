@@ -1,0 +1,17 @@
+minishell: syntax error near unexpected token `|'
+srcs/execution.c:119:14: runtime error: member access within null pointer of type 't_cmd' (aka 'struct s_cmd')
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior srcs/execution.c:119:14 in 
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==5384==ERROR: AddressSanitizer: SEGV on unknown address 0x00000000000c (pc 0x000000526657 bp 0x7ffc275778b0 sp 0x7ffc27577860 T0)
+==5384==The signal is caused by a READ memory access.
+==5384==Hint: address points to the zero page.
+    #0 0x526656 in size_pipeline /home/user42/42/minishell/ingit2/srcs/execution.c:119:19
+    #1 0x528aed in exec_cmds /home/user42/42/minishell/ingit2/srcs/execution.c:280:19
+    #2 0x52e6de in main /home/user42/42/minishell/ingit2/srcs/minishell.c:73:14
+    #3 0x7fd1b3ddab96 in __libc_start_main /build/glibc-2ORdQG/glibc-2.27/csu/../csu/libc-start.c:310
+    #4 0x419f89 in _start (/home/user42/42/minishell/ingit2/42TESTERS-MINISHELL/minishell+0x419f89)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV /home/user42/42/minishell/ingit2/srcs/execution.c:119:19 in size_pipeline
+==5384==ABORTING

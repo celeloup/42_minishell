@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 11:59:15 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 17:31:53 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,16 @@ int		edit_shell_level(char **new_env[], char *env[], int shlvl)
 
 	if (!env || !shlvl)
 	{
-		(*new_env)[0] = ft_strdup("SHLVL=\"1\"");
+		(*new_env)[0] = ft_strdup("SHLVL=1");
 		return (1);
 	}
 	else
 	{
 		tmp = get_var_value("$SHLVL", env);
-		shlvl_str = ft_strtrim(tmp, "\"");
-		shlvl_int = atoi(shlvl_str) + 1;
-		shlvl_str = free_and_null_str(&shlvl_str);
+		shlvl_int = atoi(tmp) + 1;
 		tmp = free_and_null_str(&tmp);
-		shlvl_str = ft_itoa(shlvl_int);
-		tmp = ft_strjoin("SHLVL=\"", shlvl_str);
-		shlvl_str = free_and_null_str(&shlvl_str);
-		shlvl_str = ft_strjoin(tmp, "\"");
+		tmp = ft_itoa(shlvl_int);
+		shlvl_str = ft_strjoin("SHLVL=", tmp);
 		edit_var(new_env, NULL, shlvl_str);
 		shlvl_str = free_and_null_str(&shlvl_str);
 		tmp = free_and_null_str(&tmp);

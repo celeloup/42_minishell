@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/12 15:36:51 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/13 15:25:52 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,9 @@ int		main(int argc, char *argv[], char *env[])
 //	input = ft_strdup("echo $PATH");
 	while (status != -1 && status != 255)//input à enlever
 	{
-		prompt(0);
+	//	prompt(0);
+	//	ft_printf("\ninput avant GNL is =");//debug
+	//	print_args(argc, argv);//debug
 		get_next_line(0, &input);
 		if (!input && !(environment = free_and_null_tab(&environment)))
 			control_d();
