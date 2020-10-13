@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 12:29:45 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 13:54:02 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -349,7 +349,8 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 		}
 		status = ((status != 1 || status != 2) ? WEXITSTATUS(status) : status);
 		cmd = cmd->next;
-		edit_exit_status(env, status);
+		if (status != 255)
+			edit_exit_status(env, status);
 	}
 	redirect(NULL, 0, tmpin, STDIN_FILENO); //a proteger ?
 	redirect(NULL, 0, tmpout, STDOUT_FILENO); //a proteger ?

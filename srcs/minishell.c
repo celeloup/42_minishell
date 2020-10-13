@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 15:25:52 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 17:44:23 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	prompt(int error)
 		ft_printf("%s➜  %sminishell %s> %s", GREEN, BLUE, YELLOW, END);
 	*/
 	(void)error;
-	ft_printf("➜ minishell > ");
+	ft_putstr_fd("➜ minishell > ", 2);
 }
 
 int		main(int argc, char *argv[], char *env[])
