@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 11:44:25 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/13 12:29:45 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -316,7 +316,10 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 							error_exit(1, first, *env);
 					}
 					if (cmd->pipe == 1)
+					{
 						cmd = cmd->next;
+						make_cmd_an_adult(cmd, *env);
+					}
 					i++;
 				}
 				wait_for_stuff(first);

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_args.c                                      :+:      :+:    :+:   */
+/*   parsing_make_cmd_an_adult.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/09 21:21:27 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 12:25:32 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ int		make_cmd_an_adult(t_cmd *baby, char *env[])
 	int		ret;
 	t_cmd	*adult;
 
+	if (!baby)
+		return (0);
 	adult = init_cmd();
 	adult->argc = get_adult_argc(baby->argv, env);
 	adult->argv = get_adult_argv(baby->argv, adult->argc, env);
