@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 11:57:49 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 14:37:50 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,5 +214,6 @@ void	close_fd(int fd);
 void	redirect_pipe(int old_fd, int new_fd);
 void	exec_pipeline(t_cmd *cmd, char *env[], int in_fd);
 int		exec_cmds(t_cmd *cmd, char **env[]);
+void	error_msg(char *actor, char *msg);
 
 #endif

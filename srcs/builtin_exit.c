@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_exit.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/12 21:01:35 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/13 15:53:17 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,44 @@ void	edit_exit_status(char **env[], int status)
 	return ;
 }
 
+int		ft_str_is_nb(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]) && str[i] != '-')
+		{
+			return (0);
+			break ;
+		}
+		i++;
+	}
+	return (1);
+}
+
 int		ft_exit(t_cmd *cmd, char **env[])
 {
 	int	status;
 
+	status = 0;
 	if (cmd && cmd->argv && cmd->argv[1])
 	{
-		status = ft_atoi(cmd->argv[1]);
+		if (!ft_str_is_nb(cmd->argv[1]))
+		{
+			error_msg("exit", ": numeric argument required");
+			status = 2;
+		}
+		else if (cmd->argv[2])
+		{
+			error_msg("exit", "too many arguments");
+			status = 1;
+		}
+		else
+			status = ft_atoi(cmd->argv[1]);
+		if (status == -1)
+			error_msg("exit", ": numeric argument required");
 		edit_exit_status(env, status);
 	}
 	return (-1);
