@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 13:54:02 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/14 11:41:42 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,12 +256,13 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	tmp = get_var_value("$?", *env);
 	status = atoi(tmp);
 	tmp = free_and_null_str(&tmp);
-	tmpin = dup(STDIN_FILENO); //a proteger
-	tmpout = dup(STDOUT_FILENO); // a proteger
+	
 	first = cmd;
 	init_stuff(cmd);
 	while (cmd)
 	{
+		tmpin = dup(STDIN_FILENO); //a proteger
+		tmpout = dup(STDOUT_FILENO); // a proteger
 		make_cmd_an_adult(cmd, *env);//renvoie 1 si ambiguous redirect
 		if (!cmd || !cmd->argv || !cmd->argv[0])
 			return (0);//vérifier le cas du cmd->next
@@ -351,8 +352,9 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 		cmd = cmd->next;
 		if (status != 255)
 			edit_exit_status(env, status);
+		redirect(NULL, 0, tmpin, STDIN_FILENO); //a proteger ?
+		redirect(NULL, 0, tmpout, STDOUT_FILENO); //a proteger ?
 	}
-	redirect(NULL, 0, tmpin, STDIN_FILENO); //a proteger ?
-	redirect(NULL, 0, tmpout, STDOUT_FILENO); //a proteger ?
+	
 	return (status);
 }
