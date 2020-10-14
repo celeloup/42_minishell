@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/14 11:17:23 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/14 12:25:47 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,14 +256,15 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	tmp = get_var_value("$?", *env);
 	status = atoi(tmp);
 	tmp = free_and_null_str(&tmp);
-	tmpin = dup(STDIN_FILENO); //a proteger
-	tmpout = dup(STDOUT_FILENO); // a proteger
+	
 	first = cmd;
 	init_stuff(cmd);
 	while (cmd)
 	{
 		while(make_cmd_an_adult(cmd, env))//change le status dans env mais pas ici
 			cmd = cmd->next;
+		tmpin = dup(STDIN_FILENO); //a proteger
+		tmpout = dup(STDOUT_FILENO); // a proteger
 		if (!cmd || !cmd->argv || !cmd->argv[0])
 			return (0);//vérifier le cas du cmd->next
 		//if (builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
@@ -354,8 +355,9 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 		cmd = cmd->next;
 		if (status != 255)
 			edit_exit_status(env, status);
+		redirect(NULL, 0, tmpin, STDIN_FILENO); //a proteger ?
+		redirect(NULL, 0, tmpout, STDOUT_FILENO); //a proteger ?
 	}
-	redirect(NULL, 0, tmpin, STDIN_FILENO); //a proteger ?
-	redirect(NULL, 0, tmpout, STDOUT_FILENO); //a proteger ?
+	
 	return (status);
 }
