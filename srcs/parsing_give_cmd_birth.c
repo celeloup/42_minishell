@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 22:48:53 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/14 10:27:07 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int		cmd_len(t_cmd *cmd, char *input)
 			if (get_rdir_type(NULL, &input[len]) > 0)
 				len += get_baby_rdir(&cmd->rdir, &input[len]);
 			else
-				return (-1);
+				return (-2);
 		}
 		else
 			len++;
@@ -97,11 +97,13 @@ int		give_cmd_birth(t_cmd **cmd, char *input, char **env[])
 	if ((len = cmd_len(*cmd, input)) < 0)
 	{
 		*cmd = free_and_null_cmd(cmd);
+		edit_exit_status(env, -len);
 		return (-len);
 	}
 	(*cmd)->argv = init_argv((*cmd)->argc);
 	get_baby_argv(*cmd, input, len);
-//	print_args(*cmd->argc, *cmd->argv);//debug
+//	ft_printf("\nargs in parse :");//debug
+//	print_cmd((*cmd), 0);//debug
 	if (input[len] && (input[len] == ';' || input[len] == '|'))
 	{
 		if (input[len] == '|')

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 21:43:10 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/14 11:17:47 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ t_rdir	*init_rdir();
 ** expand_args.c
 */
 t_cmd	*copy_cmd(t_cmd *cmd);
-int		make_cmd_an_adult(t_cmd *cmd, char *env[]);
+int		make_cmd_an_adult(t_cmd *cmd, char **env[]);
 
 /*
 ** signal_handling.c

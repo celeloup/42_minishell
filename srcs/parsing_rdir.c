@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/09 21:18:47 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/14 11:19:12 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int		get_adult_rdir(t_rdir **adult, t_rdir *baby, char *env[])
 	teen = NULL;
 	if (baby && words_in_baby(baby->value, env) != 1)
 	{
-		ft_printf("\nminishell: %s: ambiguous redirect", baby->value);
+		ft_printf("minishell: %s: ambiguous redirect\n", baby->value);
 		(*adult) = NULL;
 		return (1);
 	}

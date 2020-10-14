@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 20:50:32 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/14 11:18:40 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int		get_adult_argc(char **baby_argv, char *env[])
 	return (adult_argc);
 }
 
-int		make_cmd_an_adult(t_cmd *baby, char *env[])
+int		make_cmd_an_adult(t_cmd *baby, char **env[])
 {
 	int		ret;
 	t_cmd	*adult;
@@ -63,16 +63,20 @@ int		make_cmd_an_adult(t_cmd *baby, char *env[])
 	if (!baby)
 		return (0);
 	adult = init_cmd();
-	adult->argc = get_adult_argc(baby->argv, env);
-	adult->argv = get_adult_argv(baby->argv, adult->argc, env);
-//	ft_printf("\nMAKE_ADULT printarg");//debug
-//	print_args(adult->argc, adult->argv);//debug
+	adult->argc = get_adult_argc(baby->argv, *env);
+	adult->argv = get_adult_argv(baby->argv, adult->argc, *env);
+
 	baby->argv = free_and_null_tab(&baby->argv);
 	baby->argv = copy_argv(adult->argv, adult->argc);
 	baby->argc = adult->argc;
-	ret = get_adult_rdir(&adult->rdir, baby->rdir, env);
+	ret = get_adult_rdir(&adult->rdir, baby->rdir, *env);
+//	ft_printf("\n ret = %d", ret);
+//	ft_printf("\nMAKE_ADULT printarg");//debug
+//	print_cmd(adult, 0);//debug
 	baby->rdir = free_and_null_rdir(&baby->rdir);
 	baby->rdir = copy_rdir(adult->rdir);
 	adult = free_and_null_cmd(&adult);
+	if (ret)
+		edit_exit_status(env, ret);
 	return (ret);
 }

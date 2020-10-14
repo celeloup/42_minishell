@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 22:14:12 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/14 11:17:23 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,7 +262,8 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	init_stuff(cmd);
 	while (cmd)
 	{
-		make_cmd_an_adult(cmd, *env);//renvoie 1 si ambiguous redirect
+		while(make_cmd_an_adult(cmd, env))//change le status dans env mais pas ici
+			cmd = cmd->next;
 		if (!cmd || !cmd->argv || !cmd->argv[0])
 			return (0);//vérifier le cas du cmd->next
 		//if (builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
@@ -319,7 +320,8 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 					if (cmd->pipe == 1)
 					{
 						cmd = cmd->next;
-						make_cmd_an_adult(cmd, *env);
+						while (make_cmd_an_adult(cmd, env))
+							cmd = cmd->next;
 					}
 					i++;
 				}
