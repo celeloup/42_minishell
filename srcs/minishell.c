@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 20:55:39 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 22:51:17 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,19 +43,22 @@ int		main(int argc, char *argv[], char *env[])
 	environment = init_env(env);
 	cmd_list = NULL;
 	status = 0;
+	signal(SIGINT, &control_c);
+	signal(SIGQUIT, &control_slash);
 	while (status != -1 && status != 255)
 	{
 		init_var();
-		signal(SIGINT, &control_c);
-		signal(SIGQUIT, &control_slash);
-		if (g_var.sigint || g_var.sigquit)
-			status = g_var.status;
-	//	prompt();
+		prompt();
 		get_next_line(0, &input);
 		if (!input)
 			status = -1;
 		else
 		{
+			if (g_var.sigint || g_var.sigquit)
+			{
+				status = g_var.status;
+				edit_exit_status(&environment, g_var.status);
+			}
 			edit_exit_status(&environment, status);
 			if (!give_cmd_birth(&cmd_list, input, &environment))
 				status = exec_cmds(cmd_list, &environment);
