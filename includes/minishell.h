@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 14:14:29 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 17:44:25 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,19 @@ typedef	struct	s_cmd{
 	struct s_cmd	*next;
 }				t_cmd;
 
+typedef struct	s_var{
+	int				status;
+	int				sigint;
+	int				sigquit;
+	pid_t			pid;
+}				t_var;
+
+
+extern t_var g_var;
 /*
 ** minishell.c
 */
-void			prompt(int error);
+void			prompt();
 
 /*
 ** builtins files
@@ -185,7 +194,6 @@ int				make_cmd_an_adult(t_cmd *cmd, char **env[]);
 void			control_slash(int num);
 void			control_d();
 void			control_c(int num);
-void			signal_handler(int num);
 
 /*
 ** builtins files
@@ -217,5 +225,6 @@ void			redirect_pipe(int old_fd, int new_fd);
 void			exec_pipeline(t_cmd *cmd, char *env[], int in_fd);
 int				exec_cmds(t_cmd *cmd, char **env[]);
 void			error_msg(char *actor, char *msg);
+int				get_status(char **env[]);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 14:15:07 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 18:49:22 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ char	*search_path(char **bin_tab, char *cmd)
 				{
 					closedir(dir);
 					cmd_name = path_join(bin_tab[i], cmd);
-					free_tab(bin_tab);
 					return (cmd_name);
 				}
 			}
@@ -67,7 +66,6 @@ char	*search_path(char **bin_tab, char *cmd)
 		}
 		i++;
 	}
-	free_tab(bin_tab);
 	return (NULL);
 }
 
@@ -85,6 +83,7 @@ char	*get_cmd_path(char *cmd, char *env[])
 	bin_tab = ft_split(path, ':');
 	free(path);
 	cmd_name = search_path(bin_tab, cmd);
+	free_tab(bin_tab);
 	if (cmd_name != NULL)
 		return (cmd_name);
 	else
@@ -150,15 +149,9 @@ int		redirect(t_rdir *rd, int direction, int fd, int flux)
 	if (fd != -1 && flux != -1)
 	{
 		if (dup2(fd, flux) == -1)
-		{
-			//error_msg("dup2", strerror(errno));
 			return (-1);
-		}
 		if (close(fd) == -1)
-		{
-			error_msg("close", strerror(errno));
 			return (-1);
-		}
 	}
 	while (rd)
 	{
@@ -193,25 +186,19 @@ int		redirect(t_rdir *rd, int direction, int fd, int flux)
 			flux = STDOUT_FILENO;
 		}
 		if (dup2(fd, flux) == -1)
-		{
-			//error_msg("dup2", strerror(errno));
 			return (-1);
-		}
 		if (close(fd) == -1)
-		{
-			error_msg("close", strerror(errno));
 			return (-1);
-		}
 		rd = rd->next;
 	}
 	return (0);
 }
 
-void 	init_stuff(t_cmd *cmd)
+void	init_stuff(t_cmd *cmd)
 {
-	while(cmd)
+	while (cmd)
 	{
-		cmd->status = -1;
+		cmd->status = 1;
 		cmd->pid = -1;
 		cmd = cmd->next;
 	}
@@ -226,22 +213,10 @@ void	wait_for_stuff(t_cmd *cmd)
 	}
 }
 
-int		get_last_status(t_cmd *cmd)
-{
-	int status;
-
-	while (cmd->pipe == 1)
-	{
-		cmd = cmd->next;
-		status = cmd->status;
-	}
-	return (status);
-}
-
 int		get_status(char **env[])
 {
-	char *tmp;
-	int status;
+	char	*tmp;
+	int		status;
 
 	tmp = get_var_value("$?", *env);
 	status = atoi(tmp);
@@ -249,7 +224,7 @@ int		get_status(char **env[])
 	return (status);
 }
 
-int		is_binary_file(char *file_name)
+int		file_exist(char *file_name)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -269,10 +244,53 @@ int		is_binary_file(char *file_name)
 	return (0);
 }
 
+int permission_denied(char *file_name)
+{
+	DIR				*dir;
+	struct dirent	*entry;
+	int				i;
+
+	if (ft_strncmp(file_name, "./", 2) == 0)
+		i = 2;
+	else
+		i = 0;
+	if ((dir = opendir(".")) != NULL)
+	{
+		while ((entry = readdir(dir)))
+		{
+			if (!ft_strcmp(entry->d_name, &file_name[i]))
+			{
+				closedir(dir);
+				return (1);
+			}
+		}
+		closedir(dir);
+	}
+	return (0);
+}
+
+void	no_exec_quit(char *cmd, t_cmd *cmd_list, char **env[])
+{
+	if (ft_strncmp(cmd, "./", 2) == 0 && file_exist(&cmd[2]))
+	{
+		error_msg(cmd, "Permission denied");
+		error_exit(126, cmd_list, *env);
+	}
+	else if (ft_strncmp(cmd, "./", 2) == 0 || !var_is_set(env, "PATH"))
+	{
+		error_msg(cmd, "No such file or directory");
+		error_exit(127, cmd_list, *env);
+	}
+	else
+	{
+		error_msg(cmd, "command not found");
+		error_exit(127, cmd_list, *env);
+	}
+}
+
 int		exec_cmds(t_cmd *cmd, char **env[])
 {
 	int status;
-	pid_t pid;
 	int fdpipe[2];
 	int pipe_length;
 	int tmpin;
@@ -280,41 +298,36 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	int i;
 	t_cmd *first;
 
-	status = get_status(env);
 	first = cmd;
 	init_stuff(cmd);
 	while (cmd)
 	{
-		while(make_cmd_an_adult(cmd, env))//change le status dans env mais pas ici
+		status = 0;
+		while (make_cmd_an_adult(cmd, env))
 			cmd = cmd->next;
-		tmpin = dup(STDIN_FILENO); //a proteger
-		tmpout = dup(STDOUT_FILENO); // a proteger
-		//if (!cmd || !cmd->argv || !cmd->argv[0]) // SUPPR POUR CAS OU REDIR SEULE
-		//	return (0);//vérifier le cas du cmd->next
+		tmpin = dup(STDIN_FILENO);
+		tmpout = dup(STDOUT_FILENO);
 		if (cmd && cmd->argv && cmd->argv[0] && builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
 		{
 			if (redirect(cmd->rdir, 3, -1, -1) != -1)
 				status = (*builtin(cmd->argv[0]))(cmd, env);
 			else
 				status = 1;
-			//ft_printf("\ninside exec cmd status is %d", status);
 		}
 		else if (cmd)
 		{
 			if (cmd->pipe == 1)
 			{
 				pipe_length = size_pipeline(cmd);
-				//fdpipe[0] = dup(tmpin); // a proteger
 				i = 0;
 				while (i < pipe_length)
 				{
-					pipe(fdpipe); // a proteger
-					pid = fork(); //a proteger
-					cmd->pid = pid;
-					if (pid == 0)
+					pipe(fdpipe);
+					g_var.pid = fork();
+					cmd->pid = g_var.pid;
+					if (g_var.pid == 0)
 					{
-						if (close(fdpipe[0]) == -1)
-							ft_printf("error close fdpipe0");//a proteger
+						close(fdpipe[0]);
 						if (cmd->pipe != 0)
 						{
 							if (redirect(cmd->rdir, 2, fdpipe[1], STDOUT_FILENO) == -1)
@@ -324,7 +337,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 						{
 							if (redirect(cmd->rdir, 2, tmpout, STDOUT_FILENO) == -1)
 								error_exit(1, first, *env);
-							close(fdpipe[1]); //a proteger
+							close(fdpipe[1]);
 						}
 						if (builtin(cmd->argv[0]) != NULL)
 						{
@@ -336,28 +349,14 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 						}
 						else
 						{
-							if (!is_binary_file(cmd->argv[0]))
+							if (!file_exist(cmd->argv[0]))
 								execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
-							if (ft_strncmp(cmd->argv[0], "./", 2) == 0)
-							{
-								error_msg(cmd->argv[0], "Permission denied");
-								error_exit(126, first, *env);
-							}
-							else if (!var_is_set(env, "PATH"))
-							{
-								error_msg(cmd->argv[0], "No such file or directory");
-								error_exit(127, first, *env);
-							}
-							else
-							{
-								error_msg(cmd->argv[0], "command not found");
-								error_exit(127, first, *env);
-							}
+							no_exec_quit(cmd->argv[0], first, env);
 						}
 					}
 					else
 					{
-						close(fdpipe[1]); //a proteger
+						close(fdpipe[1]);
 						if (redirect(cmd->rdir, 1, fdpipe[0], STDIN_FILENO) == -1)
 							error_exit(1, first, *env);
 					}
@@ -370,36 +369,20 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 					i++;
 				}
 				wait_for_stuff(first);
-				status = cmd->status; //get_last_status(first);
-				//ft_printf("status = %d\ncmd = %s\n", status, cmd->argv[0]);
+				status = cmd->status;
 			}
 			else
 			{
 				if (redirect(cmd->rdir, 3, -1, -1) == -1)
 					status = 1;
-				if (status != 1 && cmd->argv && cmd->argv[0] && cmd->argv[0][0] && (pid = fork()) == 0)
+				if (status != 1 && cmd->argv && cmd->argv[0] && cmd->argv[0][0] && (g_var.pid = fork()) == 0)
 				{
-					//ft_printf("%s\n", get_cmd_path(cmd->argv[0], *env));
-					if (!is_binary_file(cmd->argv[0]))
+					if (!file_exist(cmd->argv[0]))
 						execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
-					if (ft_strncmp(cmd->argv[0], "./", 2) == 0)
-					{
-						error_msg(cmd->argv[0], "Permission denied");
-						error_exit(126, first, *env);
-					}
-					else if (!var_is_set(env, "PATH"))
-					{
-						error_msg(cmd->argv[0], "No such file or directory");
-						error_exit(127, first, *env);
-					}
-					else
-					{
-						error_msg(cmd->argv[0], "command not found");
-						error_exit(127, first, *env);
-					}
+					no_exec_quit(cmd->argv[0], first, env);
 				}
 				else
-					waitpid(pid, &status, 0);
+					waitpid(g_var.pid, &status, 0);
 			}
 		}
 		status = ((status != 1 && status != 2) ? WEXITSTATUS(status) : status);
@@ -407,8 +390,10 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 			cmd = cmd->next;
 		if (status != 255)
 			edit_exit_status(env, status);
-		redirect(NULL, 0, tmpin, STDIN_FILENO); //a proteger ?
-		redirect(NULL, 0, tmpout, STDOUT_FILENO); //a proteger ?
+		redirect(NULL, 0, tmpin, STDIN_FILENO);
+		redirect(NULL, 0, tmpout, STDOUT_FILENO);
 	}
+	if (g_var.sigint || g_var.sigquit)
+		return (g_var.status);
 	return (status);
 }
