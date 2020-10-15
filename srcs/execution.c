@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 10:17:32 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 10:22:17 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,7 +267,6 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	{
 		while(make_cmd_an_adult(cmd, env))//change le status dans env mais pas ici
 			cmd = cmd->next;
-		ft_printf("%s\n", cmd->argv[0]);
 		tmpin = dup(STDIN_FILENO); //a proteger
 		tmpout = dup(STDOUT_FILENO); // a proteger
 		//if (!cmd || !cmd->argv || !cmd->argv[0]) // SUPPR POUR CAS OU REDIR SEULE
