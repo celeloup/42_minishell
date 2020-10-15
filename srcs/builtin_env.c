@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 12:44:54 by user42            #+#    #+#             */
-/*   Updated: 2020/10/13 20:12:14 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 12:53:36 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	sort_env(char *env[])
 	char **tmp_env;
 	int i;
 	int j;
-	int len ;
+	int len;
 	char *tmp_str;
 
 	len = 0;
@@ -74,7 +74,7 @@ void	sort_env(char *env[])
 		i++;
 	}
 	print_env(tmp_env, EXP);
-	free_and_null_tab(&tmp_env);
+	tmp_env=free_and_null_tab(&tmp_env);
 }
 
 int		print_env(char *env[], int option)

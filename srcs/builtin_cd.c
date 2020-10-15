@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/28 15:08:57 by user42            #+#    #+#             */
-/*   Updated: 2020/10/13 21:11:44 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 12:49:31 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int		go_to_next_component(char **new, char *path, int i, struct stat **buf)
 	else if (!ft_strncmp(path, "..", 2) && !go_to_parent_directory(new))
 		return (go_to_next_component_index(path + 2) + 2);
 	else if (!ft_strncmp(path, "..", 2))
-		 return (0);
+		return (0);
 	else if (path[0] != '/')
 	{
 		i = 0;
@@ -48,6 +48,8 @@ int		change_relative_to_absolute_path(char **path)
 	char		*new_path;
 	struct stat	*buf;
 
+	if (!ft_strcmp(*path, "/"))
+		return (0);
 	i = 0;
 	new_path = ft_strdup("");
 	buf = (struct stat *)malloc(sizeof(struct stat));

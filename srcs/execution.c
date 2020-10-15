@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execution.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 10:22:17 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 11:46:15 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,7 +271,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 		tmpout = dup(STDOUT_FILENO); // a proteger
 		//if (!cmd || !cmd->argv || !cmd->argv[0]) // SUPPR POUR CAS OU REDIR SEULE
 		//	return (0);//vérifier le cas du cmd->next
-		if (cmd->argv && cmd->argv[0] && builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
+		if (cmd && cmd->argv && cmd->argv[0] && builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
 		{
 			if (redirect(cmd->rdir, 3, -1, -1) != -1)
 				status = (*builtin(cmd->argv[0]))(cmd, env);
@@ -279,7 +279,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 				status = 1;
 			//ft_printf("\ninside exec cmd status is %d", status);
 		}
-		else
+		else if (cmd)
 		{
 			if (cmd->pipe == 1)
 			{
@@ -363,7 +363,8 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 			}
 		}
 		status = ((status != 1 && status != 2) ? WEXITSTATUS(status) : status);
-		cmd = cmd->next;
+		if (cmd)
+			cmd = cmd->next;
 		if (status != 255)
 			edit_exit_status(env, status);
 		redirect(NULL, 0, tmpin, STDIN_FILENO); //a proteger ?

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 13:00:13 by user42            #+#    #+#             */
-/*   Updated: 2020/10/13 22:08:07 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 12:54:07 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ int		var_is_set(char **env[], char *var)
 
 	tmp = ft_strjoin("$", var);
 	to_check = get_var_name(tmp);
-//	ft_printf("\ntocheck =%s", to_check);
 	tmp = free_and_null_str(&tmp);
 	tmp = get_var_value(to_check, *env);
 	to_check = free_and_null_str(&to_check);
@@ -69,7 +68,6 @@ int		add_var(char **env[], char *cmd, char *var)
 		return (0);
 	if (var_is_valid(var, NULL, YES) <= 0 && is_not_name(var))
 		return (-(var_is_valid(var, cmd, YES)));
-//	ft_printf("\nadd_var inside");//debug
 	if (var_is_set(env, var))
 		return (edit_var(env, cmd, var));
 	i = 0;
@@ -102,6 +100,5 @@ int		ft_export(t_cmd *cmd, char **env[])
 			ret = 1;
 		i++;
 	}
-//	ft_printf("\nexport ret =%d", ret);//debug
 	return (ret);
 }

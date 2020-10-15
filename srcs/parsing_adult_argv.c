@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/13 17:26:45 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 13:00:27 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ int		get_adult_part(char *adult, char *teen, char *env[], int quote)
 	}
 	else
 		part = ft_substr(teen, 0, go_to_next_char(teen, quote));
-//	ft_printf("\npart is : >%s<", part);
 	len = ft_strlen(part);
 	if (adult)
 		ft_strncpy(adult, part, len);
@@ -72,12 +71,10 @@ char	*get_one_adult_arg(char *teen, char *env[])
 	adult = (char*)malloc(sizeof(char) * (len + 1));
 	adult[len] = '\0';
 	len = 0;
-//	ft_printf("\ngetONEadult teen=%s", teen);//debug
 	while (teen[i] && adult[len])
 	{
 		len += get_adult_part(&adult[len], &teen[i], env, NO);
 		i += go_to_next_char(&teen[i], NO);
-//		ft_printf("\ngetONEadult adult=%s", adult);//debug
 	}
 	return (adult);
 }
@@ -113,17 +110,14 @@ char	**get_adult_argv(char **baby, int adult_argc, char *env[])
 	i = 0;
 	j = 0;
 	teen = NULL;
-	adult = init_argv(adult_argc);	
+	adult = init_argv(adult_argc);
 	while (baby[i] && j < adult_argc)
 	{
-//		ft_printf("\nbaby is : >%s<", baby[i]);
 		while (baby[i] && !(teen = make_baby_a_teen(baby[i], env)))
 			i++;
 		if (!baby[i])
 			break ;
-//		ft_printf("\nteenbf split is : >%s<", teen);
 		adult = split_teen(adult, teen, env, j);
-//		print_args(adult_argc, adult);//debug
 		teen = free_and_null_str(&teen);
 		j += words_in_baby(baby[i], env);
 		i++;

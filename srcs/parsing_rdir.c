@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/14 11:19:12 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 10:55:01 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ int		get_rdir_type(t_rdir *rdir, char *input)
 	while (input[i] && is_ifs(input[i]))
 		i++;
 	if (!input[i])
-		return (unexpected_token_msg(NULL));
+		return (unexpected_token_msg(NULL, 0));
 	else if (input[i] && (is_rdir(input[i]) || is_cmd_sep(input[i])))
-		return (unexpected_token_msg(&input[i]));
+		return (unexpected_token_msg(&input[i], 0));
 	if (rdir)
 		rdir->type = rdir_type;
 	return (i);
