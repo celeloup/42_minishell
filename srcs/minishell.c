@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 22:48:28 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/14 18:13:40 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int		main(int argc, char *argv[], char *env[])
 //	input = ft_strdup("echo $PATH");
 	while (status != -1 && status != 255)//input à enlever
 	{
-	//	prompt(0);
+		prompt(0);
 	//	ft_printf("\ninput avant GNL is =");//debug
 	//	print_args(argc, argv);//debug
 		get_next_line(0, &input);
@@ -78,7 +78,6 @@ int		main(int argc, char *argv[], char *env[])
 				
 //			else if (!cmd_list)//cas de unexpected token...
 //				status = 2;
-			//ft_printf("ret test = %d\n", test);
 			cmd_list = free_and_null_cmd(&cmd_list);
 		}
 		cmd_list = free_and_null_cmd(&cmd_list);

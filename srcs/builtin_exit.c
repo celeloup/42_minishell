@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 15:53:17 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/14 17:51:58 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,11 @@ int		ft_str_is_nb(char *str)
 	int i;
 
 	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
 	while (str[i])
 	{
-		if (!ft_isdigit(str[i]) && str[i] != '-')
+		if (!ft_isdigit(str[i]))
 		{
 			return (0);
 			break ;
@@ -75,5 +77,6 @@ int		ft_exit(t_cmd *cmd, char **env[])
 			error_msg("exit", ": numeric argument required");
 		edit_exit_status(env, status);
 	}
+	ft_putstr_fd("exit\n", 2);
 	return (-1);
 }

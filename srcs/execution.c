@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/14 12:25:47 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 10:12:33 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ int		redirect(t_rdir *rd, int direction, int fd, int flux)
 	{
 		if (dup2(fd, flux) == -1)
 		{
-			error_msg("dup2", strerror(errno));
+			//error_msg("dup2", strerror(errno));
 			return (-1);
 		}
 		if (close(fd) == -1)
@@ -194,7 +194,7 @@ int		redirect(t_rdir *rd, int direction, int fd, int flux)
 		}
 		if (dup2(fd, flux) == -1)
 		{
-			error_msg("dup2", strerror(errno));
+			//error_msg("dup2", strerror(errno));
 			return (-1);
 		}
 		if (close(fd) == -1)
@@ -230,14 +230,24 @@ int		get_last_status(t_cmd *cmd)
 {
 	int status;
 
-	while (cmd)
+	while (cmd->pipe == 1)
 	{
-		status = cmd->status;
 		cmd = cmd->next;
+		status = cmd->status;
 	}
 	return (status);
 }
 
+int		get_status(char **env[])
+{
+	char *tmp;
+	int status;
+
+	tmp = get_var_value("$?", *env);
+	status = atoi(tmp);
+	tmp = free_and_null_str(&tmp);
+	return (status);
+}
 
 int		exec_cmds(t_cmd *cmd, char **env[])
 {
@@ -247,34 +257,28 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	int pipe_length;
 	int tmpin;
 	int tmpout;
-	char	*tmp;
-//	t_cmd	*new;
-//	t_cmd	*tmp;
 	int i;
 	t_cmd *first;
 
-	tmp = get_var_value("$?", *env);
-	status = atoi(tmp);
-	tmp = free_and_null_str(&tmp);
-	
+	status = get_status(env);
 	first = cmd;
 	init_stuff(cmd);
 	while (cmd)
 	{
 		while(make_cmd_an_adult(cmd, env))//change le status dans env mais pas ici
 			cmd = cmd->next;
+		ft_printf("%s\n", cmd->argv[0]);
 		tmpin = dup(STDIN_FILENO); //a proteger
 		tmpout = dup(STDOUT_FILENO); // a proteger
-		if (!cmd || !cmd->argv || !cmd->argv[0])
-			return (0);//vérifier le cas du cmd->next
-		//if (builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
+		//if (!cmd || !cmd->argv || !cmd->argv[0]) // SUPPR POUR CAS OU REDIR SEULE
+		//	return (0);//vérifier le cas du cmd->next
 		if (cmd->argv && cmd->argv[0] && builtin(cmd->argv[0]) != NULL && cmd->pipe == 0)
 		{
 			if (redirect(cmd->rdir, 3, -1, -1) != -1)
 				status = (*builtin(cmd->argv[0]))(cmd, env);
 			else
 				status = 1;
-//			ft_printf("\ninside exec cmd status is %d", status);
+			//ft_printf("\ninside exec cmd status is %d", status);
 		}
 		else
 		{
@@ -304,7 +308,13 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 							close(fdpipe[1]); //a proteger
 						}
 						if (builtin(cmd->argv[0]) != NULL)
-							error_exit((*builtin(cmd->argv[0]))(cmd, env), first, *env);
+						{
+							status = (*builtin(cmd->argv[0]))(cmd, env);
+							if (status != -1)
+								error_exit(status, first, *env);
+							else
+								error_exit(get_status(env), first, *env);
+						}
 						else
 						{
 							execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
@@ -327,14 +337,16 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 					i++;
 				}
 				wait_for_stuff(first);
-				status = get_last_status(first);
+				status = cmd->status; //get_last_status(first);
+				//ft_printf("status = %d\ncmd = %s\n", status, cmd->argv[0]);
 			}
 			else
 			{
 				if (redirect(cmd->rdir, 3, -1, -1) == -1)
 					status = 1;
-				if (status != 1 && cmd->argv && cmd->argv[0] && (pid = fork()) == 0)
+				if (status != 1 && cmd->argv && cmd->argv[0] && cmd->argv[0][0] && (pid = fork()) == 0)
 				{
+					//ft_printf("%s\n", get_cmd_path(cmd->argv[0], *env));
 					execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
 					if (ft_strncmp(cmd->argv[0], "./", 2) == 0)
 					{
@@ -351,13 +363,12 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 					waitpid(pid, &status, 0);
 			}
 		}
-//		status = ((status != 1 || status != 2) ? WEXITSTATUS(status) : status);
+		status = ((status != 1 && status != 2) ? WEXITSTATUS(status) : status);
 		cmd = cmd->next;
 		if (status != 255)
 			edit_exit_status(env, status);
 		redirect(NULL, 0, tmpin, STDIN_FILENO); //a proteger ?
 		redirect(NULL, 0, tmpout, STDOUT_FILENO); //a proteger ?
 	}
-	
 	return (status);
 }
