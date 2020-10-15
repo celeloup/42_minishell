@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/15 20:30:11 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 20:57:29 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ char	**get_adult_argv(char **baby, int adult_argc, char *env[])
 			i++;
 		if (!baby[i])
 			break ;
-		split_teen(adult, teen, env, j);
+		adult = split_teen(adult, teen, env, j);
 		teen = free_and_null_str(&teen);
 		j += words_in_baby(baby[i], env);
 		i++;

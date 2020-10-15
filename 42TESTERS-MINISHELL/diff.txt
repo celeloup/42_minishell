@@ -1,14 +1,9 @@
-Test 46 : RETURN VALUE
-echo 'cat tester.sh | grep echo; echo $?; cat tester.sh | grep RECKT | wc; echo $?' | ./minishell
+Test 53 : TEST EXECUTABLE PATH ORDER 3
+echo "export PATH=.:$PWD/srcs/test1:$PWD/srcs/test2:$PATH ; cd srcs/test3; testexecpath" | ./minishell
 
-46c46
-< 0
----
-> -1
-48c48
-< 0
----
-> -1
+1d0
+< bom dia
+\ Pas de fin de ligne à la fin du fichier
 
 <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>
 <<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>><<>>

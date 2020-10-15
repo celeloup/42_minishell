@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:20:14 by user42            #+#    #+#             */
-/*   Updated: 2020/10/15 19:49:15 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 21:07:32 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,13 @@ char	*get_double_quote(char *teen, char *env[])
 	quote = (char*)malloc(sizeof(char) * (len + 1));
 	quote[len] = '\0';
 	i = 1;
-	len = 0;
+	while (len)
+		quote[--len] = ' ';
 	while (teen[i] && quote[len])
 	{
 		if ((part = get_adult_part(&teen[i], env, DOUBLE_QUOTE)))
+			ft_strncpy(&quote[len], part, ft_strlen(part));
+		if (part)
 			len += ft_strlen(part);
 		part = free_and_null_str(&part);
 		i += go_to_next_char(&teen[i], DOUBLE_QUOTE);
