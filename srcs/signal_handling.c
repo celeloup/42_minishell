@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/03 17:32:21 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 15:23:56 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 20:00:38 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	control_slash(int num)
 	if (g_var.pid != 0)
 		ft_putstr_fd("Quit (core dumped)\n", 2);
 	else
-		ft_putstr_fd("\b\b ", 2);
+		ft_putstr_fd("\b", 2);
 	g_var.status = 131;
 	g_var.sigquit = 1;
 }

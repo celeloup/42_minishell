@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 18:49:22 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 19:04:15 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,31 +244,6 @@ int		file_exist(char *file_name)
 	return (0);
 }
 
-int permission_denied(char *file_name)
-{
-	DIR				*dir;
-	struct dirent	*entry;
-	int				i;
-
-	if (ft_strncmp(file_name, "./", 2) == 0)
-		i = 2;
-	else
-		i = 0;
-	if ((dir = opendir(".")) != NULL)
-	{
-		while ((entry = readdir(dir)))
-		{
-			if (!ft_strcmp(entry->d_name, &file_name[i]))
-			{
-				closedir(dir);
-				return (1);
-			}
-		}
-		closedir(dir);
-	}
-	return (0);
-}
-
 void	no_exec_quit(char *cmd, t_cmd *cmd_list, char **env[])
 {
 	if (ft_strncmp(cmd, "./", 2) == 0 && file_exist(&cmd[2]))
@@ -349,7 +324,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 						}
 						else
 						{
-							if (!file_exist(cmd->argv[0]))
+							//if (!file_exist(cmd->argv[0]))
 								execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
 							no_exec_quit(cmd->argv[0], first, env);
 						}
@@ -377,7 +352,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 					status = 1;
 				if (status != 1 && cmd->argv && cmd->argv[0] && cmd->argv[0][0] && (g_var.pid = fork()) == 0)
 				{
-					if (!file_exist(cmd->argv[0]))
+					//if (!file_exist(cmd->argv[0]))
 						execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
 					no_exec_quit(cmd->argv[0], first, env);
 				}

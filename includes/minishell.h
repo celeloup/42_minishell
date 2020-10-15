@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 17:44:25 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 19:22:19 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ typedef struct	s_var{
 }				t_var;
 
 
-extern t_var g_var;
+
 /*
 ** minishell.c
 */
@@ -226,5 +226,5 @@ void			exec_pipeline(t_cmd *cmd, char *env[], int in_fd);
 int				exec_cmds(t_cmd *cmd, char **env[]);
 void			error_msg(char *actor, char *msg);
 int				get_status(char **env[]);
-
+extern t_var g_var;
 #endif
