@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 10:22:17 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 10:54:48 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,6 +249,26 @@ int		get_status(char **env[])
 	return (status);
 }
 
+int		is_binary_file(char *file_name)
+{
+	DIR				*dir;
+	struct dirent	*entry;
+
+	if ((dir = opendir(".")) != NULL)
+	{
+		while ((entry = readdir(dir)))
+		{
+			if (!ft_strcmp(entry->d_name, file_name))
+			{
+				closedir(dir);
+				return (1);
+			}
+		}
+		closedir(dir);
+	}
+	return (0);
+}
+
 int		exec_cmds(t_cmd *cmd, char **env[])
 {
 	int status;
@@ -316,9 +336,23 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 						}
 						else
 						{
-							execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
-							error_msg(cmd->argv[0], "command not found");
-							error_exit(127, cmd, *env);
+							if (!is_binary_file(cmd->argv[0]))
+								execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
+							if (ft_strncmp(cmd->argv[0], "./", 2) == 0)
+							{
+								error_msg(cmd->argv[0], "Permission denied");
+								error_exit(126, first, *env);
+							}
+							else if (!var_is_set(env, "PATH"))
+							{
+								error_msg(cmd->argv[0], "No such file or directory");
+								error_exit(127, first, *env);
+							}
+							else
+							{
+								error_msg(cmd->argv[0], "command not found");
+								error_exit(127, first, *env);
+							}
 						}
 					}
 					else
@@ -346,13 +380,19 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 				if (status != 1 && cmd->argv && cmd->argv[0] && cmd->argv[0][0] && (pid = fork()) == 0)
 				{
 					//ft_printf("%s\n", get_cmd_path(cmd->argv[0], *env));
-					execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
+					if (!is_binary_file(cmd->argv[0]))
+						execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
 					if (ft_strncmp(cmd->argv[0], "./", 2) == 0)
 					{
 						error_msg(cmd->argv[0], "Permission denied");
 						error_exit(126, first, *env);
 					}
-					else //ajouter ici le check si PATH is set ou pas ?
+					else if (!var_is_set(env, "PATH"))
+					{
+						error_msg(cmd->argv[0], "No such file or directory");
+						error_exit(127, first, *env);
+					}
+					else
 					{
 						error_msg(cmd->argv[0], "command not found");
 						error_exit(127, first, *env);

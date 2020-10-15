@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/14 18:13:40 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 13:44:07 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <stdio.h>
 
 //valgrind --leak-check=full --show-leak-kinds=all ./minishell > valgrind_log 2>&1
-
 
 /*
 ** Affiche le prompt en couleurs
@@ -42,10 +41,11 @@ int		main(int argc, char *argv[], char *env[])
 	
 	(void)argc;
 	(void)argv;
-	signal(SIGINT, control_c);
+	
 	input = NULL;
-	/*signal(SIGQUIT, control_slash);
-	signal(SIGTERM, signal_handler);
+	signal(SIGINT , control_c);
+	signal(SIGQUIT, control_slash);
+	/*signal(SIGTERM, signal_handler);
 	if (signal(SIGCHLD, SIG_IGN) == SIG_ERR)
 	{
 		ft_putstr_fd("SIGCHLD\n", 2);
@@ -57,6 +57,7 @@ int		main(int argc, char *argv[], char *env[])
 //	input = ft_strdup("echo $PATH");
 	while (status != -1 && status != 255)//input à enlever
 	{
+		
 		prompt(0);
 	//	ft_printf("\ninput avant GNL is =");//debug
 	//	print_args(argc, argv);//debug
@@ -75,7 +76,6 @@ int		main(int argc, char *argv[], char *env[])
 				input = get_var_value("$?", environment);
 				status = ft_atoi(input);
 			}
-				
 //			else if (!cmd_list)//cas de unexpected token...
 //				status = 2;
 			cmd_list = free_and_null_cmd(&cmd_list);

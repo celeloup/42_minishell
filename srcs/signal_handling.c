@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/03 17:32:21 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/14 12:49:40 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 13:33:22 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	control_c(int num)
 {
 	(void)num;
 	write(1, "\n", 1);
+	prompt(0);
 }
 
 void	signal_handler(int num)
@@ -52,5 +53,4 @@ void	signal_handler(int num)
 		//ft_printf("sigterm signal received \n");
 		exit(EXIT_SUCCESS);
 	}
-		
 }
