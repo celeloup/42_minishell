@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/15 13:07:07 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 18:59:48 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,16 +106,22 @@ char	*make_baby_a_teen(char *baby, char *env[])
 	int		len;
 	int		i;
 
+	teen = NULL;
 	if ((len = teen_len(baby, env)) < 0)
 		return (NULL);
+//		ft_printf("\nbabytoteen, len is:%d", len);
 	teen = (char*)malloc(sizeof(char) * (len + 1));
 	teen[len] = '\0';
 	i = 0;
+	while (len)
+		teen[--len] = ' ';
 	len = 0;
+//	ft_printf("\nbabytoteen teen is :>%s<", teen);
 	while (teen[len] && baby[i])
 	{
 		len += get_teen_part(&teen[len], &baby[i], env);
 		i += go_to_next_char(&baby[i], NO);
 	}
+//	ft_printf("\nbabytoteen teen is :>%s<", teen);
 	return (teen);
 }

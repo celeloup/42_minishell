@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:20:14 by user42            #+#    #+#             */
-/*   Updated: 2020/10/13 17:25:50 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 19:49:15 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,18 @@ int		single_quote_len(char *input, int expanded)
 
 int		double_quote_len(char *input, char *env[])
 {
-	int i;
-	int	len;
+	int		i;
+	int		len;
+	char	*part;
 
 	len = 0;
 	i = 1;
+	part = NULL;
 	while (input[i] && input[i] != DOUBLE_QUOTE)
 	{
-		if (env)
-			len += get_adult_part(NULL, &input[i], env, DOUBLE_QUOTE);
+		if (env && (part = get_adult_part(&input[i], env, DOUBLE_QUOTE)))
+			len += ft_strlen(part);
+		part = free_and_null_str(&part);
 		i += go_to_next_char(&input[i], DOUBLE_QUOTE);
 	}
 	if (input[i] && input[i] == DOUBLE_QUOTE)
@@ -64,6 +67,7 @@ char	*get_double_quote(char *teen, char *env[])
 	char	*quote;
 	int		len;
 	int		i;
+	char	*part;
 
 	if ((len = double_quote_len(teen, env)) < 0)
 		return (ft_strdup(""));
@@ -73,7 +77,9 @@ char	*get_double_quote(char *teen, char *env[])
 	len = 0;
 	while (teen[i] && quote[len])
 	{
-		len += get_adult_part(&quote[len], &teen[i], env, DOUBLE_QUOTE);
+		if ((part = get_adult_part(&teen[i], env, DOUBLE_QUOTE)))
+			len += ft_strlen(part);
+		part = free_and_null_str(&part);
 		i += go_to_next_char(&teen[i], DOUBLE_QUOTE);
 	}
 	return (quote);

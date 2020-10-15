@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 17:44:25 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 20:00:43 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ char			*get_var_value(char *input, char *env[]);
 char			*get_var_name(char *input);
 int				var_len(char *input, char *env[]);
 int				go_to_next_char(char *input, int quote);
-int				get_adult_part(char *adult, char *teen, char *env[], int quote);
+char			*get_adult_part(char *teen, char *env[], int quote);
 int				backslash_len(char *input, int quote, int expanded);
 char			*get_escaped_char(char *input, int quote);
 int				unexpected_token_msg(char *input, int len);
