@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/04 15:39:46 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 18:31:24 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 20:15:28 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,6 @@ int		give_cmd_birth(t_cmd **cmd, char *input, char **env[])
 	get_baby_argv(*cmd, input, len);
 	if (input[len] && input[len] == '|')
 		(*cmd)->pipe++;
-	print_args((*cmd)->argc, (*cmd)->argv);//debug
 	if (input[len] && is_cmd_sep(input[len]) && input[len + 1]
 		&& (ret = give_cmd_birth(&((*cmd)->next), &input[len + 1], env)))
 	{

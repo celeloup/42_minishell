@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:33:25 by user42            #+#    #+#             */
-/*   Updated: 2020/10/15 13:10:29 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 20:48:32 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,7 @@ int		var_len(char *input, char *env[])
 	var_name = NULL;
 	var_value = NULL;
 	len = 1;
-	while (input[len] && !ft_isdigit(input[1])
-		&& (ft_isalnum(input[len]) || input[len] == '_'))
+	while (input[len] && (ft_isalnum(input[len]) || input[len] == '_'))
 		len++;
 	if (len == 1 && input[len] && input[len] == '?')
 		len++;

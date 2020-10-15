@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 20:01:50 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 20:50:18 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ typedef struct	s_var{
 	int				sigquit;
 	pid_t			pid;
 }				t_var;
-
 
 extern t_var g_var;
 /*
