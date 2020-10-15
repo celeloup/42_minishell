@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/15 13:00:27 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 19:52:56 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,25 @@
 
 int		adult_len(char *teen, char *env[])
 {
-	int i;
-	int len;
+	int		i;
+	int		len;
+	char	*part;
 
 	i = 0;
 	len = 0;
 	while (teen[i] && !(is_ifs(teen[i])))
 	{
-		len += get_adult_part(NULL, &teen[i], env, NO);
+		part = get_adult_part(&teen[i], env, NO);
+		if (part)
+			len += ft_strlen(part);
+		part = free_and_null_str(&part);
 		i += go_to_next_char(&teen[i], NO);
 	}
 	return (len);
 }
 
-int		get_adult_part(char *adult, char *teen, char *env[], int quote)
+char	*get_adult_part(char *teen, char *env[], int quote)
 {
-	int		len;
 	char	*part;
 	char	*var_name;
 
@@ -48,21 +51,20 @@ int		get_adult_part(char *adult, char *teen, char *env[], int quote)
 	}
 	else
 		part = ft_substr(teen, 0, go_to_next_char(teen, quote));
-	len = ft_strlen(part);
-	if (adult)
-		ft_strncpy(adult, part, len);
-	part = free_and_null_str(&part);
-	return (len);
+	ft_printf("\npart is : %s", part);
+	return (part);
 }
 
 char	*get_one_adult_arg(char *teen, char *env[])
 {
 	char	*adult;
+	char	*part;
 	int		len;
 	int		i;
 
 	adult = NULL;
 	i = 0;
+	ft_printf("\nget one adult teen is >%s<", teen);
 	while (teen && teen[i] && is_ifs(teen[i]))
 		i++;
 	if (!teen || !teen[i])
@@ -70,12 +72,23 @@ char	*get_one_adult_arg(char *teen, char *env[])
 	len = adult_len(&teen[i], env);
 	adult = (char*)malloc(sizeof(char) * (len + 1));
 	adult[len] = '\0';
+	ft_printf("\nget one adult len is >%d<", len);
+	while (len)
+		adult[--len] = ' ';
 	len = 0;
+	ft_printf("\nget one adult end adult is >%s<", adult);
 	while (teen[i] && adult[len])
 	{
-		len += get_adult_part(&adult[len], &teen[i], env, NO);
+		if ((part = get_adult_part(&teen[i], env, NO)))
+		{
+			ft_strncpy(&adult[len], part, ft_strlen(part));
+			len += ft_strlen(part);
+		}
+		part = free_and_null_str(&part);
+		ft_printf("\nget one adult end adult is >%s<", adult);
 		i += go_to_next_char(&teen[i], NO);
 	}
+	ft_printf("\nget one adult end adult is >%s<", adult);
 	return (adult);
 }
 
@@ -84,6 +97,7 @@ char	**split_teen(char **adult, char *teen, char *env[], int j)
 	int		i;
 
 	i = 0;
+	ft_printf("\nsplit teen teen is :%s", teen);
 	while (teen[i] && is_ifs(teen[i]))
 		i++;
 	if (!teen[i])
@@ -92,11 +106,14 @@ char	**split_teen(char **adult, char *teen, char *env[], int j)
 	{
 		if (!(adult[j] = get_one_adult_arg(&teen[i], env)))
 			break ;
+		ft_printf("\nsplit teen adult[j] is :>%s<", adult[j]);
 		j++;
 		i += child_len(&teen[i]);
 		while (teen[i] && is_ifs(teen[i]))
 			i++;
 	}
+	ft_printf("\nv--split teen adult");
+	print_args(2, adult);
 	return (adult);
 }
 
@@ -117,10 +134,13 @@ char	**get_adult_argv(char **baby, int adult_argc, char *env[])
 			i++;
 		if (!baby[i])
 			break ;
-		adult = split_teen(adult, teen, env, j);
+		ft_printf("\nGet adult teen is :%s", teen);
+		split_teen(adult, teen, env, j);
 		teen = free_and_null_str(&teen);
 		j += words_in_baby(baby[i], env);
 		i++;
 	}
+	ft_printf("\nGetadult args end :");
+	print_args(adult_argc, adult);
 	return (adult);
 }

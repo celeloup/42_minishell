@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/14 18:13:40 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 18:29:04 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int		main(int argc, char *argv[], char *env[])
 	//	ft_printf("\ninput avant GNL is =");//debug
 	//	print_args(argc, argv);//debug
 		get_next_line(0, &input);
+		ft_printf("\ninput is :>%s<", input);
 		if (!input && !(environment = free_and_null_tab(&environment)))
 			control_d();
 		else

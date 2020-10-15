@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 13:07:22 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 18:44:48 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,25 @@ int		make_cmd_an_adult(t_cmd *baby, char **env[])
 
 	if (!baby)
 		return (0);
+//	ft_printf("\nGo_adult beginning: baby");
+//	print_args(baby->argc, baby->argv);//debug
 	adult = init_cmd();
 	adult->argc = get_adult_argc(baby->argv, *env);
 	adult->argv = get_adult_argv(baby->argv, adult->argc, *env);
 	baby->argv = free_and_null_tab(&baby->argv);
 	baby->argv = copy_argv(adult->argv, adult->argc);
+//	ft_printf("\nGo_adult middle: adult");
+//	print_cmd(adult, 0);
 	baby->argc = adult->argc;
 	ret = get_adult_rdir(&adult->rdir, baby->rdir, *env);
 	baby->rdir = free_and_null_rdir(&baby->rdir);
 	baby->rdir = copy_rdir(adult->rdir);
+//	ft_printf("\nGo_adult end: adult");
+//	print_args(adult->argc, adult->argv);//debug
 	adult = free_and_null_cmd(&adult);
+//	ft_printf("\nGo_adult end: baby");
+//	print_cmd(baby, 0);//debug
+	
 	if (ret)
 		edit_exit_status(env, ret);
 	return (ret);
