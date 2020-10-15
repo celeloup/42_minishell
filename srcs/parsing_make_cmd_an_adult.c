@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/14 11:18:40 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 13:07:22 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,10 @@ int		make_cmd_an_adult(t_cmd *baby, char **env[])
 	adult = init_cmd();
 	adult->argc = get_adult_argc(baby->argv, *env);
 	adult->argv = get_adult_argv(baby->argv, adult->argc, *env);
-
 	baby->argv = free_and_null_tab(&baby->argv);
 	baby->argv = copy_argv(adult->argv, adult->argc);
 	baby->argc = adult->argc;
 	ret = get_adult_rdir(&adult->rdir, baby->rdir, *env);
-//	ft_printf("\n ret = %d", ret);
-//	ft_printf("\nMAKE_ADULT printarg");//debug
-//	print_cmd(adult, 0);//debug
 	baby->rdir = free_and_null_rdir(&baby->rdir);
 	baby->rdir = copy_rdir(adult->rdir);
 	adult = free_and_null_cmd(&adult);

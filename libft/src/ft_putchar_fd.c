@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putchar_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/02 17:36:13 by celeloup          #+#    #+#             */
-/*   Updated: 2019/12/02 17:36:17 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/15 13:13:06 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,5 @@
 
 int		ft_putchar_fd(char c, int fd)
 {
-	return(write(fd, &c, 1));
+	return (write(fd, &c, 1));
 }

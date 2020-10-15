@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/13 20:06:56 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/15 12:56:57 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,8 @@ char	**init_env(char *env[])
 	i = 0;
 	shlvl = 0;
 	while (env && env[i])
-	{
-		if (!ft_strncmp("SHLVL=", env[i], 6))
+		if (!ft_strncmp("SHLVL=", env[i++], 6))
 			shlvl = 1;
-		i++;
-	}
 	if (!(new_env = (char**)malloc((i + 3 - shlvl) * sizeof(char*))))
 		return (NULL);
 	i = 0;
