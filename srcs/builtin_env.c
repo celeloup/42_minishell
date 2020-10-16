@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 12:44:54 by user42            #+#    #+#             */
-/*   Updated: 2020/10/15 20:14:48 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/16 14:32:51 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,26 +35,28 @@ void	print_env_export(char *var)
 	ft_putchar_fd('\n', 1);
 }
 
+void	swap_str(char **str1, char **str2)
+{
+	char *tmp;
+
+	tmp = ft_strdup(*str1);
+	free(*str1);
+	*str1 = ft_strdup(*str2);
+	free(*str2);
+	*str2 = tmp;
+}
+
 void	sort_env(char *env[])
 {
-	char **tmp_env;
-	int i;
-	int j;
-	int len;
-	char *tmp_str;
+	char	**tmp_env;
+	int		i;
+	int		j;
+	int		len;
 
 	len = 0;
 	while (env[len])
 		len++;
-	if ((tmp_env = malloc((len + 1) * sizeof(char*))) == NULL)
-		return ;
-	i = 0;
-	while (i < len)
-	{
-		tmp_env[i] = ft_strdup(env[i]);
-		i++;
-	}
-	tmp_env[i] = NULL;
+	tmp_env = env_dup(env);
 	i = 0;
 	while (i < len)
 	{
@@ -62,13 +64,7 @@ void	sort_env(char *env[])
 		while (j < len)
 		{
 			if (ft_strcmp(tmp_env[i], tmp_env[j]) < 0)
-			{
-				tmp_str = ft_strdup(tmp_env[i]);
-				free(tmp_env[i]);
-				tmp_env[i] = ft_strdup(tmp_env[j]);
-				free(tmp_env[j]);
-				tmp_env[j] = tmp_str;
-			}
+				swap_str(&tmp_env[i], &tmp_env[j]);
 			j++;
 		}
 		i++;

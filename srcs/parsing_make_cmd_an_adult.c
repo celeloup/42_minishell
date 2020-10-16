@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_make_cmd_an_adult.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 20:15:09 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/16 16:49:12 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,7 @@ int		make_cmd_an_adult(t_cmd *baby, char **env[])
 	adult = free_and_null_cmd(&adult);
 	if (ret)
 		edit_exit_status(env, ret);
+	baby->status = 1;
+	baby->pid = -1;
 	return (ret);
 }

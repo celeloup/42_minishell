@@ -1,2 +1,0 @@
-PWD=/home/user42/42/minishell/ingit2/42TESTERS-MINISHELL
-SHLVL=1

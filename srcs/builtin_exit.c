@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 20:06:19 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/16 14:06:04 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,5 @@ int		ft_exit(t_cmd *cmd, char **env[])
 		edit_exit_status(env, status);
 	}
 	ft_putstr_fd("exit\n", 2);
-	ft_printf("status = %d\n", get_status(env));
 	return (-1);
 }

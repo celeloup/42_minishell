@@ -6,11 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2020/10/15 22:50:45 by celeloup         ###   ########.fr       */
-=======
-/*   Updated: 2020/10/15 19:22:19 by celeloup         ###   ########.fr       */
->>>>>>> 2127782fcfb861c7060373edee673f1e1a5977a1
+/*   Updated: 2020/10/16 17:58:12 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +20,7 @@
 # include <fcntl.h>
 # include <sys/types.h>
 # include <sys/stat.h>
+# include <dirent.h>
 
 # ifndef STDIN_FILENO
 #  define STDIN_FILENO 0
@@ -96,12 +93,13 @@ typedef struct	s_var{
 	pid_t			pid;
 }				t_var;
 
-
-
 /*
 ** minishell.c
 */
 void			prompt();
+void			init_var(void);
+int				launch_mini(char **env[], char *input);
+int				minishell(char **env[]);
 
 /*
 ** builtins files
@@ -129,7 +127,7 @@ int				env_len(char *env[]);
 char			**env_dup(char *env[]);
 char			**env_ncpy(char *dest[], char *src[], int start, int n);
 int				var_is_valid(char *var, char *cmd, int value_expected);
-
+void			sort_env(char *env[]);
 /*
 ** copy.c
 */
@@ -164,20 +162,17 @@ int				child_len(char *input);
 int				get_rdir_type(t_rdir *rdir, char *input);
 int				get_baby_rdir(t_rdir **rdir, char *input);
 int				give_cmd_birth(t_cmd **cmd, char *input, char **env[]);
-
 /*
 ** debug.c
 */
 void			print_args(int argc, char **argv);
 void			print_cmd_rdir(t_rdir *rdir);
 void			print_cmd(t_cmd *cmd, int i);
-
 /*
 ** free.c
 */
 t_cmd			*free_and_null_cmd(t_cmd **cmd_list);
 t_rdir			*free_and_null_rdir(t_rdir **rdir);
-
 /*
 ** init.
 */
@@ -185,50 +180,55 @@ char			**init_env(char *env[]);
 char			**init_argv(int argc);
 t_cmd			*init_cmd();
 t_rdir			*init_rdir();
-
 /*
 ** expand_args.c
 */
 t_cmd			*copy_cmd(t_cmd *cmd);
 int				make_cmd_an_adult(t_cmd *cmd, char **env[]);
-
 /*
 ** signal_handling.c
 */
 void			control_slash(int num);
 void			control_d();
 void			control_c(int num);
-
-/*
-** builtins files
-*/
-void			edit_exit_status(char **env[], int status);
-int				print_env_error(char *input, char *cmd, int error_type);
-int				print_env(char *env[], int option);
-int				ft_env(t_cmd *cmd, char **env[]);
-int				ft_export(t_cmd *cmd, char **env[]);
-int				ft_unset(t_cmd *cmd, char **env[]);
-int				ft_exit(t_cmd *cmd, char **env[]);
-int				ft_echo(t_cmd *cmd, char **env[]);
-int				ft_cd(t_cmd *cmd, char **env[]);
-int				ft_pwd(t_cmd *cmd, char **env[]);
-int				env_len(char *env[]);
-char			**env_dup(char *env[]);
-char			**env_ncpy(char *dest[], char *src[], int start, int n);
-int				var_is_valid(char *var, char *cmd, int value_expected);
-void			sort_env(char *env[]);
 /*
 ** execution.c
 */
-int				is_builtin(t_cmd *cmd, char *env[]);
-int				redirections(t_rdir *rd, int type);
-void			error_exit(int status, t_cmd *cmd, char *env[]);
-int				exec_cmd(t_cmd *cmd, char *env[]);
-void			close_fd(int fd);
-void			redirect_pipe(int old_fd, int new_fd);
-void			exec_pipeline(t_cmd *cmd, char *env[], int in_fd);
+int				(*g_builtin(char *cmd_name))(t_cmd*, char***);
+int				exec_single_cmd(t_cmd *cmd, char **env[], t_cmd *first);
+int				execution(t_cmd **cmd, char **env[], t_cmd *first, int tmpout);
 int				exec_cmds(t_cmd *cmd, char **env[]);
+/*
+** bin.c
+*/
+char			*path_join(char *bin, char *path);
+char			*search_path(char **bin_tab, char *cmd);
+char			*get_cmd_path(char *cmd, char *env[]);
+int				file_exist(char *file_name);
+/*
+** pipe.c
+*/
+int				pipe_child_redirect(int fdpipe[2], t_cmd *cmd, int tmpout);
+void			pipe_child_exec(t_cmd *cmd, t_cmd *first, char **env[]);
+void			pipeline_exec(t_cmd **cmd, char **env[], t_cmd *first,
+				int tmpout);
+int				pipeline(t_cmd **cmd, char **env[], t_cmd *first, int tmpout);
+int				size_pipeline(t_cmd *cmd);
+/*
+** redirection.c
+*/
+int				open_fd(int *fd, char *file, int flag, int *flux);
+int				redirect(int fd, int flux);
+int				redirection(t_rdir *rd, int direction, int fd, int flux);
+/*
+** exec_utils.c
+*/
 void			error_msg(char *actor, char *msg);
+void			error_exit(int status, t_cmd *cmd, char *env[]);
+void			wait_for_stuff(t_cmd *cmd);
 int				get_status(char **env[]);
+void			no_exec_quit(char *cmd, t_cmd *cmd_list, char **env[]);
+
 extern t_var g_var;
+
 #endif

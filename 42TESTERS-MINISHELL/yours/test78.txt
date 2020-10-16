@@ -1,2 +1,0 @@
-coucou
-/bin/bash

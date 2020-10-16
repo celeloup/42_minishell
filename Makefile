@@ -6,11 +6,7 @@
 #    By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/05/28 09:41:35 by celeloup          #+#    #+#              #
-<<<<<<< HEAD
-#    Updated: 2020/10/15 22:51:30 by celeloup         ###   ########.fr        #
-=======
-#    Updated: 2020/10/15 19:27:21 by celeloup         ###   ########.fr        #
->>>>>>> 2127782fcfb861c7060373edee673f1e1a5977a1
+#    Updated: 2020/10/16 17:39:31 by celeloup         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,6 +38,10 @@ parsing_rdir.c \
 parsing_utils.c \
 parsing_var.c \
 signal_handling.c \
+bin.c \
+pipe.c \
+redirection.c \
+exec_utils.c
 
 SRCS			= $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS			= $(addprefix $(OBJS_DIR), $(SRCS_FILE:.c=.o))
