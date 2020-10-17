@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/16 17:32:52 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/16 17:59:26 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/16 19:31:59 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,12 @@ void	pipe_child_exec(t_cmd *cmd, t_cmd *first, char **env[])
 	}
 }
 
-void	pipeline_exec(t_cmd **cmd, char **env[], t_cmd *first, int tmpout)
+int		pipeline_exec(t_cmd **cmd, char **env[], t_cmd *first, int tmpout)
 {
 	int fdpipe[2];
+	int status;
 
+	status = 0;
 	pipe(fdpipe);
 	g_var.pid = fork();
 	(*cmd)->pid = g_var.pid;
@@ -72,9 +74,10 @@ void	pipeline_exec(t_cmd **cmd, char **env[], t_cmd *first, int tmpout)
 	if ((*cmd)->pipe == 1)
 	{
 		*cmd = (*cmd)->next;
-		while (make_cmd_an_adult(*cmd, env))
+		while ((*cmd) && (status = make_cmd_an_adult(*cmd, env) == 1))
 			*cmd = (*cmd)->next;
 	}
+	return (status ? status : 0);
 }
 
 int		pipeline(t_cmd **cmd, char **env[], t_cmd *first, int tmpout)
@@ -86,13 +89,14 @@ int		pipeline(t_cmd **cmd, char **env[], t_cmd *first, int tmpout)
 	status = 0;
 	pipe_length = size_pipeline(*cmd);
 	i = 0;
-	while (i < pipe_length)
+	while (i < pipe_length && *cmd)
 	{
-		pipeline_exec(cmd, env, first, tmpout);
+		status = pipeline_exec(cmd, env, first, tmpout);
 		i++;
 	}
 	wait_for_stuff(first);
-	status = (*cmd)->status;
+	if (*cmd)
+		status = (*cmd)->status;
 	return (status);
 }
 

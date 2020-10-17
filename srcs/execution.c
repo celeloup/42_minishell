@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/16 17:58:34 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/16 19:38:09 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,18 +85,22 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 	while (cmd)
 	{
 		status = 0;
-		while (make_cmd_an_adult(cmd, env))
+		while (cmd && (status = make_cmd_an_adult(cmd, env)))
 			cmd = cmd->next;
-		tmpin = dup(STDIN_FILENO);
-		tmpout = dup(STDOUT_FILENO);
-		status = execution(&cmd, env, first, tmpout);
-		status = ((status != 1 && status != 2) ? WEXITSTATUS(status) : status);
 		if (cmd)
-			cmd = cmd->next;
-		if (status != 255)
-			edit_exit_status(env, status);
-		redirection(NULL, 0, tmpin, STDIN_FILENO);
-		redirection(NULL, 0, tmpout, STDOUT_FILENO);
+		{
+			tmpin = dup(STDIN_FILENO);
+			tmpout = dup(STDOUT_FILENO);
+			status = execution(&cmd, env, first, tmpout);
+			status = ((status != 1 && status != 2) 
+				? WEXITSTATUS(status) : status);
+			if (cmd)
+				cmd = cmd->next;
+			if (status != 255)
+				edit_exit_status(env, status);
+			redirection(NULL, 0, tmpin, STDIN_FILENO);
+			redirection(NULL, 0, tmpout, STDOUT_FILENO);
+		}
 		if (g_var.sigint || g_var.sigquit)
 			return (g_var.status);
 	}

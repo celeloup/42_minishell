@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/16 16:49:12 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/16 19:33:39 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ int		make_cmd_an_adult(t_cmd *baby, char **env[])
 	baby->rdir = free_and_null_rdir(&baby->rdir);
 	baby->rdir = copy_rdir(adult->rdir);
 	adult = free_and_null_cmd(&adult);
-	if (ret)
-		edit_exit_status(env, ret);
 	baby->status = 1;
 	baby->pid = -1;
+	if (ret)
+		edit_exit_status(env, ret);
 	return (ret);
 }
