@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:30 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/16 19:31:14 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/17 16:04:44 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,7 @@ int				file_exist(char *file_name);
 */
 int				pipe_child_redirect(int fdpipe[2], t_cmd *cmd, int tmpout);
 void			pipe_child_exec(t_cmd *cmd, t_cmd *first, char **env[]);
-int			pipeline_exec(t_cmd **cmd, char **env[], t_cmd *first,
+int				pipeline_exec(t_cmd **cmd, char **env[], t_cmd *first,
 				int tmpout);
 int				pipeline(t_cmd **cmd, char **env[], t_cmd *first, int tmpout);
 int				size_pipeline(t_cmd *cmd);
