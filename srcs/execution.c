@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/23 12:17:07 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/16 19:38:09 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/17 16:00:15 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int		exec_single_cmd(t_cmd *cmd, char **env[], t_cmd *first)
 	if (redirection(cmd->rdir, 3, -1, -1) == -1)
 		status = 1;
 	if (status != 1 && cmd->argv && cmd->argv[0]
-		&& cmd->argv[0][0] && (g_var.pid = fork()) == 0)
+		&& (g_var.pid = fork()) == 0)
 	{
 		if (!file_exist(cmd->argv[0]))
 			execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
@@ -74,6 +74,20 @@ int		execution(t_cmd **cmd, char **env[], t_cmd *first, int tmpout)
 	return (status);
 }
 
+int		pre_execution(t_cmd **cmd, t_cmd *first, char **env[], int tmpout)
+{
+	int status;
+
+	status = execution(cmd, env, first, tmpout);
+	status = ((status != 1 && status != 2)
+		? WEXITSTATUS(status) : status);
+	if (*cmd)
+		*cmd = (*cmd)->next;
+	if (status != 255)
+		edit_exit_status(env, status);
+	return (status);
+}
+
 int		exec_cmds(t_cmd *cmd, char **env[])
 {
 	int		status;
@@ -91,13 +105,7 @@ int		exec_cmds(t_cmd *cmd, char **env[])
 		{
 			tmpin = dup(STDIN_FILENO);
 			tmpout = dup(STDOUT_FILENO);
-			status = execution(&cmd, env, first, tmpout);
-			status = ((status != 1 && status != 2) 
-				? WEXITSTATUS(status) : status);
-			if (cmd)
-				cmd = cmd->next;
-			if (status != 255)
-				edit_exit_status(env, status);
+			status = pre_execution(&cmd, first, env, tmpout);
 			redirection(NULL, 0, tmpin, STDIN_FILENO);
 			redirection(NULL, 0, tmpout, STDOUT_FILENO);
 		}

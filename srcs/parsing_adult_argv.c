@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_adult_argv.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/23 17:03:31 by amenadier         #+#    #+#             */
-/*   Updated: 2020/10/15 20:57:29 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/17 15:38:02 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,8 @@ char	**split_teen(char **adult, char *teen, char *env[], int j)
 		if (!(adult[j] = get_one_adult_arg(&teen[i], env)))
 			break ;
 		j++;
-		i += child_len(&teen[i]);
+		while (teen[i] && !is_ifs(teen[i]))
+			i += go_to_next_char(&teen[i], NO);
 		while (teen[i] && is_ifs(teen[i]))
 			i++;
 	}

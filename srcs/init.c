@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/15 12:56:57 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/17 13:11:55 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,5 +113,7 @@ t_cmd	*init_cmd(void)
 	cmd->rdir = NULL;
 	cmd->pipe = 0;
 	cmd->next = NULL;
+	cmd->pid = -1;
+	cmd->status = 1;
 	return (cmd);
 }

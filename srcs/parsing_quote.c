@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_quote.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
+/*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/25 14:20:14 by user42            #+#    #+#             */
-/*   Updated: 2020/10/15 21:07:32 by user42           ###   ########.fr       */
+/*   Updated: 2020/10/17 15:50:38 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,9 @@ char	*get_double_quote(char *teen, char *env[])
 
 char	*get_quote(char *teen, char *env[])
 {
-	if (teen[0] == SINGLE_QUOTE && single_quote_len(teen, EXP))
+	if (baby_quote_len(teen) == 1 || teen[baby_quote_len(teen) - 1] != teen[0])
+		return (ft_strdup(teen));
+	else if (teen[0] == SINGLE_QUOTE && single_quote_len(teen, EXP))
 		return (ft_substr(teen, 1, single_quote_len(teen, EXP)));
 	else if (teen[0] == SINGLE_QUOTE)
 		return (ft_strdup(""));

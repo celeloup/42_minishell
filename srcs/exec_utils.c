@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/16 17:38:53 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/16 17:39:11 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/17 13:51:46 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,10 @@
 void	error_msg(char *actor, char *msg)
 {
 	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(actor, 2);
+	if (!actor[0])
+		ft_putstr_fd("''", 2);
+	else
+		ft_putstr_fd(actor, 2);
 	ft_putstr_fd(": ", 2);
 	ft_putstr_fd(msg, 2);
 	ft_putchar_fd('\n', 2);
@@ -32,7 +35,8 @@ void	wait_for_stuff(t_cmd *cmd)
 {
 	while (cmd)
 	{
-		waitpid(cmd->pid, &cmd->status, 0);
+		if (cmd->argv && cmd->argv[0])
+			waitpid(cmd->pid, &cmd->status, 0);
 		cmd = cmd->next;
 	}
 }
@@ -50,7 +54,9 @@ int		get_status(char **env[])
 
 void	no_exec_quit(char *cmd, t_cmd *cmd_list, char **env[])
 {
-	if (ft_strncmp(cmd, "./", 2) == 0 && file_exist(&cmd[2]))
+	if (!cmd)
+		error_exit(0, cmd_list, *env);
+	else if (ft_strncmp(cmd, "./", 2) == 0 && file_exist(&cmd[2]))
 	{
 		error_msg(cmd, "Permission denied");
 		error_exit(126, cmd_list, *env);

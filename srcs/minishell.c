@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/05/28 09:45:08 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/16 17:46:24 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/17 14:04:45 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,10 @@ int		launch_mini(char **env[], char *input)
 	}
 	edit_exit_status(env, status);
 	if (give_cmd_birth(&cmd_list, input, env))
+	{
 		status = get_status(env);
+		input = free_and_null_str(&input);
+	}
 	else
 	{
 		input = free_and_null_str(&input);
@@ -93,5 +96,6 @@ int		main(int argc, char *argv[], char *env[])
 		status = minishell(&environment);
 	status = get_status(&environment);
 	environment = free_and_null_tab(&environment);
+	ft_putstr_fd("exit\n", 2);
 	return (status);
 }

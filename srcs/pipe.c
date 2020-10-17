@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/16 17:32:52 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/16 19:31:59 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/17 12:56:32 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	pipe_child_exec(t_cmd *cmd, t_cmd *first, char **env[])
 	int status;
 
 	status = 0;
-	if (g_builtin(cmd->argv[0]) != NULL)
+	if (cmd && cmd->argv && cmd->argv[0] && g_builtin(cmd->argv[0]) != NULL)
 	{
 		status = (*g_builtin(cmd->argv[0]))(cmd, env);
 		if (status != -1)
@@ -47,7 +47,7 @@ void	pipe_child_exec(t_cmd *cmd, t_cmd *first, char **env[])
 	}
 	else
 	{
-		if (!file_exist(cmd->argv[0]))
+		if (cmd && cmd->argv && cmd->argv[0] && !file_exist(cmd->argv[0]))
 			execve(get_cmd_path(cmd->argv[0], *env), cmd->argv, *env);
 		no_exec_quit(cmd->argv[0], first, env);
 	}

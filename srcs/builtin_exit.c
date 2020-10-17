@@ -6,7 +6,7 @@
 /*   By: celeloup <celeloup@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/06/05 17:41:04 by celeloup          #+#    #+#             */
-/*   Updated: 2020/10/16 14:06:04 by celeloup         ###   ########.fr       */
+/*   Updated: 2020/10/17 12:33:11 by celeloup         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,5 @@ int		ft_exit(t_cmd *cmd, char **env[])
 			error_msg("exit", ": numeric argument required");
 		edit_exit_status(env, status);
 	}
-	ft_putstr_fd("exit\n", 2);
 	return (-1);
 }
